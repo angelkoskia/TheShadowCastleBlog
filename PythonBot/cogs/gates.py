@@ -1,23 +1,16 @@
 import discord
 from discord.ext import commands
-import random
-import json
-import asyncio
-from datetime import datetime, timedelta
 from discord.ui import View, Button, Select
+import json
+import random
+import asyncio
 
-class Gates(commands.Cog):
+class GatesSystem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.active_gates = {}
-        self.gate_levels = {
-            'E': {'min_level': 1, 'max_level': 10, 'rewards': (50, 150)},
-            'D': {'min_level': 11, 'max_level': 20, 'rewards': (150, 300)},
-            'C': {'min_level': 21, 'max_level': 30, 'rewards': (300, 600)},
-            'B': {'min_level': 31, 'max_level': 40, 'rewards': (600, 1200)},
-            'A': {'min_level': 41, 'max_level': 50, 'rewards': (1200, 2400)},
-            'S': {'min_level': 51, 'max_level': 60, 'rewards': (2400, 5000)}
-        }
+        self.red_gates = {}
+        self.dungeon_sessions = {}
 
     def load_hunters_data(self):
         try:
@@ -30,322 +23,361 @@ class Gates(commands.Cog):
         with open('hunters_data.json', 'w') as f:
             json.dump(data, f, indent=4)
 
-    @commands.command(name='scan')
-    async def scan_for_gates(self, ctx):
-        """Scan the area for gates"""
-        user_id = str(ctx.author.id)
+    class GateView(View):
+        def __init__(self, cog, user_id, gate_type="normal"):
+            super().__init__(timeout=60)
+            self.cog = cog
+            self.user_id = user_id
+            self.gate_type = gate_type
+
+        @discord.ui.button(label="Enter Gate", style=discord.ButtonStyle.primary, emoji="🌀")
+        async def enter_gate(self, interaction: discord.Interaction, button: Button):
+            if str(interaction.user.id) != self.user_id:
+                await interaction.response.send_message("This gate is not for you!", ephemeral=True)
+                return
+            await self.cog.process_gate_entry(interaction, self.gate_type)
+
+        @discord.ui.button(label="Information", style=discord.ButtonStyle.secondary, emoji="ℹ️")
+        async def gate_info(self, interaction: discord.Interaction, button: Button):
+            await self.cog.show_gate_info(interaction, self.gate_type)
+
+    @commands.command(name='viewgates')
+    async def viewgates(self, ctx):
+        """View available dimensional gates based on your rank"""
         hunters_data = self.load_hunters_data()
+        user_id = str(ctx.author.id)
 
         if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You must be a registered hunter to scan for gates. Use #start first!", color=discord.Color.red()))
+            await ctx.send("You need to start your journey first! Use #start")
             return
 
         hunter = hunters_data[user_id]
+        rank = hunter['rank']
 
-        # Check if hunter is already in a gate
-        if user_id in self.active_gates:
-            await ctx.send(embed=discord.Embed(description="You are already in a gate! Complete or leave it first.", color=discord.Color.orange()))
-            return
+        # Generate available gates based on rank
+        available_gates = self.generate_gates(rank)
 
-        # Determine available gate ranks based on hunter's level
-        available_ranks = []
-        for rank, data in self.gate_levels.items():
-            if hunter['level'] >= data['min_level']:
-                available_ranks.append(rank)
+        embed = discord.Embed(
+            title="🌀 Available Gates",
+            description=f"Current Rank: {rank}",
+            color=discord.Color.blue()
+        )
 
-        if not available_ranks:
-            await ctx.send(embed=discord.Embed(description="No gates available for your level!", color=discord.Color.red()))
-            return
-
-        # Random chance to find a gate
-        if random.random() < 0.7:  # 70% chance to find a gate
-            rank = random.choice(available_ranks)
-            gate_level = random.randint(
-                self.gate_levels[rank]['min_level'],
-                self.gate_levels[rank]['max_level']
+        for gate in available_gates:
+            embed.add_field(
+                name=f"Gate {gate['id']}",
+                value=f"Level: {gate['level']}\nDifficulty: {gate['difficulty']}\nStatus: {gate['status']}",
+                inline=True
             )
 
-            self.active_gates[user_id] = {
-                'rank': rank,
-                'level': gate_level,
-                'status': 'available',
-                'expires': datetime.now() + timedelta(minutes=30)
-            }
+        embed.set_footer(text="Use #entergate <id> to enter a gate")
+        await ctx.send(embed=embed, view=self.GateView(self, user_id))
 
-            embed = discord.Embed(
-                title="🌀 Gate Detected!",
-                description=f"A Rank {rank} gate has appeared!\nGate Level: {gate_level}",
-                color=discord.Color.green()
-            )
-            embed.add_field(name="Time Limit", value="30 minutes", inline=False)
-            embed.add_field(name="Status", value="Available", inline=False)
-            embed.set_footer(text="Click below to enter the gate!")
-
-            class EnterGateView(View):
-                def __init__(self, parent, ctx):
-                    super().__init__(timeout=60)
-                    self.parent = parent
-                    self.ctx = ctx
-
-                @discord.ui.button(label="Enter Gate", style=discord.ButtonStyle.primary, emoji="⚔️")
-                async def enter_button(self, interaction: discord.Interaction, button: Button):
-                    if interaction.user.id != ctx.author.id:
-                        await interaction.response.send_message("This isn't your gate!", ephemeral=True)
-                        return
-                    await interaction.response.defer()
-                    await self.parent._enter_gate(ctx, interaction)
-                    self.stop()
-
-            await ctx.send(embed=embed, view=EnterGateView(self, ctx))
-        else:
-            await ctx.send(embed=discord.Embed(description="No gates found in your area. Try again later!", color=discord.Color.blurple()))
-
-    async def _enter_gate(self, ctx, interaction=None):
-        user_id = str(ctx.author.id)
+    @commands.command(name='viewredgates')
+    async def viewredgates(self, ctx):
+        """View all known red gates based on player rank"""
         hunters_data = self.load_hunters_data()
+        user_id = str(ctx.author.id)
 
         if user_id not in hunters_data:
-            msg = "You must be a registered hunter to enter gates!"
-            if interaction:
-                await interaction.followup.send(msg, ephemeral=True)
-            else:
-                await ctx.send(msg)
+            await ctx.send("You need to start your journey first! Use #start")
             return
 
-        if user_id not in self.active_gates:
-            msg = "No gate available! Use #scan to find a gate first."
-            if interaction:
-                await interaction.followup.send(msg, ephemeral=True)
-            else:
-                await ctx.send(msg)
-            return
-
-        gate = self.active_gates[user_id]
         hunter = hunters_data[user_id]
+        rank = hunter['rank']
 
-        if datetime.now() > gate['expires']:
-            del self.active_gates[user_id]
-            msg = "The gate has expired! Use #scan to find a new gate."
-            if interaction:
-                await interaction.followup.send(msg, ephemeral=True)
-            else:
-                await ctx.send(msg)
+        # Generate red gates based on rank
+        red_gates = self.generate_red_gates(rank)
+
+        if not red_gates:
+            await ctx.send("No red gates detected in your area!")
             return
 
         embed = discord.Embed(
-            title="⚔️ Entering Gate",
-            description=f"You've entered a Rank {gate['rank']} gate!",
-            color=discord.Color.blue()
+            title="🔴 Red Gates Detected",
+            description="Warning: Red Gates are extremely dangerous!",
+            color=discord.Color.red()
         )
-        if interaction:
-            await interaction.followup.send(embed=embed)
-        else:
-            await ctx.send(embed=embed)
 
-        # Simulate dungeon progress
-        progress_msg = await ctx.send("Progress: 0%")
-        for i in range(5):
-            await asyncio.sleep(3)
-            await progress_msg.edit(content=f"Progress: {(i+1)*20}%")
-
-            # Random encounter
-            if random.random() < 0.5:
-                monster_level = gate['level']
-                damage_taken = random.randint(5, 15)
-                hunter['hp'] = max(0, hunter['hp'] - damage_taken)
-
-                encounter_embed = discord.Embed(
-                    title="⚔️ Monster Encountered!",
-                    description=f"You took {damage_taken} damage!",
-                    color=discord.Color.red()
-                )
-                await ctx.send(embed=encounter_embed)
-
-                if hunter['hp'] <= 0:
-                    await ctx.send("You have been defeated! You'll need to rest and recover.")
-                    hunter['hp'] = 50  # Partial recovery
-                    self.save_hunters_data(hunters_data)
-                    del self.active_gates[user_id]
-                    return
-
-        # Gate completion rewards
-        exp_gain = random.randint(
-            self.gate_levels[gate['rank']]['rewards'][0],
-            self.gate_levels[gate['rank']]['rewards'][1]
-        )
-        hunter['exp'] += exp_gain
-
-        # Level up check
-        level_up = False
-        while hunter['exp'] >= (hunter['level'] * 100):
-            hunter['exp'] -= (hunter['level'] * 100)
-            hunter['level'] += 1
-            level_up = True
-
-        completion_embed = discord.Embed(
-            title="🎉 Gate Cleared!",
-            description=f"Congratulations! You've cleared the Rank {gate['rank']} gate!",
-            color=discord.Color.green()
-        )
-        completion_embed.add_field(name="EXP Gained", value=str(exp_gain), inline=True)
-        if level_up:
-            completion_embed.add_field(name="Level Up!", value=f"New Level: {hunter['level']}", inline=True)
-
-        await ctx.send(embed=completion_embed)
-
-        # Update hunter data
-        self.save_hunters_data(hunters_data)
-        del self.active_gates[user_id]
-
-    @commands.command(name='awaken')
-    async def awaken(self, ctx):
-        """Begin your hunter journey at the awakening-gate (can only be used once)"""
-        user_id = str(ctx.author.id)
-        hunters_data = self.load_hunters_data()
-        if user_id in hunters_data and hunters_data[user_id].get('awakened', False):
-            await ctx.send(embed=discord.Embed(description="You have already awakened! This can only be done once.", color=discord.Color.red()))
-            return
-        # Simulate awakening-gate event
-        hunters_data[user_id] = {
-            'name': ctx.author.name,
-            'level': 1,
-            'exp': 0,
-            'gold': 100,
-            'hp': 100,
-            'mp': 50,
-            'strength': 10,
-            'agility': 10,
-            'abilities': {},
-            'equipment': {},
-            'inventory': [],
-            'awakened': True,
-            'pvp_wins': 0,
-            'pvp_losses': 0,
-            'monster_kills': 0,
-            'deaths': 0,
-            'successful_raids': 0,
-            'failed_raids': 0
-        }
-        self.save_hunters_data(hunters_data)
-        embed = discord.Embed(title="Awakening Gate", description=f"{ctx.author.mention}, you have awakened as a Hunter! Your journey begins now.", color=discord.Color.blue())
-        await ctx.send(embed=embed)
-
-    async def handle_red_gate_completion(self, ctx, user_id, victory=False):
-        """Handle red gate completion or death."""
-        if user_id in self.active_gates and self.active_gates[user_id]['type'] == 'red':
-            gate = self.active_gates[user_id]
-            if victory:
-                embed = discord.Embed(
-                    title="🏆 Red Gate Cleared!",
-                    description="You have successfully cleared the red gate and automatically exited!",
-                    color=discord.Color.gold()
-                )
-            else:
-                embed = discord.Embed(
-                    title="💀 Defeated in Red Gate",
-                    description="You have been defeated and automatically ejected from the red gate!",
-                    color=discord.Color.red()
-                )
-            del self.active_gates[user_id]
-            await ctx.send(embed=embed)
-
-    @commands.command(name='viewgates')
-    async def view_gates(self, ctx):
-        """View available dimensional gates with modern UI"""
-        hunters_data = self.load_hunters_data()
-        user_id = str(ctx.author.id)
-        if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You must be registered to view gates!", color=discord.Color.red()))
-            return
-
-        hunter = hunters_data[user_id]
-        available_ranks = []
-        for rank, data in self.gate_levels.items():
-            if hunter['level'] >= data['min_level']:
-                available_ranks.append(rank)
-
-        embed = discord.Embed(title="🌀 Available Gates", color=discord.Color.blue())
-        for rank in available_ranks:
+        for gate in red_gates:
             embed.add_field(
-                name=f"Rank {rank} Gate",
-                value=f"Level: {self.gate_levels[rank]['min_level']}-{self.gate_levels[rank]['max_level']}\nRewards: {self.gate_levels[rank]['rewards'][0]}-{self.gate_levels[rank]['rewards'][1]} exp",
-                inline=False
+                name=f"Red Gate {gate['id']}",
+                value=f"Level: {gate['level']}\nThreat Level: {gate['threat']}\nStatus: {gate['status']}",
+                inline=True
             )
 
-        class GateView(View):
-            def __init__(self):
-                super().__init__(timeout=60)
-                self.add_item(Select(
-                    placeholder="Choose a gate...",
-                    options=[discord.SelectOption(label=f"Rank {r} Gate", value=r) for r in available_ranks]
-                ))
-
-        await ctx.send(embed=embed, view=GateView())
-
-    @commands.command(name='viewredgates')
-    async def view_red_gates(self, ctx):
-        """View all known red gates based on player rank."""
-        user_id = str(ctx.author.id)
-        hunters_data = self.load_hunters_data()
-        if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You must be a registered hunter to view red gates. Use #start first!", color=discord.Color.red()))
-            return
-        # Example: Red gates are only available for level 20+
-        hunter = hunters_data[user_id]
-        if hunter['level'] < 20:
-            await ctx.send(embed=discord.Embed(description="Red gates are only available for level 20 and above!", color=discord.Color.orange()))
-            return
-        embed = discord.Embed(title="Known Red Gates", description="Danger: EXTREME", color=discord.Color.red())
-        embed.add_field(name="Red Gate Alpha", value="Level 20+ | Boss: Blood Demon", inline=False)
-        embed.add_field(name="Red Gate Omega", value="Level 30+ | Boss: Crimson Monarch", inline=False)
-        await ctx.send(embed=embed)
+        embed.set_footer(text="Use #enterredgate <id> to enter a red gate")
+        await ctx.send(embed=embed, view=self.GateView(self, user_id, "red"))
 
     @commands.command(name='entergate')
-    async def enter_gate(self, ctx, *, gate_name: str):
-        """Enter a basic gate by name."""
-        user_id = str(ctx.author.id)
-        if user_id in self.active_gates:
-            await ctx.send(embed=discord.Embed(description="You are already in a gate!", color=discord.Color.orange()))
+    async def entergate(self, ctx, gate_id: str = None):
+        """Enter a basic gate"""
+        if not gate_id:
+            await ctx.send("Please specify a gate ID! Use #viewgates to see available gates.")
             return
-        # Simulate entering a gate
-        self.active_gates[user_id] = {'name': gate_name, 'type': 'normal', 'entered': True}
-        embed = discord.Embed(title="Gate Entered", description=f"You have entered the gate: {gate_name}", color=discord.Color.blue())
+
+        hunters_data = self.load_hunters_data()
+        user_id = str(ctx.author.id)
+
+        if user_id not in hunters_data:
+            await ctx.send("You need to start your journey first! Use #start")
+            return
+
+        # Check if player is already in a gate
+        if user_id in self.active_gates:
+            await ctx.send("You're already in a gate! Use #exitgate first.")
+            return
+
+        # Start gate session
+        self.active_gates[user_id] = {
+            'gate_id': gate_id,
+            'level': 1,
+            'monsters_defeated': 0,
+            'rewards': {
+                'exp': 0,
+                'gold': 0,
+                'items': []
+            }
+        }
+
+        embed = discord.Embed(
+            title="🌀 Gate Entry",
+            description=f"You've entered Gate {gate_id}!",
+            color=discord.Color.blue()
+        )
+        embed.add_field(name="Instructions", value="Use #hunt to find monsters\nUse #exitgate to leave")
         await ctx.send(embed=embed)
 
     @commands.command(name='enterredgate')
-    async def enter_red_gate(self, ctx, *, gate_name: str):
-        """Enter a red gate by name (restrictions apply)."""
-        user_id = str(ctx.author.id)
+    async def enterredgate(self, ctx, gate_id: str = None):
+        """Enter a red gate"""
+        if not gate_id:
+            await ctx.send("Please specify a red gate ID! Use #viewredgates to see available gates.")
+            return
+
         hunters_data = self.load_hunters_data()
-        if user_id in self.active_gates:
-            await ctx.send(embed=discord.Embed(description="You are already in a gate!", color=discord.Color.orange()))
+        user_id = str(ctx.author.id)
+
+        if user_id not in hunters_data:
+            await ctx.send("You need to start your journey first! Use #start")
             return
-        hunter = hunters_data.get(user_id, {})
-        if hunter.get('level', 1) < 20:
-            await ctx.send(embed=discord.Embed(description="Red gates are only available for level 20 and above!", color=discord.Color.red()))
+
+        hunter = hunters_data[user_id]
+        if hunter['rank'] not in ['S', 'A']:
+            await ctx.send("Your rank is too low to enter red gates! Only S and A rank hunters can enter.")
             return
-        self.active_gates[user_id] = {'name': gate_name, 'type': 'red', 'entered': True}
-        embed = discord.Embed(title="Red Gate Entered", description=f"You have entered the RED gate: {gate_name}. Escape is only possible if the boss is defeated or you die!", color=discord.Color.red())
+
+        # Check if player is already in a gate
+        if user_id in self.active_gates or user_id in self.red_gates:
+            await ctx.send("You're already in a gate!")
+            return
+
+        # Start red gate session
+        self.red_gates[user_id] = {
+            'gate_id': gate_id,
+            'level': 1,
+            'boss_alive': True,
+            'monsters_defeated': 0,
+            'rewards': {
+                'exp': 0,
+                'gold': 0,
+                'items': []
+            }
+        }
+
+        embed = discord.Embed(
+            title="🔴 Red Gate Entry",
+            description=f"You've entered Red Gate {gate_id}!\nWarning: You cannot exit until the boss is defeated!",
+            color=discord.Color.red()
+        )
+        embed.add_field(name="Instructions", value="Use #hunt to find monsters\nDefeat the boss to escape!")
         await ctx.send(embed=embed)
 
     @commands.command(name='exitgate')
-    async def exit_gate(self, ctx):
-        """Exit the current gate (restrictions for red gates)."""
+    async def exitgate(self, ctx):
+        """Exit the current gate"""
         user_id = str(ctx.author.id)
-        if user_id not in self.active_gates:
-            await ctx.send(embed=discord.Embed(description="You are not in a gate!", color=discord.Color.orange()))
-            return
-        gate = self.active_gates[user_id]
-        if gate['type'] == 'red':
-            await ctx.send(embed=discord.Embed(description="You cannot exit a red gate unless the boss is defeated or you die!", color=discord.Color.red()))
-            return
-        del self.active_gates[user_id]
-        await ctx.send(embed=discord.Embed(description="You have exited the gate.", color=discord.Color.green()))
 
-    def auto_leave_red_gate(self, user_id):
-        """Auto-leave a red gate after win/death."""
-        if user_id in self.active_gates and self.active_gates[user_id]['type'] == 'red':
+        # Check red gates first
+        if user_id in self.red_gates:
+            if self.red_gates[user_id]['boss_alive']:
+                embed = discord.Embed(
+                    title="❌ Cannot Exit",
+                    description="You must defeat the boss to exit a red gate!",
+                    color=discord.Color.red()
+                )
+                await ctx.send(embed=embed)
+                return
+            else:
+                gate_data = self.red_gates[user_id]
+                del self.red_gates[user_id]
+        elif user_id in self.active_gates:
+            gate_data = self.active_gates[user_id]
             del self.active_gates[user_id]
+        else:
+            await ctx.send("You're not in any gate!")
+            return
+
+        # Calculate final rewards
+        hunters_data = self.load_hunters_data()
+        if user_id in hunters_data:
+            hunter = hunters_data[user_id]
+            hunter['exp'] += gate_data['rewards']['exp']
+            hunter['gold'] = hunter.get('gold', 0) + gate_data['rewards']['gold']
+
+            # Add items to inventory
+            if 'inventory' not in hunter:
+                hunter['inventory'] = []
+            hunter['inventory'].extend(gate_data['rewards']['items'])
+
+            self.save_hunters_data(hunters_data)
+
+        embed = discord.Embed(
+            title="🚪 Gate Exit",
+            description="You've successfully left the gate!",
+            color=discord.Color.green()
+        )
+        embed.add_field(
+            name="Final Rewards",
+            value=f"EXP: {gate_data['rewards']['exp']}\nGold: {gate_data['rewards']['gold']}\nItems: {len(gate_data['rewards']['items'])}",
+            inline=False
+        )
+        embed.add_field(
+            name="Statistics",
+            value=f"Monsters Defeated: {gate_data['monsters_defeated']}\nLevels Cleared: {gate_data['level']}",
+            inline=False
+        )
+        await ctx.send(embed=embed)
+
+    def generate_gates(self, rank):
+        """Generate available gates based on hunter rank"""
+        rank_levels = {
+            'S': range(80, 101),
+            'A': range(60, 81),
+            'B': range(40, 61),
+            'C': range(20, 41),
+            'D': range(10, 21),
+            'E': range(1, 11)
+        }
+
+        levels = rank_levels.get(rank, range(1, 11))
+        gates = []
+
+        for i in range(3):  # Generate 3 gates
+            level = random.choice(list(levels))
+            gates.append({
+                'id': f"{rank}{i+1}",
+                'level': level,
+                'difficulty': self.calculate_difficulty(level),
+                'status': random.choice(['Active', 'Unstable', 'Stable'])
+            })
+
+        return gates
+
+    def generate_red_gates(self, rank):
+        """Generate red gates based on hunter rank"""
+        if rank not in ['S', 'A']:
+            return []
+
+        red_gates = []
+        base_level = 90 if rank == 'S' else 70
+
+        for i in range(2):  # Generate 2 red gates
+            level = base_level + random.randint(0, 10)
+            red_gates.append({
+                'id': f"R{rank}{i+1}",
+                'level': level,
+                'threat': 'Catastrophic' if level > 95 else 'Extreme',
+                'status': random.choice(['Unstable', 'Volatile', 'Critical'])
+            })
+
+        return red_gates
+
+    def calculate_difficulty(self, level):
+        """Calculate gate difficulty based on level"""
+        if level >= 90:
+            return 'Extreme'
+        elif level >= 70:
+            return 'Very Hard'
+        elif level >= 50:
+            return 'Hard'
+        elif level >= 30:
+            return 'Medium'
+        else:
+            return 'Easy'
+
+    async def process_gate_entry(self, interaction, gate_type):
+        """Process gate entry request"""
+        user_id = str(interaction.user.id)
+        hunters_data = self.load_hunters_data()
+
+        if user_id not in hunters_data:
+            await interaction.response.send_message("You need to start your journey first! Use #start", ephemeral=True)
+            return
+
+        if gate_type == "red" and hunters_data[user_id]['rank'] not in ['S', 'A']:
+            await interaction.response.send_message("Your rank is too low to enter red gates!", ephemeral=True)
+            return
+
+        if user_id in self.active_gates or user_id in self.red_gates:
+            await interaction.response.send_message("You're already in a gate!", ephemeral=True)
+            return
+
+        # Create gate session
+        if gate_type == "red":
+            self.red_gates[user_id] = {
+                'gate_id': f"R{hunters_data[user_id]['rank']}1",
+                'level': 1,
+                'boss_alive': True,
+                'monsters_defeated': 0,
+                'rewards': {'exp': 0, 'gold': 0, 'items': []}
+            }
+            color = discord.Color.red()
+            title = "🔴 Red Gate Entry"
+        else:
+            self.active_gates[user_id] = {
+                'gate_id': f"{hunters_data[user_id]['rank']}1",
+                'level': 1,
+                'monsters_defeated': 0,
+                'rewards': {'exp': 0, 'gold': 0, 'items': []}
+            }
+            color = discord.Color.blue()
+            title = "🌀 Gate Entry"
+
+        embed = discord.Embed(
+            title=title,
+            description="You've entered the gate!\nUse #hunt to find monsters",
+            color=color
+        )
+        await interaction.response.send_message(embed=embed)
+
+    async def show_gate_info(self, interaction, gate_type):
+        """Show detailed gate information"""
+        user_id = str(interaction.user.id)
+        hunters_data = self.load_hunters_data()
+
+        if user_id not in hunters_data:
+            await interaction.response.send_message("You need to start your journey first! Use #start", ephemeral=True)
+            return
+
+        rank = hunters_data[user_id]['rank']
+        if gate_type == "red":
+            gates = self.generate_red_gates(rank)
+            color = discord.Color.red()
+            title = "🔴 Red Gate Information"
+        else:
+            gates = self.generate_gates(rank)
+            color = discord.Color.blue()
+            title = "🌀 Gate Information"
+
+        embed = discord.Embed(title=title, color=color)
+        for gate in gates:
+            info = f"Level: {gate['level']}\n"
+            info += f"{'Threat' if gate_type == 'red' else 'Difficulty'}: {gate.get('threat', gate.get('difficulty'))}\n"
+            info += f"Status: {gate['status']}"
+            embed.add_field(name=f"Gate {gate['id']}", value=info, inline=True)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def setup(bot):
-    await bot.add_cog(Gates(bot))
+    await bot.add_cog(GatesSystem(bot))

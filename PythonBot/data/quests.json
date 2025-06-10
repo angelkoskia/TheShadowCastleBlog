@@ -1,52 +1,105 @@
 {
-    "daily": {
-        "monster_hunt": {
-            "name": "Monster Hunter",
-            "description": "Defeat {count} monsters",
-            "variants": [
-                {"count": 5, "reward_gold": 100, "reward_exp": 50},
-                {"count": 10, "reward_gold": 200, "reward_exp": 100},
-                {"count": 15, "reward_gold": 300, "reward_exp": 150}
-            ]
+    "daily": [
+        {
+            "type": "hunt",
+            "description": "Hunt monsters in gates",
+            "min_target": 5,
+            "max_target": 10,
+            "base_gold": 100,
+            "base_exp": 50
         },
-        "gate_clear": {
-            "name": "Gate Clearer",
-            "description": "Clear {count} gates",
-            "variants": [
-                {"count": 1, "reward_gold": 200, "reward_exp": 100},
-                {"count": 3, "reward_gold": 500, "reward_exp": 250},
-                {"count": 5, "reward_gold": 1000, "reward_exp": 500}
-            ]
+        {
+            "type": "pvp",
+            "description": "Participate in PvP duels",
+            "min_target": 2,
+            "max_target": 5,
+            "base_gold": 150,
+            "base_exp": 75
         },
-        "shadow_training": {
-            "name": "Shadow Master",
-            "description": "Train your shadows {count} times",
-            "variants": [
-                {"count": 3, "reward_gold": 150, "reward_exp": 75},
-                {"count": 5, "reward_gold": 300, "reward_exp": 150},
-                {"count": 10, "reward_gold": 600, "reward_exp": 300}
-            ]
+        {
+            "type": "gate",
+            "description": "Enter dimensional gates",
+            "min_target": 3,
+            "max_target": 6,
+            "base_gold": 200,
+            "base_exp": 100
+        },
+        {
+            "type": "dungeon",
+            "description": "Complete dungeon floors",
+            "min_target": 2,
+            "max_target": 4,
+            "base_gold": 250,
+            "base_exp": 125
+        },
+        {
+            "type": "party",
+            "description": "Complete party battles",
+            "min_target": 3,
+            "max_target": 5,
+            "base_gold": 175,
+            "base_exp": 85
+        },
+        {
+            "type": "boss",
+            "description": "Defeat dungeon bosses",
+            "min_target": 1,
+            "max_target": 3,
+            "base_gold": 300,
+            "base_exp": 150
         }
-    },
-    "weekly": {
-        "pvp_battles": {
-            "name": "PvP Champion",
-            "description": "Win {count} PvP battles",
-            "variants": [
-                {"count": 3, "reward_gold": 500, "reward_exp": 250},
-                {"count": 5, "reward_gold": 1000, "reward_exp": 500},
-                {"count": 10, "reward_gold": 2000, "reward_exp": 1000}
-            ]
+    ],
+    "weekly": [
+        {
+            "type": "redgate",
+            "description": "Clear red gates",
+            "min_target": 1,
+            "max_target": 3,
+            "base_gold": 500,
+            "base_exp": 250
         },
-        "dungeon_raids": {
-            "name": "Dungeon Conqueror",
-            "description": "Complete {count} dungeon raids",
-            "variants": [
-                {"count": 1, "reward_gold": 1000, "reward_exp": 500},
-                {"count": 3, "reward_gold": 2500, "reward_exp": 1250},
-                {"count": 5, "reward_gold": 5000, "reward_exp": 2500}
-            ]
+        {
+            "type": "guildraid",
+            "description": "Participate in guild raids",
+            "min_target": 2,
+            "max_target": 4,
+            "base_gold": 400,
+            "base_exp": 200
+        },
+        {
+            "type": "pvp_wins",
+            "description": "Win PvP duels",
+            "min_target": 5,
+            "max_target": 10,
+            "base_gold": 450,
+            "base_exp": 225
         }
-    }
+    ],
+    "achievement": [
+        {
+            "type": "rank_up",
+            "description": "Reach next hunter rank",
+            "rewards": {
+                "gold": 1000,
+                "exp": 500
+            }
+        },
+        {
+            "type": "shadow_extract",
+            "description": "Extract your first shadow",
+            "rewards": {
+                "gold": 2000,
+                "exp": 1000
+            }
+        },
+        {
+            "type": "guild_leader",
+            "description": "Become a guild leader",
+            "rewards": {
+                "gold": 1500,
+                "exp": 750
+            }
+        }
+    ]
 }
 
