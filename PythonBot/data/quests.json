@@ -1,0 +1,52 @@
+{
+    "daily": {
+        "monster_hunt": {
+            "name": "Monster Hunter",
+            "description": "Defeat {count} monsters",
+            "variants": [
+                {"count": 5, "reward_gold": 100, "reward_exp": 50},
+                {"count": 10, "reward_gold": 200, "reward_exp": 100},
+                {"count": 15, "reward_gold": 300, "reward_exp": 150}
+            ]
+        },
+        "gate_clear": {
+            "name": "Gate Clearer",
+            "description": "Clear {count} gates",
+            "variants": [
+                {"count": 1, "reward_gold": 200, "reward_exp": 100},
+                {"count": 3, "reward_gold": 500, "reward_exp": 250},
+                {"count": 5, "reward_gold": 1000, "reward_exp": 500}
+            ]
+        },
+        "shadow_training": {
+            "name": "Shadow Master",
+            "description": "Train your shadows {count} times",
+            "variants": [
+                {"count": 3, "reward_gold": 150, "reward_exp": 75},
+                {"count": 5, "reward_gold": 300, "reward_exp": 150},
+                {"count": 10, "reward_gold": 600, "reward_exp": 300}
+            ]
+        }
+    },
+    "weekly": {
+        "pvp_battles": {
+            "name": "PvP Champion",
+            "description": "Win {count} PvP battles",
+            "variants": [
+                {"count": 3, "reward_gold": 500, "reward_exp": 250},
+                {"count": 5, "reward_gold": 1000, "reward_exp": 500},
+                {"count": 10, "reward_gold": 2000, "reward_exp": 1000}
+            ]
+        },
+        "dungeon_raids": {
+            "name": "Dungeon Conqueror",
+            "description": "Complete {count} dungeon raids",
+            "variants": [
+                {"count": 1, "reward_gold": 1000, "reward_exp": 500},
+                {"count": 3, "reward_gold": 2500, "reward_exp": 1250},
+                {"count": 5, "reward_gold": 5000, "reward_exp": 2500}
+            ]
+        }
+    }
+}
+

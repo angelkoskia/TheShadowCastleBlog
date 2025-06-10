@@ -1,0 +1,52 @@
+{
+    "198108580115644418": {
+        "level": 1,
+        "exp": 100,
+        "rank": "E",
+        "hp": 100,
+        "mp": 50,
+        "strength": 10,
+        "agility": 10,
+        "intelligence": 10,
+        "inventory": [],
+        "shadows": [],
+        "equipment": {
+            "weapon": null,
+            "armor": null,
+            "accessory": null
+        },
+        "quests": {
+            "daily": {
+                "monster_hunt": {
+                    "name": "Monster Hunter",
+                    "description": "Defeat 15 monsters",
+                    "target": 15,
+                    "progress": 0,
+                    "reward_gold": 300,
+                    "reward_exp": 150,
+                    "completed": false
+                },
+                "gate_clear": {
+                    "name": "Gate Clearer",
+                    "description": "Clear 1 gates",
+                    "target": 1,
+                    "progress": 1,
+                    "reward_gold": 200,
+                    "reward_exp": 100,
+                    "completed": true
+                },
+                "shadow_training": {
+                    "name": "Shadow Master",
+                    "description": "Train your shadows 3 times",
+                    "target": 3,
+                    "progress": 0,
+                    "reward_gold": 150,
+                    "reward_exp": 75,
+                    "completed": false
+                }
+            },
+            "last_daily_reset": "2025-06-10"
+        },
+        "gold": 200
+    }
+}
