@@ -1,1 +1,1 @@
-This is a blog page that is currently in development for our discord server which is themed with Solo Leveling activities. More on that in the future.
+This blog page is under development for our Discord server, inspired by Solo Leveling activities. Stay tuned for updates and new features coming soon!
