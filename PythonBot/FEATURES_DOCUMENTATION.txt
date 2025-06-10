@@ -1,0 +1,89 @@
+# Solo Leveling RPG Discord Bot - Features Documentation
+Last Updated: 2025-06-11
+
+## Modern UI Implementation (All Features)
+All commands in the bot use modern Discord UI components:
+- Embeds: Beautifully formatted information displays
+- Buttons: Interactive command responses
+- Select Menus: Easy selection for items, targets, etc.
+- Modal Forms: Clean input for complex commands
+- Auto-updating Messages: Real-time battle and status updates
+
+## Core Systems
+
+### Party & Co-Op System (Finished)
+- **#startparty @user @user ...**: Create party with interactive invite UI
+- **#accept/#decline/#refuse**: Handle invitations via buttons or commands
+- **#finished**: Mark turn complete, shows party stats, auto-disbands when all ready
+- **Party Combat UI**:
+  - Automatic stats display after each action
+  - Turn progression tracking
+  - Modern combat buttons
+  - Party-wide status updates
+
+### Guild System (Finished)
+- **#guildwar**: Initiate guild vs guild combat with member matching
+- **#guildraid**: Coordinate guild-wide gate/dungeon raids
+- Guild Management UI with buttons and select menus
+- Real-time guild activity tracking
+
+### Gates & Red Gates (Finished)
+- **#viewgates/#viewredgates**: Interactive gate selection UI
+- **#entergate/#enterredgate**: Gate entry with confirmation
+- **#exitgate**: Standard gate exit (restricted for red gates)
+- Automatic leave system for red gates on win/death
+- Gate progress tracking with visual indicators
+
+### Combat System (Finished)
+- **#hunt**: Start monster encounters
+- **#attack/#defend/#dodge**: Combat actions via buttons
+- **#flee**: Escape attempt with success calculation
+- **#ability**: Use skills with target selection UI
+- Real-time battle updates
+- Visual HP/MP/Status indicators
+
+### PvP Arena (Finished)
+- **#pvp**: Challenge system with accept/decline buttons
+- **#topserver**: Interactive leaderboard
+- **#rank**: Visual progress bars
+- Tournament system with bracket display
+- Real-time match updates
+
+### Equipment & Inventory (Finished)
+- **#inventory/#inv**: Modern item management UI
+- **#equip/#unequip**: Equipment slots with visual feedback
+- **#use**: Item usage with target selection
+- Drag-and-drop style UI elements
+- Category filtering and sorting
+
+### Quest & Daily Systems (Finished)
+- **#daily/#dailyquest**: Daily rewards and tasks
+- **#weekly**: Weekly challenge tracking
+- Progress bars and completion indicators
+- Automatic reward distribution
+- Visual quest logs
+
+### Server Integration (Finished)
+- Automatic role assignment
+- Title management system
+- Penalty role automation
+- Server-wide announcements
+- Admin control panel
+
+## Additional Features
+- Modern error handling with clear feedback
+- Intuitive command suggestions
+- Help system with command categories
+- Tutorial system for new players
+- Performance optimization for large servers
+
+## Technical Notes
+- All features use Discord.py's latest UI components
+- Persistent data storage in JSON format
+- Optimized for minimal latency
+- Cross-platform compatibility
+- Regular backup system
+
+---
+
+Note: All features listed are fully implemented (Finished) and include modern Discord UI components. The bot uses the # prefix for all commands.

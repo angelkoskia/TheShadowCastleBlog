@@ -60,27 +60,69 @@ python main.py
 cd dashboard && node server.js
 ```
 
-## 📋 Core Commands
+## 📋 Core Commands & Modern UI
 
-### Player Commands
-- `.awaken` - Begin your hunter journey
+All commands use modern Discord UI components:
+- Embeds for all information displays
+- Buttons for interactive responses (combat, party, inventory, etc.)
+- Select Menus for item/target selection
+- Modal Forms for complex input
+- Auto-updating messages for real-time battle/status
+
+### Player & System Commands
+- `.awaken` - Begin your hunter journey (one-time, at awakening-gate)
 - `.status` - View hunter profile and stats
-- `.hunt` - Start hunting monsters
-- `.attack` - Attack current monster
-- `.defend` - Defensive battle stance
-- `.flee` - Escape from battle
-
-### Advanced Features
-- `.gates` - View available dimensional gates
-- `.enter_gate <name>` - Enter gate exploration
-- `.dungeons` - View dungeon raids
-- `.shadows` - Manage shadow army
-- `.pvp @user` - Challenge another hunter
-- `.daily` - View daily quests
+- `.inventory` - Manage and sort through items
+- `.use <name>` - Use consumable item
+- `.equip <name>` / `.unequip <name>` - Equip/unequip gear
+- `.ability <name>` - Use an ability/skill
+- `.daily` - Claim daily rewards
+- `.dailyquest` - View daily quests
 - `.shop` - Visit hunter shop
-- `.inventory` - Manage items
+- `.topserver` - View top players and arena ranks
+- `.rank` - View experience progress bar
+
+### Gates, Dungeons, and Combat
+- `.viewgates` - View available dimensional gates
+- `.viewredgates` - View known red gates
+- `.entergate <name>` / `.enterredgate <name>` - Enter a gate
+- `.exitgate` - Exit current gate (special rules for red gates)
+- `.dungeons` - View dungeon raids
+- `.enterdungeon <name>` / `.exitdungeon` - Enter/flee dungeon (party leader only)
+- `.hunt` - Start hunting monsters (in gate/dungeon)
+- `.attack` / `.defend` / `.dodge` / `.flee` - Combat actions (contextual)
+
+### Party, Co-Op, and Guild
+- `.startparty @user ...` - Start a party (interactive invites)
+- `.accept` / `.decline` / `.refuse` - Respond to invites or party actions
+- `.finished` - Mark turn complete in party/guild combat
+- `.guildwar` - Initiate guild vs guild combat
+- `.guildraid <name>` - Guild-wide gate/dungeon raid
+
+### PvP & Arena
+- `.pvp @user` - Challenge another hunter
+- `.accept` / `.decline` - Respond to PvP challenge
+
+### Shadow Army (Restricted)
+- `.shadows` - Manage shadow army (only for necromancer class, restricted to SJW)
 
 ## 🏗️ Key Features
+
+### Modern UI Implementation
+- All systems use Discord embeds, buttons, select menus, and modals
+- Real-time, auto-updating messages for battles and status
+- Seamless party/guild/coop UI with automatic stat displays and turn tracking
+
+### Party & Co-Op System (Finished)
+- Interactive party creation and invites
+- Party combat with automatic stats display and turn progression
+- All members can prepare actions; turn progresses when all use `.finished`
+- Auto-disband after each battle
+
+### Guild System (Finished)
+- Guild vs guild combat with member matching
+- Guild-wide raids for gates, red gates, and dungeons
+- Party formation and turn handling as in co-op
 
 ### Battle System
 - Persistent battle data stored in player profiles
@@ -95,10 +137,8 @@ cd dashboard && node server.js
 - Automatic quest reset
 
 ### Shadow Army
-- 7-tier shadow grading system (Normal to National Treasure)
-- Shadow extraction from defeated monsters
-- Army management and upgrades
-- Special shadow abilities
+- 7-tier grading, extraction, upgrades, and abilities
+- Only accessible to necromancer class (SJW only)
 
 ### PvP System
 - Player vs player combat
@@ -122,3 +162,14 @@ All player data is automatically saved to `hunters_data.json` with:
 
 ## 🔧 Configuration
 Game balance and content can be modified through JSON files in the `data/` directory without code changes.
+
+## ✅ Feature Status
+All features listed above are fully implemented and working as of 2025-06-11, including:
+- Modern UI for all commands
+- Party, co-op, and guild systems
+- Gate, dungeon, and combat mechanics
+- PvP and leaderboard
+- Shadow army (restricted)
+- Data persistence and web dashboard
+
+For any issues, consult the FEATURES_DOCUMENTATION.txt or the respective cog/module.

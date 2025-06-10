@@ -131,6 +131,54 @@ class DailyQuests(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.command(name='dailyquest')
+    async def show_daily_quests(self, ctx):
+        """View your current daily quests"""
+        hunters_data = self.load_hunters_data()
+        user_id = str(ctx.author.id)
+        if user_id not in hunters_data:
+            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #awaken first.", color=discord.Color.red()))
+            return
+        hunter = hunters_data[user_id]
+        if 'daily_quests' not in hunter or not hunter['daily_quests']:
+            # Generate new daily quests if none exist
+            hunter['daily_quests'] = self.generate_daily_quests()
+            self.save_hunters_data(hunters_data)
+        embed = discord.Embed(title=f"{ctx.author.name}'s Daily Quests", color=discord.Color.green())
+        for quest_id, quest in hunter['daily_quests'].items():
+            status = '✅ Completed' if quest['completed'] else f"{quest['progress']}/{quest['target']}"
+            embed.add_field(
+                name=quest['name'],
+                value=f"{quest['description']}\nProgress: {status}\nReward: {quest['reward_gold']} Gold, {quest['reward_exp']} EXP",
+                inline=False
+            )
+        await ctx.send(embed=embed)
+
+    @commands.command(name='daily')
+    async def claim_daily(self, ctx):
+        """Claim your daily gold and EXP (24-hour reset)"""
+        hunters_data = self.load_hunters_data()
+        user_id = str(ctx.author.id)
+        if user_id not in hunters_data:
+            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #awaken first.", color=discord.Color.red()))
+            return
+        hunter = hunters_data[user_id]
+        now = datetime.now()
+        last_claim = hunter.get('last_daily_claim')
+        if last_claim:
+            last_claim_dt = datetime.strptime(last_claim, '%Y-%m-%d')
+            if last_claim_dt.date() == now.date():
+                await ctx.send(embed=discord.Embed(description="You have already claimed your daily reward today! Come back tomorrow.", color=discord.Color.orange()))
+                return
+        gold_reward = 100 + hunter.get('level', 1) * 10
+        exp_reward = 50 + hunter.get('level', 1) * 5
+        hunter['gold'] = hunter.get('gold', 0) + gold_reward
+        hunter['exp'] = hunter.get('exp', 0) + exp_reward
+        hunter['last_daily_claim'] = now.strftime('%Y-%m-%d')
+        self.save_hunters_data(hunters_data)
+        embed = discord.Embed(title="Daily Reward Claimed!", description=f"You received 🪙 {gold_reward} gold and ⭐ {exp_reward} EXP!", color=discord.Color.green())
+        await ctx.send(embed=embed)
+
     def update_quest_progress(self, user_id, quest_type, amount=1):
         """Update quest progress for a specific type"""
         hunters_data = self.load_hunters_data()
