@@ -1,14 +1,14 @@
 import discord
 from discord.ext import commands
-import json
-import os
 from discord.ui import View, Button, Select
+import json
+import asyncio
 
 class Shop(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         with open('data/items.json', 'r') as f:
-            self.items_data = json.load(f)
+            self.shop_items = json.load(f)
 
     def load_hunters_data(self):
         try:
@@ -21,206 +21,227 @@ class Shop(commands.Cog):
         with open('hunters_data.json', 'w') as f:
             json.dump(data, f, indent=4)
 
+    class ShopView(View):
+        def __init__(self, cog, category="all"):
+            super().__init__(timeout=60)
+            self.cog = cog
+            self.category = category
+            self.add_item(self.CategorySelect(cog))
+
+        class CategorySelect(Select):
+            def __init__(self, cog):
+                options = [
+                    discord.SelectOption(label="All Items", value="all", emoji="🏪"),
+                    discord.SelectOption(label="Weapons", value="weapons", emoji="⚔️"),
+                    discord.SelectOption(label="Armor", value="armor", emoji="🛡️"),
+                    discord.SelectOption(label="Consumables", value="consumables", emoji="🧪"),
+                    discord.SelectOption(label="Accessories", value="accessories", emoji="💍")
+                ]
+                super().__init__(placeholder="Select category...", options=options)
+                self.cog = cog
+
+            async def callback(self, interaction: discord.Interaction):
+                await self.cog.show_shop_items(interaction, self.values[0])
+
     @commands.command(name='shop')
-    async def show_shop(self, ctx, category: str = None):
-        """Browse the hunter's shop. Categories: weapons, armor, potions"""
+    async def shop(self, ctx):
+        """Visit the hunter shop"""
         hunters_data = self.load_hunters_data()
         user_id = str(ctx.author.id)
 
         if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #start first.", color=discord.Color.red()))
+            await ctx.send("You need to start your journey first! Use #start")
             return
-
-        hunter = hunters_data[user_id]
-        hunter_rank = hunter.get('rank', 'E')
-
-        valid_categories = ['weapons', 'armor', 'potions']
-        if category and category.lower() not in valid_categories:
-            await ctx.send(embed=discord.Embed(description="Invalid category! Choose from: weapons, armor, potions", color=discord.Color.orange()))
-            return
-
-        categories = [category.lower()] if category else valid_categories
-        category_icons = {
-            'weapons': '⚔️',
-            'armor': '🛡️',
-            'potions': '🧪'
-        }
 
         embed = discord.Embed(
-            title="🏪 Hunter's Shop",
-            description="Welcome to the shop! Use the buttons below to buy items.",
+            title="🏪 Hunter Shop",
+            description="Welcome to the shop! Select a category to view items.",
             color=discord.Color.gold()
         )
 
-        # Build item list and buttons
-        class ShopView(View):
-            def __init__(self, parent, ctx, hunter, categories):
-                super().__init__(timeout=90)
-                self.parent = parent
-                self.ctx = ctx
-                self.hunter = hunter
-                self.categories = categories
-                self.item_buttons = []
-                for cat in categories:
-                    for item_id, item_data in parent.items_data[cat].items():
-                        # Check if player rank is sufficient
-                        if 'rank' in item_data and parent.rank_to_number(item_data['rank']) > parent.rank_to_number(hunter.get('rank', 'E')):
-                            continue
-                        label = item_data['name']
-                        emoji = category_icons[cat]
-                        self.add_item(Button(label=label, style=discord.ButtonStyle.success, emoji=emoji, custom_id=f"buy_{item_id}"))
-                        self.item_buttons.append((item_id, item_data))
-
-            async def interaction_check(self, interaction: discord.Interaction) -> bool:
-                return interaction.user.id == ctx.author.id
-
-            async def on_error(self, error, item, interaction):
-                await interaction.response.send_message("An error occurred.", ephemeral=True)
-
-            async def on_timeout(self):
-                pass
-
-            async def interaction(self, interaction: discord.Interaction):
-                if interaction.data['custom_id'].startswith('buy_'):
-                    item_id = interaction.data['custom_id'][4:]
-                    await self.parent.buy_item_button(self.ctx, item_id, interaction)
-
-        for cat in categories:
-            items_list = ""
-            for item_id, item_data in self.items_data[cat].items():
-                # Check if player rank is sufficient
-                if 'rank' in item_data and self.rank_to_number(item_data['rank']) > self.rank_to_number(hunter_rank):
-                    continue
-                item_entry = f"**{item_data['name']}**\n"
-                item_entry += f"└ 🪙 Price: {item_data['price']} gold\n"
-                if 'attack' in item_data:
-                    item_entry += f"└ ⚔️ Attack: +{item_data['attack']}\n"
-                if 'defense' in item_data:
-                    item_entry += f"└ 🛡️ Defense: +{item_data['defense']}\n"
-                if 'effect' in item_data:
-                    effect = item_data['effect']
-                    effect_type = effect['type'].replace('_', ' ').title()
-                    item_entry += f"└ ✨ Effect: {effect_type} (+{effect['value']})\n"
-                if 'rank' in item_data:
-                    item_entry += f"└ 📊 Required Rank: {item_data['rank']}\n"
-                items_list += f"{item_entry}\n"
-            if items_list:
-                embed.add_field(
-                    name=f"{category_icons[cat]} {cat.title()}",
-                    value=items_list,
-                    inline=False
-                )
-
-        embed.set_footer(text=f"Your Gold: 🪙 {hunter.get('gold', 0)}")
-        await ctx.send(embed=embed, view=ShopView(self, ctx, hunter, categories))
-
-    def rank_to_number(self, rank):
-        ranks = {'E': 1, 'D': 2, 'C': 3, 'B': 4, 'A': 5, 'S': 6}
-        return ranks.get(rank, 0)
-
-    async def buy_item_button(self, ctx, item_id, interaction):
-        hunters_data = self.load_hunters_data()
-        user_id = str(ctx.author.id)
+        # Show player's gold
         hunter = hunters_data[user_id]
-        # Find item in shop
-        item_found = False
-        item_data = None
-        for category, items in self.items_data.items():
-            if item_id in items:
-                item_found = True
-                item_data = items[item_id]
-                break
-        if not item_found:
-            await interaction.response.send_message("This item doesn't exist in the shop!", ephemeral=True)
-            return
-        # Check if player has enough gold
-        if hunter.get('gold', 0) < item_data['price']:
-            await interaction.response.send_message("You don't have enough gold to buy this item!", ephemeral=True)
-            return
-        # Check if player meets rank requirement
-        if 'rank' in item_data:
-            if self.rank_to_number(item_data['rank']) > self.rank_to_number(hunter.get('rank', 'E')):
-                await interaction.response.send_message(f"You need to be rank {item_data['rank']} or higher to buy this item!", ephemeral=True)
-                return
-        # Process purchase
-        hunter['gold'] -= item_data['price']
-        if 'inventory' not in hunter:
-            hunter['inventory'] = []
-        hunter['inventory'].append(item_id)
-        self.save_hunters_data(hunters_data)
-        await interaction.response.send_message(f"Successfully purchased {item_data['name']} for {item_data['price']} gold!", ephemeral=True)
-        await self.show_shop(ctx)
+        embed.add_field(
+            name="Your Gold",
+            value=f"🪙 {hunter.get('gold', 0)}",
+            inline=False
+        )
 
-    @commands.command(name='buy')
-    async def buy_item(self, ctx, *, item_name: str):
-        """Buy an item from the shop"""
+        await ctx.send(embed=embed, view=self.ShopView(self))
+
+    async def show_shop_items(self, interaction, category="all"):
+        """Display shop items for a specific category"""
+        user_id = str(interaction.user.id)
         hunters_data = self.load_hunters_data()
-        user_id = str(ctx.author.id)
+
         if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #start first.", color=discord.Color.red()))
+            await interaction.response.send_message("You need to start your journey first! Use #start", ephemeral=True)
             return
+
         hunter = hunters_data[user_id]
-        # Find item in shop
-        item_found = False
-        item_category = None
-        item_data = None
-        item_id = None
-        for category, items in self.items_data.items():
-            for id, data in items.items():
-                if data['name'].lower() == item_name.lower():
-                    item_found = True
-                    item_category = category
-                    item_data = data
-                    item_id = id
-                    break
-            if item_found:
-                break
-        if not item_found:
-            await ctx.send(embed=discord.Embed(description="This item doesn't exist in the shop!", color=discord.Color.orange()))
-            return
-        # Check if player has enough gold
-        if hunter.get('gold', 0) < item_data['price']:
-            await ctx.send(embed=discord.Embed(description="You don't have enough gold to buy this item!", color=discord.Color.red()))
-            return
-        # Check if player meets rank requirement
-        if 'rank' in item_data:
-            if self.rank_to_number(item_data['rank']) > self.rank_to_number(hunter.get('rank', 'E')):
-                await ctx.send(embed=discord.Embed(description=f"You need to be rank {item_data['rank']} or higher to buy this item!", color=discord.Color.orange()))
-                return
-        # Process purchase
-        hunter['gold'] -= item_data['price']
-        if 'inventory' not in hunter:
-            hunter['inventory'] = []
-        hunter['inventory'].append(item_id)
-        self.save_hunters_data(hunters_data)
-        await ctx.send(embed=discord.Embed(description=f"Successfully purchased {item_data['name']} for {item_data['price']} gold!", color=discord.Color.green()))
+        items = []
+
+        # Filter items by category
+        if category == "all":
+            for cat in self.shop_items.values():
+                items.extend(cat.values())
+        else:
+            items = list(self.shop_items.get(category, {}).values())
+
+        embed = discord.Embed(
+            title=f"🏪 Shop - {category.title()}",
+            color=discord.Color.gold()
+        )
+        embed.add_field(name="Your Gold", value=f"🪙 {hunter.get('gold', 0)}", inline=False)
+
+        # Create item selection menu
+        options = []
+        for item in items[:25]:  # Discord limit of 25 options
+            options.append(
+                discord.SelectOption(
+                    label=f"{item['name']} - {item['price']} gold",
+                    value=item['id'],
+                    description=item['description'],
+                    emoji=self.get_item_emoji(item['type'])
+                )
+            )
+
+        # Create purchase UI
+        class PurchaseView(View):
+            def __init__(self):
+                super().__init__(timeout=60)
+
+            @discord.ui.select(placeholder="Select an item to purchase...", options=options)
+            async def select_item(self, interaction: discord.Interaction, select: Select):
+                await self.purchase_item(interaction, select.values[0])
+
+            async def purchase_item(self, interaction, item_id):
+                # Find the item
+                item = None
+                for category in self.shop_items.values():
+                    if item_id in category:
+                        item = category[item_id]
+                        break
+
+                if not item:
+                    await interaction.response.send_message("Item not found!", ephemeral=True)
+                    return
+
+                # Check if player can afford it
+                if hunter.get('gold', 0) < item['price']:
+                    await interaction.response.send_message("You don't have enough gold!", ephemeral=True)
+                    return
+
+                # Create confirmation button
+                class ConfirmView(View):
+                    def __init__(self):
+                        super().__init__(timeout=30)
+
+                    @discord.ui.button(label="Confirm Purchase", style=discord.ButtonStyle.success)
+                    async def confirm(self, interaction: discord.Interaction, button: Button):
+                        # Process purchase
+                        hunter['gold'] -= item['price']
+                        if 'inventory' not in hunter:
+                            hunter['inventory'] = []
+                        hunter['inventory'].append(item)
+                        self.save_hunters_data(hunters_data)
+
+                        embed = discord.Embed(
+                            title="✅ Purchase Successful!",
+                            description=f"You bought {item['name']} for 🪙 {item['price']}",
+                            color=discord.Color.green()
+                        )
+                        embed.add_field(name="Remaining Gold", value=f"🪙 {hunter['gold']}")
+                        await interaction.response.send_message(embed=embed)
+
+                    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary)
+                    async def cancel(self, interaction: discord.Interaction, button: Button):
+                        await interaction.response.send_message("Purchase cancelled.", ephemeral=True)
+
+                confirm_embed = discord.Embed(
+                    title="🛒 Confirm Purchase",
+                    description=f"Buy {item['name']} for 🪙 {item['price']}?",
+                    color=discord.Color.blue()
+                )
+                confirm_embed.add_field(name="Item Details", value=item['description'])
+                await interaction.response.send_message(embed=confirm_embed, view=ConfirmView(), ephemeral=True)
+
+        await interaction.response.send_message(embed=embed, view=PurchaseView())
+
+    def get_item_emoji(self, item_type):
+        """Get the appropriate emoji for item type"""
+        emoji_map = {
+            'weapon': '⚔️',
+            'armor': '🛡️',
+            'consumable': '🧪',
+            'accessory': '💍'
+        }
+        return emoji_map.get(item_type, '📦')
 
     @commands.command(name='sell')
-    async def sell_item(self, ctx, *, item_name: str):
+    async def sell(self, ctx, *, item_name: str = None):
         """Sell an item from your inventory"""
+        if not item_name:
+            await ctx.send("Please specify an item to sell! Use #inventory to see your items.")
+            return
+
         hunters_data = self.load_hunters_data()
         user_id = str(ctx.author.id)
+
         if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #start first.", color=discord.Color.red()))
+            await ctx.send("You need to start your journey first! Use #start")
             return
+
         hunter = hunters_data[user_id]
-        if 'inventory' not in hunter or item_name not in hunter['inventory']:
-            await ctx.send(embed=discord.Embed(description="You don't have this item in your inventory!", color=discord.Color.orange()))
-            return
-        # Find item data to determine sell price
-        item_data = None
-        for category in self.items_data:
-            if item_name in self.items_data[category]:
-                item_data = self.items_data[category][item_name]
+        inventory = hunter.get('inventory', [])
+
+        # Find the item
+        item_to_sell = None
+        item_index = -1
+        for i, item in enumerate(inventory):
+            if item['name'].lower() == item_name.lower():
+                item_to_sell = item
+                item_index = i
                 break
-        if not item_data:
-            await ctx.send(embed=discord.Embed(description="Error: Item data not found!", color=discord.Color.red()))
+
+        if not item_to_sell:
+            await ctx.send("Item not found in your inventory!")
             return
-        sell_price = item_data['price'] // 2  # Sell for half the purchase price
-        hunter['inventory'].remove(item_name)
-        hunter['gold'] = hunter.get('gold', 0) + sell_price
-        self.save_hunters_data(hunters_data)
-        await ctx.send(embed=discord.Embed(description=f"Successfully sold {item_data['name']} for {sell_price} gold!", color=discord.Color.green()))
+
+        # Calculate sell price (50% of buy price)
+        sell_price = item_to_sell['price'] // 2
+
+        # Create confirmation UI
+        class SellView(View):
+            def __init__(self):
+                super().__init__(timeout=30)
+
+            @discord.ui.button(label="Confirm Sale", style=discord.ButtonStyle.success)
+            async def confirm(self, interaction: discord.Interaction, button: Button):
+                # Process sale
+                hunter['gold'] = hunter.get('gold', 0) + sell_price
+                del inventory[item_index]
+                self.save_hunters_data(hunters_data)
+
+                embed = discord.Embed(
+                    title="✅ Item Sold!",
+                    description=f"You sold {item_to_sell['name']} for 🪙 {sell_price}",
+                    color=discord.Color.green()
+                )
+                embed.add_field(name="New Balance", value=f"🪙 {hunter['gold']}")
+                await interaction.response.send_message(embed=embed)
+
+            @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary)
+            async def cancel(self, interaction: discord.Interaction, button: Button):
+                await interaction.response.send_message("Sale cancelled.", ephemeral=True)
+
+        embed = discord.Embed(
+            title="💰 Confirm Sale",
+            description=f"Sell {item_to_sell['name']} for 🪙 {sell_price}?",
+            color=discord.Color.blue()
+        )
+        embed.add_field(name="Original Price", value=f"🪙 {item_to_sell['price']}")
+        await ctx.send(embed=embed, view=SellView())
 
 async def setup(bot):
     await bot.add_cog(Shop(bot))

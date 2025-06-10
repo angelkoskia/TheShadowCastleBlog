@@ -14,7 +14,8 @@ load_dotenv()
 COMMAND_PREFIX = '#'
 intents = discord.Intents.all()  # We need all intents for full functionality
 
-bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
+# Remove default help command before creating the bot instance
+bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents, help_command=None)
 
 # Load or create hunters data
 def load_hunters_data():
@@ -73,24 +74,46 @@ async def on_ready():
 class HelpView(View):
     def __init__(self):
         super().__init__(timeout=60)
+        # Create category selection dropdown
         self.add_item(Select(
             placeholder="Select a category",
             options=[
-                discord.SelectOption(label="Gates", description="Gate and dungeon commands"),
-                discord.SelectOption(label="Combat", description="Battle system commands"),
-                discord.SelectOption(label="Party", description="Party and guild commands"),
-                discord.SelectOption(label="Arena", description="PvP commands"),
-                discord.SelectOption(label="System", description="Basic commands")
-            ]
+                discord.SelectOption(label="Gates", description="Gate and dungeon commands", emoji="🌀"),
+                discord.SelectOption(label="Combat", description="Battle system commands", emoji="⚔️"),
+                discord.SelectOption(label="Party", description="Party and guild commands", emoji="👥"),
+                discord.SelectOption(label="System", description="Basic commands", emoji="⚙️"),
+                discord.SelectOption(label="Arena", description="PvP commands", emoji="🏆")
+            ],
+            custom_id="help_category_select"
         ))
 
-@bot.group(invoke_without_command=True)
-async def help(ctx):
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        return True
+
+@bot.command(name='help')
+async def help_command(ctx):
+    """Show all available commands"""
     embed = discord.Embed(
         title="Solo Leveling RPG Help",
-        description="Use the dropdown menu to view different command categories",
+        description="Select a category below to view specific commands",
         color=discord.Color.blue()
     )
+
+    # Add quick reference for most common commands
+    embed.add_field(
+        name="Quick Start",
+        value="```\n#start - Begin your journey\n#status - View your stats\n#hunt - Fight monsters\n#daily - Daily rewards```",
+        inline=False
+    )
+
+    embed.add_field(
+        name="Categories",
+        value="🌀 Gates - Explore gates and dungeons\n⚔️ Combat - Battle commands\n👥 Party - Group activities\n🏆 Arena - PvP system\n⚙️ System - Basic commands",
+        inline=False
+    )
+
+    embed.set_footer(text="Use the dropdown menu below to see detailed commands for each category")
+
     await ctx.send(embed=embed, view=HelpView())
 
 @bot.command(name='start')

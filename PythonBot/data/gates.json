@@ -1,0 +1,99 @@
+{
+    "normal_gates": {
+        "E": {
+            "level_range": [1, 10],
+            "monsters": ["goblin", "wolf"],
+            "boss_chance": 0.05,
+            "rewards": {
+                "exp_multiplier": 1.0,
+                "gold_multiplier": 1.0
+            }
+        },
+        "D": {
+            "level_range": [10, 20],
+            "monsters": ["goblin", "wolf", "orc"],
+            "boss_chance": 0.1,
+            "rewards": {
+                "exp_multiplier": 1.2,
+                "gold_multiplier": 1.2
+            }
+        },
+        "C": {
+            "level_range": [20, 40],
+            "monsters": ["orc", "skeleton", "troll"],
+            "boss_chance": 0.15,
+            "rewards": {
+                "exp_multiplier": 1.5,
+                "gold_multiplier": 1.5
+            }
+        },
+        "B": {
+            "level_range": [40, 60],
+            "monsters": ["troll", "ogre", "demon"],
+            "boss_chance": 0.2,
+            "rewards": {
+                "exp_multiplier": 2.0,
+                "gold_multiplier": 2.0
+            }
+        },
+        "A": {
+            "level_range": [60, 80],
+            "monsters": ["demon", "dragon", "giant"],
+            "boss_chance": 0.25,
+            "rewards": {
+                "exp_multiplier": 2.5,
+                "gold_multiplier": 2.5
+            }
+        },
+        "S": {
+            "level_range": [80, 100],
+            "monsters": ["dragon", "giant", "demon_lord"],
+            "boss_chance": 0.3,
+            "rewards": {
+                "exp_multiplier": 3.0,
+                "gold_multiplier": 3.0
+            }
+        }
+    },
+    "red_gates": {
+        "A": {
+            "level_range": [70, 90],
+            "monsters": ["demon_lord", "chaos_dragon"],
+            "boss_required": true,
+            "rewards": {
+                "exp_multiplier": 4.0,
+                "gold_multiplier": 4.0,
+                "shadow_chance": 0.3
+            }
+        },
+        "S": {
+            "level_range": [90, 100],
+            "monsters": ["chaos_dragon", "ancient_demon"],
+            "boss_required": true,
+            "rewards": {
+                "exp_multiplier": 5.0,
+                "gold_multiplier": 5.0,
+                "shadow_chance": 0.5
+            }
+        }
+    },
+    "status_effects": {
+        "Stable": {
+            "monster_level_modifier": 0,
+            "reward_modifier": 1.0
+        },
+        "Unstable": {
+            "monster_level_modifier": 2,
+            "reward_modifier": 1.2
+        },
+        "Volatile": {
+            "monster_level_modifier": 5,
+            "reward_modifier": 1.5
+        },
+        "Critical": {
+            "monster_level_modifier": 10,
+            "reward_modifier": 2.0
+        }
+    }
+}
+
