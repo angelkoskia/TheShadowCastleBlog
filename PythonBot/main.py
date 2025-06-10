@@ -4,16 +4,15 @@ import json
 import os
 from dotenv import load_dotenv
 import asyncio
-from discord.ui import View, Button
+from discord.ui import View, Button, Select
+from typing import Optional
 
 # Load environment variables
 load_dotenv()
 
 # Bot configuration
 COMMAND_PREFIX = '#'
-intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
+intents = discord.Intents.all()  # We need all intents for full functionality
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
 
@@ -29,21 +28,70 @@ def save_hunters_data(data):
     with open('hunters_data.json', 'w') as f:
         json.dump(data, f, indent=4)
 
+# Error handling
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send(embed=discord.Embed(
+            title="Command Not Found",
+            description="Use #help to see available commands",
+            color=discord.Color.red()
+        ))
+    elif isinstance(error, commands.MissingPermissions):
+        await ctx.send(embed=discord.Embed(
+            title="Permission Denied",
+            description="You don't have permission to use this command",
+            color=discord.Color.red()
+        ))
+    else:
+        await ctx.send(embed=discord.Embed(
+            title="Error",
+            description=str(error),
+            color=discord.Color.red()
+        ))
+
 async def load_cogs():
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
-            await bot.load_extension(f'cogs.{filename[:-3]}')
-            print(f'Loaded cog: {filename[:-3]}')
+            try:
+                await bot.load_extension(f'cogs.{filename[:-3]}')
+                print(f'Loaded cog: {filename[:-3]}')
+            except Exception as e:
+                print(f'Failed to load cog {filename}: {str(e)}')
 
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
     await load_cogs()
+    await bot.change_presence(activity=discord.Game(name="#help | Solo Leveling RPG"))
     print('Bot is ready!')
 
     # Create necessary data files if they don't exist
     if not os.path.exists('hunters_data.json'):
         save_hunters_data({})
+
+class HelpView(View):
+    def __init__(self):
+        super().__init__(timeout=60)
+        self.add_item(Select(
+            placeholder="Select a category",
+            options=[
+                discord.SelectOption(label="Gates", description="Gate and dungeon commands"),
+                discord.SelectOption(label="Combat", description="Battle system commands"),
+                discord.SelectOption(label="Party", description="Party and guild commands"),
+                discord.SelectOption(label="Arena", description="PvP commands"),
+                discord.SelectOption(label="System", description="Basic commands")
+            ]
+        ))
+
+@bot.group(invoke_without_command=True)
+async def help(ctx):
+    embed = discord.Embed(
+        title="Solo Leveling RPG Help",
+        description="Use the dropdown menu to view different command categories",
+        color=discord.Color.blue()
+    )
+    await ctx.send(embed=embed, view=HelpView())
 
 @bot.command(name='start')
 async def start(ctx):
@@ -393,9 +441,8 @@ async def guildraid(ctx, *, name: str = None):
     await ctx.send(f"Guild raid '{name}' feature is in development.")
 
 # Run the bot
-async def main():
-    async with bot:
-        await bot.start(os.getenv('DISCORD_TOKEN'))
+def run_bot():
+    bot.run(os.getenv('DISCORD_TOKEN'))
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(run_bot())

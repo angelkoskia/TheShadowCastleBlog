@@ -1,14 +1,11 @@
 import discord
 from discord.ext import commands
+from discord.ui import View, Button, Select
 import json
-import os
-from discord.ui import View, Button
 
 class Inventory(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        with open('data/items.json', 'r') as f:
-            self.items_data = json.load(f)
 
     def load_hunters_data(self):
         try:
@@ -21,268 +18,236 @@ class Inventory(commands.Cog):
         with open('hunters_data.json', 'w') as f:
             json.dump(data, f, indent=4)
 
-    @commands.command(name='inventory', aliases=['inv'])
-    async def show_inventory(self, ctx):
-        """Display your inventory and equipped items"""
-        hunters_data = self.load_hunters_data()
+    class InventoryView(View):
+        def __init__(self, cog, user_id, page=0):
+            super().__init__(timeout=60)
+            self.cog = cog
+            self.user_id = user_id
+            self.page = page
+            self.items_per_page = 5
+
+        @discord.ui.button(label="Use", style=discord.ButtonStyle.primary, emoji="🔨")
+        async def use_item(self, interaction: discord.Interaction, button: Button):
+            hunters_data = self.cog.load_hunters_data()
+            inventory = hunters_data[self.user_id].get('inventory', [])
+
+            if not inventory:
+                await interaction.response.send_message("Your inventory is empty!", ephemeral=True)
+                return
+
+            # Create item selection menu
+            options = []
+            for item in inventory:
+                if item.get('type') == 'consumable':
+                    options.append(discord.SelectOption(
+                        label=item['name'],
+                        description=f"Effect: {item.get('effect', 'Unknown')}",
+                        value=item['id']
+                    ))
+
+            if not options:
+                await interaction.response.send_message("No usable items found!", ephemeral=True)
+                return
+
+            select = Select(
+                placeholder="Choose an item to use...",
+                options=options[:25]  # Discord limits to 25 options
+            )
+
+            async def select_callback(interaction):
+                await self.cog.use_item(interaction, select.values[0])
+
+            select.callback = select_callback
+            view = View()
+            view.add_item(select)
+            await interaction.response.send_message("Select an item to use:", view=view, ephemeral=True)
+
+        @discord.ui.button(label="Equip", style=discord.ButtonStyle.success, emoji="⚔️")
+        async def equip_item(self, interaction: discord.Interaction, button: Button):
+            hunters_data = self.cog.load_hunters_data()
+            inventory = hunters_data[self.user_id].get('inventory', [])
+
+            if not inventory:
+                await interaction.response.send_message("Your inventory is empty!", ephemeral=True)
+                return
+
+            # Create equipment selection menu
+            options = []
+            for item in inventory:
+                if item.get('type') in ['weapon', 'armor', 'accessory']:
+                    options.append(discord.SelectOption(
+                        label=item['name'],
+                        description=f"Type: {item['type'].title()}",
+                        value=item['id']
+                    ))
+
+            if not options:
+                await interaction.response.send_message("No equipment found!", ephemeral=True)
+                return
+
+            select = Select(
+                placeholder="Choose equipment to equip...",
+                options=options[:25]
+            )
+
+            async def select_callback(interaction):
+                await self.cog.equip_item(interaction, select.values[0])
+
+            select.callback = select_callback
+            view = View()
+            view.add_item(select)
+            await interaction.response.send_message("Select equipment to equip:", view=view, ephemeral=True)
+
+        @discord.ui.button(label="Next", style=discord.ButtonStyle.secondary, emoji="➡️")
+        async def next_page(self, interaction: discord.Interaction, button: Button):
+            hunters_data = self.cog.load_hunters_data()
+            inventory = hunters_data[self.user_id].get('inventory', [])
+
+            if (self.page + 1) * self.items_per_page < len(inventory):
+                self.page += 1
+                await self.cog.show_inventory(interaction, self.user_id, self.page)
+            else:
+                await interaction.response.send_message("No more items!", ephemeral=True)
+
+    @commands.command(name='inventory')
+    async def inventory(self, ctx):
+        """View and manage your inventory"""
         user_id = str(ctx.author.id)
+        hunters_data = self.load_hunters_data()
 
         if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #start first.", color=discord.Color.red()))
+            await ctx.send("You need to start your journey first! Use #start")
             return
 
-        hunter = hunters_data[user_id]
-        inventory = hunter.get('inventory', [])
-        equipment = hunter.get('equipment', {})
+        await self.show_inventory(ctx, user_id)
 
-        embed = discord.Embed(title=f"{ctx.author.name}'s Inventory", color=discord.Color.gold())
+    async def show_inventory(self, ctx, user_id, page=0):
+        """Display inventory with pagination"""
+        hunters_data = self.load_hunters_data()
+        inventory = hunters_data[user_id].get('inventory', [])
+        equipment = hunters_data[user_id].get('equipment', {})
+
+        if not inventory:
+            embed = discord.Embed(
+                title="🎒 Inventory",
+                description="Your inventory is empty!",
+                color=discord.Color.blue()
+            )
+            await ctx.send(embed=embed)
+            return
+
+        items_per_page = 5
+        start_idx = page * items_per_page
+        end_idx = min(start_idx + items_per_page, len(inventory))
+
+        embed = discord.Embed(
+            title="🎒 Inventory",
+            color=discord.Color.blue()
+        )
 
         # Show equipped items
-        equipped = (
-            f"🗡️ Weapon: {equipment.get('weapon', 'None')}\n"
-            f"🛡️ Armor: {equipment.get('armor', 'None')}\n"
-            f"💍 Accessory: {equipment.get('accessory', 'None')}"
-        )
-        embed.add_field(name="Equipped Items", value=equipped, inline=False)
+        equipped = "```\n"
+        equipped += f"Weapon: {equipment.get('weapon', 'None')}\n"
+        equipped += f"Armor: {equipment.get('armor', 'None')}\n"
+        equipped += f"Accessory: {equipment.get('accessory', 'None')}\n"
+        equipped += "```"
+        embed.add_field(name="📦 Equipped Items", value=equipped, inline=False)
 
         # Show inventory items
-        if inventory:
-            item_count = {}
-            for item in inventory:
-                if item in item_count:
-                    item_count[item] += 1
-                else:
-                    item_count[item] = 1
-            inv_text = ""
-            for item, count in item_count.items():
-                inv_text += f"{item} x{count}\n"
-        else:
-            inv_text = "Your inventory is empty!"
-        embed.add_field(name="Inventory", value=inv_text, inline=False)
+        for item in inventory[start_idx:end_idx]:
+            embed.add_field(
+                name=f"{item['name']}",
+                value=f"Type: {item['type']}\n{item.get('description', 'No description')}",
+                inline=False
+            )
 
-        # Show gold
-        embed.add_field(name="🪙 Gold", value=str(hunter.get('gold', 0)), inline=True)
-        embed.set_footer(text="Use #equip <item> or #unequip <type> to manage equipment.")
+        embed.set_footer(text=f"Page {page + 1}/{(len(inventory) - 1) // items_per_page + 1}")
 
-        # Modern UI: Add equip/unequip buttons for equipped slots
-        class InventoryView(View):
-            def __init__(self, parent, ctx, hunter, equipment):
-                super().__init__(timeout=60)
-                self.parent = parent
-                self.ctx = ctx
-                self.hunter = hunter
-                self.equipment = equipment
-                for slot in ['weapon', 'armor', 'accessory']:
-                    if equipment.get(slot):
-                        self.add_item(Button(label=f"Unequip {slot.title()}", style=discord.ButtonStyle.secondary, custom_id=f"unequip_{slot}"))
+        await ctx.send(embed=embed, view=self.InventoryView(self, user_id, page))
 
-            async def interaction_check(self, interaction: discord.Interaction) -> bool:
-                return interaction.user.id == ctx.author.id
-
-            @discord.ui.button(label="Refresh", style=discord.ButtonStyle.primary, emoji="🔄", custom_id="refresh")
-            async def refresh_button(self, interaction: discord.Interaction, button: Button):
-                await interaction.response.defer()
-                await self.parent.show_inventory(self.ctx)
-
-            async def on_error(self, error, item, interaction):
-                await interaction.response.send_message("An error occurred.", ephemeral=True)
-
-            async def on_timeout(self):
-                pass
-
-            async def interaction(self, interaction: discord.Interaction):
-                # Handle unequip actions
-                if interaction.data['custom_id'].startswith('unequip_'):
-                    slot = interaction.data['custom_id'].split('_')[1]
-                    await self.parent.unequip_item_button(self.ctx, slot, interaction)
-
-        await ctx.send(embed=embed, view=InventoryView(self, ctx, hunter, equipment))
-
-    async def unequip_item_button(self, ctx, item_type, interaction):
-        hunters_data = self.load_hunters_data()
-        user_id = str(ctx.author.id)
-        hunter = hunters_data[user_id]
-        if item_type not in hunter['equipment'] or not hunter['equipment'][item_type]:
-            await interaction.response.send_message(f"You don't have anything equipped in the {item_type} slot!", ephemeral=True)
-            return
-        item_name = hunter['equipment'][item_type]
-        hunter['inventory'].append(item_name)
-        hunter['equipment'][item_type] = None
-        # Remove stat bonuses
-        if item_type == 'weapon':
-            hunter['attack_bonus'] = 0
-        elif item_type == 'armor':
-            hunter['defense_bonus'] = 0
-        self.save_hunters_data(hunters_data)
-        await interaction.response.send_message(f"Successfully unequipped {item_name}!", ephemeral=True)
-        await self.show_inventory(ctx)
-
-    @commands.command(name='equip')
-    async def equip_item(self, ctx, *, item_name: str):
-        """Equip an item from your inventory"""
-        hunters_data = self.load_hunters_data()
-        user_id = str(ctx.author.id)
-
-        if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #start first.", color=discord.Color.red()))
-            return
-
-        hunter = hunters_data[user_id]
-        inventory = hunter.get('inventory', [])
-
-        if item_name not in inventory:
-            await ctx.send(embed=discord.Embed(description=f"You don't have {item_name} in your inventory!", color=discord.Color.orange()))
-            return
-
-        # Find item type
-        item_type = None
-        item_data = None
-        for category in self.items_data:
-            if item_name in self.items_data[category]:
-                item_data = self.items_data[category][item_name]
-                item_type = item_data['type']
-                break
-
-        if not item_type:
-            await ctx.send(embed=discord.Embed(description="This item cannot be equipped!", color=discord.Color.red()))
-            return
-
-        # Unequip current item if exists
-        current_equipped = hunter['equipment'].get(item_type)
-        if current_equipped:
-            inventory.append(current_equipped)
-
-        # Equip new item
-        hunter['equipment'][item_type] = item_name
-        inventory.remove(item_name)
-
-        # Update stats based on equipment
-        if 'attack' in item_data:
-            hunter['attack_bonus'] = item_data['attack']
-        if 'defense' in item_data:
-            hunter['defense_bonus'] = item_data['defense']
-
-        self.save_hunters_data(hunters_data)
-        await ctx.send(embed=discord.Embed(description=f"Successfully equipped {item_name}!", color=discord.Color.green()))
-
-    @commands.command(name='unequip')
-    async def unequip_item(self, ctx, item_type: str):
-        """Unequip an item (weapon/armor/accessory)"""
-        hunters_data = self.load_hunters_data()
-        user_id = str(ctx.author.id)
-
-        if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #start first.", color=discord.Color.red()))
-            return
-
-        hunter = hunters_data[user_id]
-        if item_type not in hunter['equipment'] or not hunter['equipment'][item_type]:
-            await ctx.send(embed=discord.Embed(description=f"You don't have anything equipped in the {item_type} slot!", color=discord.Color.orange()))
-            return
-
-        item_name = hunter['equipment'][item_type]
-        hunter['inventory'].append(item_name)
-        hunter['equipment'][item_type] = None
-
-        # Remove stat bonuses
-        if item_type == 'weapon':
-            hunter['attack_bonus'] = 0
-        elif item_type == 'armor':
-            hunter['defense_bonus'] = 0
-
-        self.save_hunters_data(hunters_data)
-        await ctx.send(embed=discord.Embed(description=f"Successfully unequipped {item_name}!", color=discord.Color.green()))
-
-    @commands.command(name='use')
-    async def use_item(self, ctx, *, item_name: str):
+    async def use_item(self, interaction, item_id):
         """Use a consumable item"""
+        user_id = str(interaction.user.id)
         hunters_data = self.load_hunters_data()
-        user_id = str(ctx.author.id)
+        inventory = hunters_data[user_id].get('inventory', [])
 
-        if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #start first.", color=discord.Color.red()))
+        item = next((item for item in inventory if item['id'] == item_id), None)
+        if not item:
+            await interaction.response.send_message("Item not found!", ephemeral=True)
             return
 
-        hunter = hunters_data[user_id]
-        inventory = hunter.get('inventory', [])
-
-        if item_name not in inventory:
-            await ctx.send(embed=discord.Embed(description=f"You don't have {item_name} in your inventory!", color=discord.Color.orange()))
-            return
-
-        # Check if item is usable
-        item_data = None
-        for category in self.items_data:
-            if item_name in self.items_data[category]:
-                item_data = self.items_data[category][item_name]
-                break
-
-        if not item_data or item_data['type'] not in ['consumable', 'buff']:
-            await ctx.send(embed=discord.Embed(description="This item cannot be used!", color=discord.Color.red()))
+        if item['type'] != 'consumable':
+            await interaction.response.send_message("This item cannot be used!", ephemeral=True)
             return
 
         # Apply item effects
-        effect = item_data['effect']
-        if effect['type'] == 'heal':
-            hunter['hp'] = min(100, hunter['hp'] + effect['value'])
-            message = f"Restored {effect['value']} HP!"
-        elif effect['type'] == 'restore_mp':
-            hunter['mp'] = min(100, hunter['mp'] + effect['value'])
-            message = f"Restored {effect['value']} MP!"
-        elif effect['type'] == 'strength':
-            hunter['temp_strength_bonus'] = effect['value']
-            hunter['buff_duration'] = effect['duration']
-            message = f"Increased strength by {effect['value']} for {effect['duration']} seconds!"
+        if 'heal' in item.get('effects', {}):
+            hunters_data[user_id]['hp'] = min(
+                hunters_data[user_id]['hp'] + item['effects']['heal'],
+                hunters_data[user_id]['max_hp']
+            )
 
         # Remove item from inventory
-        inventory.remove(item_name)
+        hunters_data[user_id]['inventory'] = [i for i in inventory if i['id'] != item_id]
         self.save_hunters_data(hunters_data)
 
-        await ctx.send(f"Used {item_name}! {message}")
+        embed = discord.Embed(
+            title="✨ Item Used",
+            description=f"Used {item['name']}\n{item.get('use_message', 'The item was consumed.')}",
+            color=discord.Color.green()
+        )
+        await interaction.response.send_message(embed=embed)
 
-    @commands.command(name='status')
-    async def show_status(self, ctx):
-        """View your hunter profile and stats"""
+    async def equip_item(self, interaction, item_id):
+        """Equip a piece of equipment"""
+        user_id = str(interaction.user.id)
         hunters_data = self.load_hunters_data()
-        user_id = str(ctx.author.id)
-        if user_id not in hunters_data:
-            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #awaken first.", color=discord.Color.red()))
+        inventory = hunters_data[user_id].get('inventory', [])
+
+        item = next((item for item in inventory if item['id'] == item_id), None)
+        if not item:
+            await interaction.response.send_message("Item not found!", ephemeral=True)
             return
-        hunter = hunters_data[user_id]
-        embed = discord.Embed(title=f"{ctx.author.name}'s Hunter Profile", color=discord.Color.blue())
-        embed.add_field(name="Level", value=str(hunter.get('level', 1)), inline=True)
-        embed.add_field(name="EXP", value=f"{hunter.get('exp', 0)}/{hunter.get('level', 1)*100}", inline=True)
-        embed.add_field(name="Gold", value=str(hunter.get('gold', 0)), inline=True)
-        embed.add_field(name="HP", value=f"{hunter.get('hp', 100)}/100", inline=True)
-        embed.add_field(name="MP", value=f"{hunter.get('mp', 50)}/50", inline=True)
-        embed.add_field(name="Strength", value=str(hunter.get('strength', 10)), inline=True)
-        embed.add_field(name="Agility", value=str(hunter.get('agility', 10)), inline=True)
-        # Abilities
-        abilities = hunter.get('abilities', {})
-        if abilities:
-            abilities_str = '\n'.join([f"{name.title()}: {data['type'].title()} ({data['power']})" for name, data in abilities.items()])
-        else:
-            abilities_str = 'None'
-        embed.add_field(name="Abilities", value=abilities_str, inline=False)
-        # Equipment
-        equipment = hunter.get('equipment', {})
-        equipped = (
-            f"🗡️ Weapon: {equipment.get('weapon', 'None')}\n"
-            f"🛡️ Armor: {equipment.get('armor', 'None')}\n"
-            f"💍 Accessory: {equipment.get('accessory', 'None')}"
+
+        if item['type'] not in ['weapon', 'armor', 'accessory']:
+            await interaction.response.send_message("This item cannot be equipped!", ephemeral=True)
+            return
+
+        # Unequip current item if any
+        current_equipped = hunters_data[user_id]['equipment'].get(item['type'])
+        if current_equipped:
+            # Add current equipment back to inventory
+            hunters_data[user_id]['inventory'].append(current_equipped)
+
+        # Equip new item
+        hunters_data[user_id]['equipment'][item['type']] = item
+        # Remove from inventory
+        hunters_data[user_id]['inventory'] = [i for i in inventory if i['id'] != item_id]
+
+        # Update stats
+        self.update_equipment_stats(hunters_data[user_id])
+
+        self.save_hunters_data(hunters_data)
+
+        embed = discord.Embed(
+            title="⚔️ Equipment Changed",
+            description=f"Equipped {item['name']}",
+            color=discord.Color.green()
         )
-        embed.add_field(name="Equipped Items", value=equipped, inline=False)
-        # Achievements
-        achievements = (
-            f"🏆 PvP Wins: {hunter.get('pvp_wins', 0)}\n"
-            f"❌ PvP Losses: {hunter.get('pvp_losses', 0)}\n"
-            f"👹 Monster Kills: {hunter.get('monster_kills', 0)}\n"
-            f"💀 Deaths: {hunter.get('deaths', 0)}\n"
-            f"🎯 Successful Raids: {hunter.get('successful_raids', 0)}\n"
-            f"⚠️ Failed Raids: {hunter.get('failed_raids', 0)}"
-        )
-        embed.add_field(name="Achievements", value=achievements, inline=False)
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
+
+    def update_equipment_stats(self, hunter):
+        """Update hunter's stats based on equipped items"""
+        # Reset bonus stats
+        hunter['attack_bonus'] = 0
+        hunter['defense_bonus'] = 0
+
+        for slot, item in hunter['equipment'].items():
+            if not item:
+                continue
+            # Add equipment bonuses
+            hunter['attack_bonus'] += item.get('attack_bonus', 0)
+            hunter['defense_bonus'] += item.get('defense_bonus', 0)
 
 async def setup(bot):
     await bot.add_cog(Inventory(bot))

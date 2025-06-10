@@ -1,85 +1,80 @@
 {
+    "consumables": {
+        "health_potion": {
+            "id": "health_potion",
+            "name": "Health Potion",
+            "type": "consumable",
+            "description": "Restores 50 HP",
+            "effects": {
+                "heal": 50
+            },
+            "use_message": "You restored 50 HP!",
+            "price": 100
+        },
+        "mana_potion": {
+            "id": "mana_potion",
+            "name": "Mana Potion",
+            "type": "consumable",
+            "description": "Restores 30 MP",
+            "effects": {
+                "mana": 30
+            },
+            "use_message": "You restored 30 MP!",
+            "price": 80
+        }
+    },
     "weapons": {
-        "basic_sword": {
-            "name": "Basic Sword",
+        "iron_sword": {
+            "id": "iron_sword",
+            "name": "Iron Sword",
             "type": "weapon",
-            "price": 100,
-            "attack": 10,
-            "durability": 100,
-            "rank": "E"
+            "description": "A basic iron sword",
+            "attack_bonus": 10,
+            "price": 200
         },
-        "hunter_blade": {
-            "name": "Hunter's Blade",
+        "steel_sword": {
+            "id": "steel_sword",
+            "name": "Steel Sword",
             "type": "weapon",
-            "price": 500,
-            "attack": 25,
-            "durability": 200,
-            "rank": "D"
-        },
-        "magic_staff": {
-            "name": "Magic Staff",
-            "type": "weapon",
-            "price": 800,
-            "attack": 15,
-            "magic_attack": 30,
-            "durability": 150,
-            "rank": "D"
+            "description": "A sturdy steel sword",
+            "attack_bonus": 20,
+            "price": 500
         }
     },
     "armor": {
-        "cloth_armor": {
-            "name": "Cloth Armor",
-            "type": "armor",
-            "price": 50,
-            "defense": 5,
-            "durability": 50,
-            "rank": "E"
-        },
         "leather_armor": {
+            "id": "leather_armor",
             "name": "Leather Armor",
             "type": "armor",
-            "price": 300,
-            "defense": 15,
-            "durability": 100,
-            "rank": "D"
+            "description": "Basic leather protection",
+            "defense_bonus": 5,
+            "price": 150
         },
-        "chain_mail": {
-            "name": "Chain Mail",
+        "iron_armor": {
+            "id": "iron_armor",
+            "name": "Iron Armor",
             "type": "armor",
-            "price": 1000,
-            "defense": 30,
-            "durability": 200,
-            "rank": "C"
+            "description": "Sturdy iron protection",
+            "defense_bonus": 15,
+            "price": 400
         }
     },
-    "potions": {
-        "health_potion": {
-            "name": "Health Potion",
-            "type": "consumable",
-            "price": 50,
-            "effect": {
-                "type": "heal",
-                "value": 50
-            }
+    "accessories": {
+        "strength_ring": {
+            "id": "strength_ring",
+            "name": "Ring of Strength",
+            "type": "accessory",
+            "description": "Increases strength by 5",
+            "strength_bonus": 5,
+            "price": 300
         },
-        "mana_potion": {
-            "name": "Mana Potion",
-            "type": "consumable",
-            "price": 50,
-            "effect": {
-                "type": "restore_mp",
-                "value": 50
-            }
-        },
-        "strength_potion": {
-            "name": "Strength Potion",
-            "type": "buff",
-            "price": 100,
-            "effect": {
-                "type": "strength",
-                "value": 10,
-                "duration": 300
-            }
+        "agility_ring": {
+            "id": "agility_ring",
+            "name": "Ring of Agility",
+            "type": "accessory",
+            "description": "Increases agility by 5",
+            "agility_bonus": 5,
+            "price": 300
         }
     }
 }
