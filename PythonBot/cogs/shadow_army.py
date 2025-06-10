@@ -44,7 +44,7 @@ class ShadowArmy(commands.Cog):
         user_id = str(ctx.author.id)
 
         if user_id not in hunters_data:
-            await ctx.send("You haven't started your journey yet! Use !start first.")
+            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #start first.", color=discord.Color.red()))
             return
 
         # Find monster in data
@@ -58,12 +58,12 @@ class ShadowArmy(commands.Cog):
                 break
 
         if not monster_data:
-            await ctx.send("Monster not found!")
+            await ctx.send(embed=discord.Embed(description="Monster not found!", color=discord.Color.orange()))
             return
 
         # Check if extraction is successful
         if random.random() > monster_data['shadow_chance']:
-            await ctx.send("Shadow extraction failed! The monster's soul was too weak.")
+            await ctx.send(embed=discord.Embed(description="Shadow extraction failed! The monster's soul was too weak.", color=discord.Color.red()))
             return
 
         # Generate shadow
@@ -89,47 +89,9 @@ class ShadowArmy(commands.Cog):
         embed = discord.Embed(
             title="🎉 Shadow Extraction Successful!",
             description=f"Extracted a {shadow_grade} grade shadow from {monster_data['name']}!",
-            color=0x00ff00
+            color=discord.Color.green()
         )
-        embed.add_field(name="Stats", value=f"""
-            HP: {shadow['stats']['hp']}
-            Attack: {shadow['stats']['attack']}
-            Defense: {shadow['stats']['defense']}
-        """)
-        await ctx.send(embed=embed)
-
-    @commands.command(name='shadows')
-    async def show_shadows(self, ctx):
-        """Display your shadow army"""
-        hunters_data = self.load_hunters_data()
-        user_id = str(ctx.author.id)
-
-        if user_id not in hunters_data:
-            await ctx.send("You haven't started your journey yet! Use !start first.")
-            return
-
-        shadows = hunters_data[user_id].get('shadows', [])
-        if not shadows:
-            await ctx.send("You don't have any shadows in your army yet!")
-            return
-
-        embed = discord.Embed(
-            title=f"{ctx.author.name}'s Shadow Army",
-            color=0x00ff00
-        )
-
-        for i, shadow in enumerate(shadows):
-            embed.add_field(
-                name=f"{i+1}. {shadow['name']} ({shadow['grade']})",
-                value=f"""
-                Level: {shadow['level']}
-                HP: {shadow['stats']['hp']}
-                Attack: {shadow['stats']['attack']}
-                Defense: {shadow['stats']['defense']}
-                """,
-                inline=False
-            )
-
+        embed.add_field(name="Stats", value=f"HP: {shadow['stats']['hp']}\nAttack: {shadow['stats']['attack']}\nDefense: {shadow['stats']['defense']}")
         await ctx.send(embed=embed)
 
     @commands.command(name='train')
@@ -139,12 +101,12 @@ class ShadowArmy(commands.Cog):
         user_id = str(ctx.author.id)
 
         if user_id not in hunters_data:
-            await ctx.send("You haven't started your journey yet! Use !start first.")
+            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #start first.", color=discord.Color.red()))
             return
 
         shadows = hunters_data[user_id].get('shadows', [])
         if not shadows or index > len(shadows) or index <= 0:
-            await ctx.send("Invalid shadow index!")
+            await ctx.send(embed=discord.Embed(description="Invalid shadow index!", color=discord.Color.orange()))
             return
 
         shadow = shadows[index-1]
@@ -152,7 +114,7 @@ class ShadowArmy(commands.Cog):
         # Training costs gold
         training_cost = 100 * shadow['level']
         if hunters_data[user_id].get('gold', 0) < training_cost:
-            await ctx.send(f"You need {training_cost} gold to train this shadow!")
+            await ctx.send(embed=discord.Embed(description=f"You need {training_cost} gold to train this shadow!", color=discord.Color.red()))
             return
 
         # Training process
@@ -180,17 +142,11 @@ class ShadowArmy(commands.Cog):
         embed = discord.Embed(
             title="Training Complete!",
             description=f"{shadow['name']} gained {exp_gain} experience!",
-            color=0x00ff00
+            color=discord.Color.green()
         )
         embed.add_field(
             name="Updated Stats",
-            value=f"""
-            Level: {shadow['level']}
-            EXP: {shadow['exp']}/{shadow['level']*100}
-            HP: {shadow['stats']['hp']}
-            Attack: {shadow['stats']['attack']}
-            Defense: {shadow['stats']['defense']}
-            """
+            value=f"Level: {shadow['level']}\nEXP: {shadow['exp']}/{shadow['level']*100}\nHP: {shadow['stats']['hp']}\nAttack: {shadow['stats']['attack']}\nDefense: {shadow['stats']['defense']}"
         )
         await msg.edit(content="", embed=embed)
 

@@ -40,15 +40,15 @@ class DungeonRaids(commands.Cog):
         user_id = str(ctx.author.id)
 
         if user_id not in hunters_data:
-            await ctx.send("You haven't started your journey yet! Use !start first.")
+            await ctx.send(embed=discord.Embed(description="You haven't started your journey yet! Use #start first.", color=discord.Color.red()))
             return
 
         if user_id in self.active_raids:
-            await ctx.send("You're already in a dungeon! Complete or abandon it first.")
+            await ctx.send(embed=discord.Embed(description="You're already in a dungeon! Complete or abandon it first.", color=discord.Color.orange()))
             return
 
         if floors < 1 or floors > 10:
-            await ctx.send("Please choose between 1 and 10 floors!")
+            await ctx.send(embed=discord.Embed(description="Please choose between 1 and 10 floors!", color=discord.Color.orange()))
             return
 
         hunter = hunters_data[user_id]
@@ -70,7 +70,7 @@ class DungeonRaids(commands.Cog):
         embed = discord.Embed(
             title="🏰 Dungeon Raid Started!",
             description=f"Entering a {floors}-floor dungeon...",
-            color=0x00ff00
+            color=discord.Color.gold()
         )
         await ctx.send(embed=embed)
 
@@ -89,7 +89,7 @@ class DungeonRaids(commands.Cog):
         embed = discord.Embed(
             title=f"Floor {dungeon['current_floor']}",
             description=f"Monsters encountered: {', '.join(m['name'] for m in floor_monsters)}",
-            color=0x00ff00
+            color=discord.Color.purple()
         )
         floor_msg = await ctx.send(embed=embed)
 
@@ -111,7 +111,7 @@ class DungeonRaids(commands.Cog):
         else:
             # Proceed to next floor
             dungeon['current_floor'] += 1
-            await ctx.send(f"Floor {dungeon['current_floor']-1} cleared! Proceeding to next floor...")
+            await ctx.send(embed=discord.Embed(description=f"Floor {dungeon['current_floor']-1} cleared! Proceeding to next floor...", color=discord.Color.blurple()))
             await self.handle_floor(ctx, user_id)
 
     async def handle_battle(self, ctx, user_id, monster):
@@ -125,7 +125,7 @@ class DungeonRaids(commands.Cog):
 
         while monster_hp > 0 and dungeon['hp'] > 0:
             # Update battle display
-            embed = discord.Embed(title=f"⚔️ Battle vs {monster['name']}", color=0xff0000)
+            embed = discord.Embed(title=f"⚔️ Battle vs {monster['name']}", color=discord.Color.red())
             embed.add_field(name="Your HP", value=f"{dungeon['hp']}/100", inline=True)
             embed.add_field(name=f"{monster['name']}'s HP", value=f"{monster_hp}/{monster['hp']}", inline=True)
 
@@ -134,66 +134,91 @@ class DungeonRaids(commands.Cog):
             else:
                 battle_msg = await ctx.send(embed=embed)
 
-            # Player's turn
-            action_msg = await ctx.send(
-                "Choose your action:\n"
-                "1️⃣ Attack\n"
-                "2️⃣ Use Shadow\n"
-                "3️⃣ Use Potion\n"
-                "4️⃣ Flee"
-            )
-
-            for emoji in ["1️⃣", "2️⃣", "3️⃣", "4️⃣"]:
-                await action_msg.add_reaction(emoji)
-
-            def action_check(reaction, user):
-                return user.id == int(user_id) and str(reaction.emoji) in ["1️⃣", "2️⃣", "3️⃣", "4️⃣"]
-
-            try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=30.0, check=action_check)
-            except asyncio.TimeoutError:
-                await ctx.send("You took too long! The monster attacks!")
+            # Player's turn (modern UI: buttons)
+            class BattleActionView(discord.ui.View):
+                def __init__(self, parent, ctx, user_id, hunter, monster, dungeon):
+                    super().__init__(timeout=30)
+                    self.parent = parent
+                    self.ctx = ctx
+                    self.user_id = user_id
+                    self.hunter = hunter
+                    self.monster = monster
+                    self.dungeon = dungeon
+                    self.value = None
+                @discord.ui.button(label="Attack", style=discord.ButtonStyle.primary, emoji="⚔️")
+                async def attack(self, interaction: discord.Interaction, button: Button):
+                    if interaction.user.id != int(self.user_id):
+                        await interaction.response.send_message("It's not your turn!", ephemeral=True)
+                        return
+                    self.value = 'attack'
+                    await interaction.response.defer()
+                    self.stop()
+                @discord.ui.button(label="Use Shadow", style=discord.ButtonStyle.secondary, emoji="👻")
+                async def shadow(self, interaction: discord.Interaction, button: Button):
+                    if interaction.user.id != int(self.user_id):
+                        await interaction.response.send_message("It's not your turn!", ephemeral=True)
+                        return
+                    self.value = 'shadow'
+                    await interaction.response.defer()
+                    self.stop()
+                @discord.ui.button(label="Use Potion", style=discord.ButtonStyle.success, emoji="🧪")
+                async def potion(self, interaction: discord.Interaction, button: Button):
+                    if interaction.user.id != int(self.user_id):
+                        await interaction.response.send_message("It's not your turn!", ephemeral=True)
+                        return
+                    self.value = 'potion'
+                    await interaction.response.defer()
+                    self.stop()
+                @discord.ui.button(label="Flee", style=discord.ButtonStyle.danger, emoji="🏃")
+                async def flee(self, interaction: discord.Interaction, button: Button):
+                    if interaction.user.id != int(self.user_id):
+                        await interaction.response.send_message("It's not your turn!", ephemeral=True)
+                        return
+                    self.value = 'flee'
+                    await interaction.response.defer()
+                    self.stop()
+            action_view = BattleActionView(self, ctx, user_id, hunter, monster, dungeon)
+            action_msg = await ctx.send("Choose your action:", view=action_view)
+            await action_view.wait()
+            action = action_view.value
+            if not action:
+                await ctx.send(embed=discord.Embed(description="You took too long! The monster attacks!", color=discord.Color.orange()))
             else:
-                if str(reaction.emoji) == "1️⃣":  # Attack
+                if action == 'attack':
                     damage = max(1, hunter.get('strength', 10) - monster['defense']//2)
                     monster_hp -= damage
                     await ctx.send(f"You dealt {damage} damage!")
-
-                elif str(reaction.emoji) == "2️⃣":  # Use Shadow
+                elif action == 'shadow':
                     if not hunter.get('shadows'):
-                        await ctx.send("You don't have any shadows!")
+                        await ctx.send(embed=discord.Embed(description="You don't have any shadows!", color=discord.Color.orange()))
                     else:
                         shadow = hunter['shadows'][0]  # Use first shadow
                         damage = max(1, shadow['stats']['attack'] - monster['defense']//2)
                         monster_hp -= damage
                         await ctx.send(f"Your {shadow['name']} dealt {damage} damage!")
-
-                elif str(reaction.emoji) == "3️⃣":  # Use Potion
+                elif action == 'potion':
                     if 'health_potion' in hunter.get('inventory', []):
                         dungeon['hp'] = min(100, dungeon['hp'] + 50)
                         hunter['inventory'].remove('health_potion')
-                        await ctx.send("Used a health potion! Restored 50 HP!")
+                        await ctx.send(embed=discord.Embed(description="Used a health potion! Restored 50 HP!", color=discord.Color.green()))
                     else:
-                        await ctx.send("No health potions available!")
-
-                elif str(reaction.emoji) == "4️⃣":  # Flee
+                        await ctx.send(embed=discord.Embed(description="No health potions available!", color=discord.Color.orange()))
+                elif action == 'flee':
                     if random.random() < 0.5:
-                        await ctx.send("You successfully fled from the battle!")
+                        await ctx.send(embed=discord.Embed(description="You successfully fled from the battle!", color=discord.Color.green()))
                         return False
                     else:
-                        await ctx.send("Failed to flee!")
-
+                        await ctx.send(embed=discord.Embed(description="Failed to flee!", color=discord.Color.red()))
             # Monster's turn
             if monster_hp > 0:
                 damage = max(1, monster['attack'] - hunter.get('defense_bonus', 0))
                 dungeon['hp'] -= damage
                 await ctx.send(f"{monster['name']} dealt {damage} damage to you!")
-
         if dungeon['hp'] <= 0:
-            await ctx.send("You were defeated!")
+            await ctx.send(embed=discord.Embed(description="You were defeated!", color=discord.Color.red()))
             return False
         else:
-            await ctx.send(f"Victory! Defeated {monster['name']}!")
+            await ctx.send(embed=discord.Embed(description=f"Victory! Defeated {monster['name']}!", color=discord.Color.green()))
             return True
 
     async def complete_dungeon(self, ctx, user_id):

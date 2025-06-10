@@ -1,0 +1,45 @@
+Player Commands
+Gates:
+.startparty @user @user @user - starts a party with numerous party members, party members must accept the invitation to proceed
+.viewgates - View available dimensional gates based on current rank role - prerequisite to .hunt
+.viewredgates - view all available known red gates based on player rank
+.enterredgate <name> - enter a red gate.
+(no exit red gate available unless boss is defeated or player dies, autoleave occurs when player wins/dies)
+.entergate <name> - Enter basic gate - prerequisite to .hunt
+.exitgate - exits current gate (if evil add a small probability for a red gate where enemies and boss turn red difficulty aka ranks above)
+.dungeons - View dungeon raids - only accessible if with party/guild
+.enterdungeon <name> - enter a dungeon, only doable if party leader, members can do: .refuse/.accept
+.exitdungeon - flee the dungeon with all party members, members can do: .refuse/.accept 
+<Combat> 
+.hunt - Start hunting monsters - can only be used in gates/dungeons
+.attack - Attack current monster - can only be used during battle
+.defend - Defensive battle stance - can only be used during battle to block damage completely or partially depending on durability/shield
+.dodge - Attempts dodge if speed is great enough might succeed might not. Probability & skill based.
+.flee - Escape from battle - can only be used during battle (if enemy speed is too great, not an option.)
+.inventory - Manage and sort through items
+.use <name> uses consumable item
+.equip <name> - equips armor/weapon/shield/staff ect onto character 
+.unequip <name> - removes an equipped item
+.ability <name> - uses an ability/skill dealing damage/healing/defending/buffing based on ability/skill (ends turn after usage)
+(when raiding solo no .finish needed, player can equip, use but when using attack/defend only then it ends the turn automatically)
+Co-Op/Guild:
+(party stats of all get automatically displayed, everyone can do their prep with combat commands and finally type .finished when done
+so the turn can progress ect)
+(at every finished battle the party will automatically disband, process of invites must start again, in guilds same party formation
+applies unless guild leader does .guildwar where every guild member fights another guild or .guildraid <name> where every guild member 
+raids a gate or red gate or dungeon.)
+🚫🚫🚫 .shadows - Manage shadow army (only accessible if job class necromancer which only SJW can canonically possess) 🚫🚫🚫 remove.
+Arena:
+.pvp @user - Challenge another hunter (wait for accept)
+.accept - accepts challenge, combat window pops up
+.decline - declines challenge.
+System:
+.awaken - Begin your hunter journey - happens at the awakening-gate (can be only used once at awakening-gate, will be met with a rejection
+message if used twice)
+.status - View hunter profile and stats (skills, abilities, equipment, health, name, title, wins, losses, monster kills, deaths, successful raids/failed raids ect)
+.inventory - Manage and sort through items
+.daily - claim a 24 hour reset gain of gold and minor exp
+.dailyquest - View daily quests
+.shop - Visit hunter shop - shop for equipment, potions ect
+.topserver - displays name, rank, top title and arena (pvp) rank. (also wins/losses in pvp)
+.rank - displays a status window of an experience bar to next rankup aka needed exp and current exp in one progress bar.
