@@ -1,0 +1,1 @@
+This blog page is under development for our Discord server, inspired by Solo Leveling activities. Stay tuned for updates and new features coming soon!
