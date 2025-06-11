@@ -1,0 +1,103 @@
+📜 Solo Leveling RPG Discord Bot – Feature Documentation
+Last Updated: 2025-06-11
+
+🌐 Server Theme
+A Discord RPG based on Solo Leveling where players act as hunters, clear gates, join guilds, battle monsters, and collect loot.
+
+✅ Core Features Overview
+🎯 Core Systems
+System	Description
+XP & Ranking	XP for quests/combat; ranks unlock higher gates and abilities
+Inventory	Tracks gear, items, and consumables
+Loot System	Items categorized from Common → Legendary
+Data Persistence	Stored in hunters_data.json & SQLite with auto-backups
+Quest System	Random daily/weekly quests and rewards with visual progress bars
+
+🧠 Planned UI Enhancements
+Planned transition to modern Discord UI components:
+
+Embeds: Structured data displays
+
+Buttons: Used for in-combat choices
+
+Select Menus: For loot/item choices
+
+Modals: Input for guild creation, skill naming, etc.
+
+Auto-Updating Messages: Real-time battle feedback
+
+🤝 Party & Co-Op System (In Progress)
+#startparty @user... – Create a party
+
+#accept / #decline – Accept/reject invites
+
+#finished – Mark turn complete, auto-progress combat
+
+Includes live turn tracking, automatic updates, and stat displays.
+
+🏰 Guild System (Planned)
+#guildraid <gate> – Guild PvE content
+
+#guildwar – PvP-style guild combat
+
+Guild leaderboards, rankings, and activity logs
+
+⚔️ Combat System
+#hunt, #attack, #defend, #dodge, #flee, #ability <name>
+
+Real-time combat UI with HP/MP/status indicators
+
+Persistent combat state and auto-resume
+
+🧾 Quest & Daily System
+#daily, #dailyquest, #weekly
+
+Randomized quest types and progress indicators
+
+🎒 Inventory & Equipment System
+#inventory, #equip <item>, #unequip, #use <item>
+
+Drag-and-drop planned for dashboard version
+
+⚔️ PvP & Arena
+#pvp @user, #accept, #decline, #topserver, #rank
+
+Future: Tournaments, brackets, and Monarch ranks
+
+🛎️ ⚠️ NEW: Rank-Based Alert System
+The bot will auto-tag hunters when rank-specific content becomes available:
+
+🧠 How It Works:
+Each rank tier (e.g., E, D, C, B, A, S) has a dedicated role: @Rank_E, @Rank_A, etc.
+
+When a Red Gate, Guild Raid, or Dungeon opens:
+
+The bot checks all players eligible (by rank)
+
+Tags the corresponding role with an embedded alert
+
+🔔 Example:
+plaintext
+Copy
+Edit
+📢 [Red Gate Alert]
+The **Red Gate: Frozen Abyss** has appeared!
+Hunters rank **B** and above may enter.
+> @Rank_B @Rank_A @Rank_S
+✅ Commands That Trigger Alerts:
+#entergate, #enterredgate, #enterdungeon, #guildraid
+
+🗂️ Player Commands Summary
+Category	Commands
+Awakening	#awaken
+Combat	#hunt, #attack, #defend, #dodge, #ability, #flee
+Inventory	#inventory, #equip, #unequip, #use
+Quests	#daily, #dailyquest, #weekly
+Party	#startparty, #accept, #decline, #finished
+PvP	#pvp, #accept, #decline, #topserver, #rank
+Gates & Dungeons	#viewgates, #viewredgates, #entergate, #enterredgate, #exitgate
+Dungeons	#dungeons, #enterdungeon, #exitdungeon
+System	#status, #shop
+
+🚫 Restricted / Removed Features
+#shadows: Only available for SJW-exclusive Necromancer class.
