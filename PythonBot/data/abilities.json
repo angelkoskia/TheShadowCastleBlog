@@ -1,0 +1,62 @@
+{
+  "power_strike": {
+    "id": "power_strike",
+    "name": "Power Strike",
+    "description": "A powerful melee attack that deals 150% damage",
+    "mana_cost": 15,
+    "cooldown_turns": 3,
+    "type": "attack",
+    "damage_multiplier": 1.5,
+    "effect": "none"
+  },
+  "heal": {
+    "id": "heal",
+    "name": "Heal",
+    "description": "Restores 40 HP instantly",
+    "mana_cost": 20,
+    "cooldown_turns": 5,
+    "type": "support",
+    "healing_amount": 40,
+    "effect": "none"
+  },
+  "shadow_step": {
+    "id": "shadow_step",
+    "name": "Shadow Step",
+    "description": "Evade the next incoming attack",
+    "mana_cost": 30,
+    "cooldown_turns": 8,
+    "type": "utility",
+    "effect": "evade_next_attack"
+  },
+  "mana_burn": {
+    "id": "mana_burn",
+    "name": "Mana Burn",
+    "description": "Attack that also drains enemy mana",
+    "mana_cost": 25,
+    "cooldown_turns": 6,
+    "type": "attack",
+    "damage_multiplier": 1.2,
+    "effect": "mana_drain"
+  },
+  "berserker_rage": {
+    "id": "berserker_rage",
+    "name": "Berserker Rage",
+    "description": "Increases attack power for 3 turns",
+    "mana_cost": 35,
+    "cooldown_turns": 10,
+    "type": "buff",
+    "effect": "attack_buff",
+    "duration": 3,
+    "buff_amount": 20
+  },
+  "ice_spike": {
+    "id": "ice_spike",
+    "name": "Ice Spike",
+    "description": "Magical ice attack with chance to freeze",
+    "mana_cost": 22,
+    "cooldown_turns": 4,
+    "type": "magic",
+    "damage_multiplier": 1.3,
+    "effect": "freeze_chance"
+  }
+}

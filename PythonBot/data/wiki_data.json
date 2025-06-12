@@ -1,0 +1,222 @@
+{
+  "wiki_entries": {
+    "hunters": {
+      "sung_jinwoo": {
+        "title": "Sung Jin-Woo",
+        "category": "S-Rank Hunter",
+        "description": "The Shadow Sovereign and strongest hunter in the world. Originally an E-Rank hunter, he gained incredible power through the System and eventually inherited the Shadow Monarch's abilities.",
+        "aliases": ["Shadow Sovereign", "The Weakest Hunter", "Player"],
+        "rank": "National Level",
+        "abilities": ["Shadow Extraction", "Shadow Exchange", "Ruler's Authority", "Shadow Army"],
+        "weapons": ["Kamish's Wrath", "Baruka's Dagger"],
+        "notable_achievements": [
+          "Cleared the Demon Castle dungeon solo",
+          "Defeated Antares in single combat",
+          "Became the Shadow Monarch",
+          "Saved humanity from the Monarchs"
+        ],
+        "related_entries": ["shadow_monarch", "rulers", "monarchs"]
+      },
+      "go_gun_hee": {
+        "title": "Go Gun-Hee",
+        "category": "S-Rank Hunter",
+        "description": "The former Chairman of the Korean Hunters Association. A legendary S-Rank hunter known for his unwavering dedication to protecting humanity.",
+        "aliases": ["Chairman Go", "The Pillar of Korea"],
+        "rank": "S-Rank",
+        "abilities": ["Superhuman Strength", "Combat Mastery"],
+        "weapons": ["Traditional Korean Sword"],
+        "notable_achievements": [
+          "Founded the Korean Hunters Association",
+          "Mentored countless hunters",
+          "Died protecting Seoul from giant monsters"
+        ],
+        "related_entries": ["korean_hunters_association"]
+      },
+      "thomas_andre": {
+        "title": "Thomas Andre",
+        "category": "National Level Hunter",
+        "description": "The Goliath, America's strongest hunter and one of only five National Level Hunters worldwide. Known for his immense physical strength.",
+        "aliases": ["Goliath", "America's Strongest"],
+        "rank": "National Level",
+        "abilities": ["Superhuman Strength", "Enhanced Durability", "Spiritual Body Manifestation"],
+        "weapons": ["Enchanted Gauntlets"],
+        "notable_achievements": [
+          "Participated in Kamish raid",
+          "Survived encounter with Kamish",
+          "Protected America from S-Rank gates"
+        ],
+        "related_entries": ["kamish", "national_level_hunters"]
+      }
+    },
+    "monarchs": {
+      "shadow_monarch": {
+        "title": "Shadow Monarch (Ashborn)",
+        "category": "Monarch",
+        "description": "The strongest of all Monarchs, ruler of death and shadows. Originally fought against the Absolute Being alongside the Rulers before switching sides.",
+        "aliases": ["Ashborn", "King of the Dead", "Greatest Fragment of Brilliant Light"],
+        "rank": "Monarch",
+        "abilities": ["Shadow Manipulation", "Death Magic", "Army of Shadows", "Dimensional Travel"],
+        "domain": "Shadows and Death",
+        "notable_achievements": [
+          "Betrayed the Monarchs to side with Rulers",
+          "Created the Shadow Army",
+          "Passed powers to Sung Jin-Woo"
+        ],
+        "related_entries": ["sung_jinwoo", "rulers", "absolute_being"]
+      },
+      "antares": {
+        "title": "Antares",
+        "category": "Monarch",
+        "description": "The Monarch of Destruction, strongest among the current Monarchs. Commands fire and destruction, leading the war against humanity.",
+        "aliases": ["Monarch of Destruction", "King of Dragons"],
+        "rank": "Monarch",
+        "abilities": ["Fire Manipulation", "Destruction Magic", "Dragon Transformation", "Reality Warping"],
+        "domain": "Fire and Destruction",
+        "notable_achievements": [
+          "Led the Monarch invasion of Earth",
+          "Destroyed multiple dimensions",
+          "Final opponent of Sung Jin-Woo"
+        ],
+        "related_entries": ["monarchs", "dimensional_war"]
+      },
+      "ice_monarch": {
+        "title": "Ice Monarch",
+        "category": "Monarch",
+        "description": "Sovereign of ice and eternal winter. One of the eight Monarchs who wage war against the Rulers.",
+        "aliases": ["Frost King", "Winter's End"],
+        "rank": "Monarch",
+        "abilities": ["Ice Manipulation", "Freezing Aura", "Blizzard Creation"],
+        "domain": "Ice and Winter",
+        "notable_achievements": [
+          "Froze entire continents",
+          "Participated in dimensional wars"
+        ],
+        "related_entries": ["monarchs", "beast_monarch"]
+      }
+    },
+    "dungeons": {
+      "demon_castle": {
+        "title": "Demon Castle Dungeon",
+        "category": "S-Rank Dungeon",
+        "description": "The dungeon where Sung Jin-Woo first encountered the System. Contains the Statue of God and various trials that awakened his true potential.",
+        "rank": "S-Rank",
+        "location": "South Korea",
+        "boss": "Statue of God",
+        "notable_features": [
+          "System installation site",
+          "Multiple trial chambers",
+          "Ancient commandments",
+          "Player awakening location"
+        ],
+        "related_entries": ["statue_of_god", "system"]
+      },
+      "jeju_island": {
+        "title": "Jeju Island S-Rank Gate",
+        "category": "S-Rank Gate",
+        "description": "The site of Korea's greatest tragedy, where an S-Rank gate spawned massive ant colonies led by the Ant King.",
+        "rank": "S-Rank",
+        "location": "Jeju Island, South Korea",
+        "boss": "Ant King",
+        "notable_features": [
+          "Ant colony ecosystem",
+          "Multiple queen ants",
+          "Territorial expansion",
+          "Site of major hunter casualties"
+        ],
+        "related_entries": ["beru", "ant_king"]
+      }
+    },
+    "organizations": {
+      "korean_hunters_association": {
+        "title": "Korean Hunters Association",
+        "category": "Hunter Organization",
+        "description": "South Korea's primary hunter management organization, responsible for gate monitoring, hunter licensing, and dungeon assignments.",
+        "leadership": "Go Gun-Hee (former), Baek Yoon-Ho",
+        "headquarters": "Seoul, South Korea",
+        "notable_members": [
+          "Go Gun-Hee",
+          "Baek Yoon-Ho",
+          "Sung Jin-Woo"
+        ],
+        "responsibilities": [
+          "Gate monitoring",
+          "Hunter certification",
+          "Dungeon raid coordination"
+        ],
+        "related_entries": ["go_gun_hee", "baek_yoon_ho"]
+      },
+      "rulers": {
+        "title": "The Rulers",
+        "category": "Divine Beings",
+        "description": "Seven fragments of light created by the Absolute Being to maintain order. They wage eternal war against the Monarchs to protect the human world.",
+        "members": "Seven Rulers (identities largely unknown)",
+        "purpose": "Protect humanity and maintain dimensional balance",
+        "abilities": [
+          "Divine power manipulation",
+          "Dimensional travel",
+          "Reality anchoring"
+        ],
+        "notable_achievements": [
+          "Created the System",
+          "Selected human vessels",
+          "Fought against Monarchs for millennia"
+        ],
+        "related_entries": ["absolute_being", "monarchs", "system"]
+      }
+    },
+    "system": {
+      "hunter_system": {
+        "title": "The System",
+        "category": "Divine Artifact",
+        "description": "A game-like interface created by the Rulers to help humanity grow stronger. Originally designed to find a vessel for the Shadow Monarch's power.",
+        "creators": "The Rulers",
+        "purpose": "Human strengthening and Monarch vessel selection",
+        "features": [
+          "Status windows",
+          "Quest system",
+          "Level progression",
+          "Skill acquisition",
+          "Instant dungeons"
+        ],
+        "unique_users": ["Sung Jin-Woo"],
+        "related_entries": ["rulers", "sung_jinwoo", "shadow_monarch"]
+      }
+    },
+    "concepts": {
+      "mana": {
+        "title": "Mana",
+        "category": "Energy System",
+        "description": "The fundamental energy that powers hunter abilities and maintains gate stability. Mana density determines dungeon rank and monster strength.",
+        "properties": [
+          "Measurable energy source",
+          "Varies by individual capacity",
+          "Regenerates over time",
+          "Required for skill activation"
+        ],
+        "applications": [
+          "Hunter abilities",
+          "Magic item creation",
+          "Gate stabilization"
+        ],
+        "related_entries": ["hunters", "gates"]
+      },
+      "gates": {
+        "title": "Gates",
+        "category": "Dimensional Rifts",
+        "description": "Interdimensional portals that connect Earth to dungeon realms. If left uncleared, they break and release monsters into the real world.",
+        "types": ["E-Rank", "D-Rank", "C-Rank", "B-Rank", "A-Rank", "S-Rank"],
+        "mechanics": [
+          "Time limit before break",
+          "Rank determines difficulty",
+          "Boss monsters guard dungeon cores"
+        ],
+        "dangers": [
+          "Gate breaks",
+          "Monster outbreaks",
+          "Dimensional instability"
+        ],
+        "related_entries": ["dungeons", "mana"]
+      }
+    }
+  }
+}

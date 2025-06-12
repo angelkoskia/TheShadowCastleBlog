@@ -1,0 +1,259 @@
+import discord
+from discord.ext import commands
+import asyncio
+import json
+
+COMBAT_CATEGORY_ID = 1382476125724213288
+
+# Solo Leveling Boss Definitions
+SOLO_LEVELING_BOSSES = {
+    "mini_bosses": [
+        {
+            "name": "Steel Fang Beast",
+            "level": 15,
+            "hp": 1200,
+            "attack": 80,
+            "defense": 40,
+            "abilities": ["Savage Claw", "Pack Howl"],
+            "drops": ["Steel Fang Claw", "Beast Hide"]
+        },
+        {
+            "name": "Corrupted Orc Shaman",
+            "level": 18,
+            "hp": 1000,
+            "attack": 70,
+            "defense": 30,
+            "abilities": ["Hexbolt", "Healing Totem"],
+            "drops": ["Dark Totem Fragment", "Shaman Staff"]
+        }
+    ],
+    "country_threat_bosses": [
+        {
+            "name": "Frost King",
+            "level": 55,
+            "hp": 15000,
+            "attack": 500,
+            "defense": 250,
+            "abilities": ["Frozen Domain", "Icicle Barrage", "Cryo Nova"],
+            "drops": ["Frost Crown", "Glacial Shard", "Icebound Cloak"]
+        },
+        {
+            "name": "Abyssal Serpent",
+            "level": 60,
+            "hp": 18000,
+            "attack": 580,
+            "defense": 270,
+            "abilities": ["Dark Coil", "Venom Rain"],
+            "drops": ["Abyss Scale", "Tainted Fang"]
+        }
+    ],
+    "continent_threat_bosses": [
+        {
+            "name": "Dragon Emperor Vargros",
+            "level": 95,
+            "hp": 50000,
+            "attack": 1300,
+            "defense": 700,
+            "abilities": ["Eternal Flame", "Sky Ruin", "Draconic Descent"],
+            "drops": ["Emperor’s Scale", "Vargros’s Heart", "Ancient Flame Core"]
+        },
+        {
+            "name": "Titan of the End",
+            "level": 100,
+            "hp": 75000,
+            "attack": 1500,
+            "defense": 800,
+            "abilities": ["World Slam", "Endquake", "Cosmic Roar"],
+            "drops": ["Titan’s Core", "Endbreaker", "Colossus Hide"]
+        }
+    ],
+    "red_gate_bosses": [
+        {
+            "name": "Bloodshade Reaper",
+            "level": 75,
+            "hp": 25000,
+            "attack": 850,
+            "defense": 450,
+            "abilities": ["Shadow Step", "Blood Cleave", "Soul Drain"],
+            "drops": ["Reaper’s Blade", "Bloodshade Cloak"]
+        },
+        {
+            "name": "Gate Keeper of Madness",
+            "level": 80,
+            "hp": 30000,
+            "attack": 900,
+            "defense": 500,
+            "abilities": ["Mad Howl", "Insanity Chains", "Warped Strike"],
+            "drops": ["Madstone", "Keeper’s Shackles"]
+        }
+    ]
+}
+
+class GlobalEvents(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    def load_hunters_data(self):
+        try:
+            with open('hunters_data.json', 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return {}
+
+    async def create_combat_channel(self, guild, users, event_type):
+        overwrites = {
+            guild.default_role: discord.PermissionOverwrite(read_messages=False),
+            guild.me: discord.PermissionOverwrite(read_messages=True)
+        }
+        for member in users:
+            overwrites[member] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
+
+        category = discord.utils.get(guild.categories, id=COMBAT_CATEGORY_ID)
+        if category is None:
+            try:
+                fetched = await self.bot.fetch_channel(COMBAT_CATEGORY_ID)
+                if isinstance(fetched, discord.CategoryChannel):
+                    category = fetched
+            except Exception as e:
+                print(f"[ERROR] Failed to fetch category: {e}")
+                return None
+
+        try:
+            channel_name = f"{users[0].id}-private-adventure"
+            print(f"[DEBUG] Creating channel '{channel_name}' in category '{category.name}'")
+            event_channel = await guild.create_text_channel(
+                name=channel_name,
+                overwrites=overwrites,
+                category=category,
+                topic=f"{event_type.replace('_', ' ').title()} Event Room",
+                reason="Permanent private adventure channel"
+            )
+            return event_channel
+        except discord.Forbidden:
+            print(f"[ERROR] Missing permissions to create the channel.")
+        except Exception as e:
+            print(f"[ERROR] Unexpected error: {e}")
+        return None
+
+    @commands.command(name='summon_event')
+    @commands.has_permissions(administrator=True)
+    async def summon_event(self, ctx, event_type: str):
+        event_names = {
+            'mini_boss': '⚔️ Mini Boss Has Appeared!',
+            'country_boss': '🌍 Country-Level Threat!',
+            'continent_boss': '🌐 Continent-Level Threat!',
+            'red_gate': '🩸 ??? Red Gate Has Opened!'
+        }
+
+        if event_type not in event_names:
+            await ctx.send("Invalid event type! Use: mini_boss, country_boss, continent_boss, red_gate")
+            return
+
+        embed = discord.Embed(
+            title=event_names[event_type],
+            description="React with ✅ to join or ❌ to skip. Event starts in 60 seconds.",
+            color=discord.Color.red()
+        )
+        embed.set_footer(text="Be prepared, hunter.")
+
+        message = await ctx.send(embed=embed)
+        await message.add_reaction("✅")
+        await message.add_reaction("❌")
+
+        await asyncio.sleep(60)
+        message = await ctx.channel.fetch_message(message.id)
+        reaction = discord.utils.get(message.reactions, emoji="✅")
+        users = await reaction.users().flatten()
+        participants = [u for u in users if not u.bot]
+
+        hunters_data = self.load_hunters_data()
+        valid_users = []
+
+        for user in participants:
+            hunter = hunters_data.get(str(user.id))
+            if not hunter:
+                continue
+            if event_type == "mini_boss" and hunter['rank'] not in ['D', 'C', 'B', 'A', 'S', 'S+', 'SS', 'SSS', 'National Level Hunter', 'Monarch']:
+                continue
+            valid_users.append(user)
+
+        if event_type == "country_boss" and len(valid_users) < 3:
+            await ctx.send("❌ Not enough hunters! Need at least 3 for a Country-Level Boss.")
+            return
+        elif event_type == "continent_boss" and len(valid_users) < 5:
+            await ctx.send("❌ Not enough hunters! Need at least 5 for a Continent-Level Boss.")
+            return
+
+        event_channel = await self.create_combat_channel(ctx.guild, valid_users, event_type)
+        if not event_channel:
+            await ctx.send("❌ Failed to create event channel. Please try again or check bot permissions.")
+            return
+
+        await event_channel.send(f"{', '.join(user.mention for user in valid_users)} — prepare for battle!")
+                # Choose a random boss based on event type
+        import random
+        bosses = SOLO_LEVELING_BOSSES.get(f"{event_type}s", [])
+        if not bosses:
+            await event_channel.send("⚠️ No bosses available for this event type.")
+            return
+
+        boss = random.choice(bosses)
+
+        await event_channel.send(
+            f"**{boss['name']}** (Level {boss['level']}) has appeared!
+"
+            f"**HP**: {boss['hp']} | **ATK**: {boss['attack']} | **DEF**: {boss['defense']}
+"
+            f"**Abilities**: {', '.join(boss['abilities'])}"
+        )
+
+        # Start turn-based combat loop
+        boss_hp = boss['hp']
+        round_num = 1
+        while boss_hp > 0:
+            await asyncio.sleep(2)
+            await event_channel.send(f"
+**🌀 Round {round_num}**")
+
+            for user in valid_users:
+                damage = random.randint(200, 400)
+                boss_hp -= damage
+                boss_hp = max(boss_hp, 0)
+                await event_channel.send(f"{user.mention} attacks for {damage} damage! Boss HP: {boss_hp}")
+                if boss_hp <= 0:
+                    break
+
+            if boss_hp > 0:
+                await asyncio.sleep(2)
+                target = random.choice(valid_users)
+                boss_attack = boss['attack']
+                await event_channel.send(f"**{boss['name']}** attacks {target.mention} for {boss_attack} damage!")
+
+            round_num += 1
+
+        await asyncio.sleep(1)
+        await event_channel.send(f"
+✅ **{boss['name']}** has been defeated! 🎉 Loot: {', '.join(boss['drops'])}")
+
+        # Award EXP
+        reward_exp = random.randint(1000, 3000)
+        for user in valid_users:
+            user_data_path = 'hunters_data.json'
+            try:
+                with open(user_data_path, 'r') as f:
+                    data = json.load(f)
+            except FileNotFoundError:
+                data = {}
+
+            uid = str(user.id)
+            if uid not in data:
+                data[uid] = {"exp": 0, "rank": "E"}
+            data[uid]["exp"] += reward_exp
+
+            with open(user_data_path, 'w') as f:
+                json.dump(data, f, indent=4)
+
+            await event_channel.send(f"{user.mention} gains {reward_exp} EXP!")
+
+async def setup(bot):
+    await bot.add_cog(GlobalEvents(bot))

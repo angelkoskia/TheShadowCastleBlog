@@ -1,0 +1,82 @@
+{
+  "abandoned_mine_b": {
+    "id": "abandoned_mine_b",
+    "name": "B-Rank Abandoned Mine",
+    "description": "A dark, multi-floor mine infested with kobolds and golems. Ancient treasures lie within.",
+    "difficulty": "B",
+    "required_level": 10,
+    "monster_pool": ["Kobold", "Cave Bat", "Mine Golem"],
+    "boss_id": "Golem Lord",
+    "rewards": {
+      "exp": 500,
+      "gold": 250,
+      "items": [
+        {"name": "Knight's Plate", "chance": 0.4},
+        {"name": "Steel Blade", "chance": 0.3},
+        {"name": "Iron Ore", "chance": 0.9, "quantity": 3}
+      ]
+    },
+    "floors": 3,
+    "image_url": "https://i.imgur.com/abandoned_mine.png"
+  },
+  "shadow_tower_a": {
+    "id": "shadow_tower_a",
+    "name": "A-Rank Shadow Tower",
+    "description": "A mysterious tower that pierces the sky. Each floor grows more dangerous than the last.",
+    "difficulty": "A",
+    "required_level": 25,
+    "monster_pool": ["Shadow Assassin", "Dark Mage", "Void Sentinel"],
+    "boss_id": "Tower Master",
+    "rewards": {
+      "exp": 1200,
+      "gold": 800,
+      "items": [
+        {"name": "Shadow Cloak", "chance": 0.3},
+        {"name": "Demon Slayer", "chance": 0.2},
+        {"name": "Shadow Crystal", "chance": 0.8}
+      ]
+    },
+    "floors": 5,
+    "image_url": "https://i.imgur.com/shadow_tower.png"
+  },
+  "demon_fortress_s": {
+    "id": "demon_fortress_s",
+    "name": "S-Rank Demon Fortress",
+    "description": "An infernal fortress housing the most powerful demons. Only National Level Hunters dare enter.",
+    "difficulty": "S",
+    "required_level": 50,
+    "monster_pool": ["Demon Warrior", "Hell Hound", "Infernal Knight"],
+    "boss_id": "Demon King",
+    "rewards": {
+      "exp": 3000,
+      "gold": 2000,
+      "items": [
+        {"name": "Dragon Scale Mail", "chance": 0.2},
+        {"name": "Shadow Reaper", "chance": 0.15},
+        {"name": "Demon Core", "chance": 0.1}
+      ]
+    },
+    "floors": 7,
+    "image_url": "https://i.imgur.com/demon_fortress.png"
+  },
+  "monarch_palace_national": {
+    "id": "monarch_palace_national",
+    "name": "National Level Monarch Palace",
+    "description": "The ultimate challenge. A palace where Monarchs once ruled. Death is almost certain.",
+    "difficulty": "National",
+    "required_level": 80,
+    "monster_pool": ["Monarch Guard", "Ancient Golem", "Ethereal Spirit"],
+    "boss_id": "Fallen Monarch",
+    "rewards": {
+      "exp": 10000,
+      "gold": 5000,
+      "items": [
+        {"name": "Monarch's Regalia", "chance": 0.1},
+        {"name": "Monarch's Edge", "chance": 0.05},
+        {"name": "Monarch Essence", "chance": 0.05}
+      ]
+    },
+    "floors": 10,
+    "image_url": "https://i.imgur.com/monarch_palace.png"
+  }
+}

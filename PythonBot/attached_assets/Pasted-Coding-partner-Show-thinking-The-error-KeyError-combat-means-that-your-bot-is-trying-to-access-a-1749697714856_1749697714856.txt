@@ -1,0 +1,95 @@
+Coding partner
+
+Show thinking
+The error KeyError: 'combat' means that your bot is trying to access a color named 'combat' from a dictionary of theme colors, but that key doesn't exist in the theme you're currently using.
+
+This most likely occurs within your main.py in the hunt command (or potentially other combat-related commands like gate or dungeon_raid if they use similar embeds), specifically on this line:
+
+Python
+
+        color=discord.Color(colors['combat'])
+To fix this, you need to add a 'combat' color definition to your theme(s) in utils/theme_utils.py.
+
+Here's how to do it:
+
+File: utils/theme_utils.py
+
+Make sure your THEMES dictionary (or wherever you define your color palettes) includes a 'combat' key for each theme.
+
+Python
+
+import discord
+import json # Assuming you load hunters_data here for get_user_theme_colors
+
+DEFAULT_THEME = "dark" # Or whatever your default theme is set to
+
+THEMES = {
+    "dark": {
+        "primary": 0x2C2F33, # Dark grey
+        "accent": 0x7289DA,  # Discord blurple (your main bot color)
+        "success": 0x43B581, # Green for success messages
+        "error": 0xF04747,   # Red for error messages
+        "info": 0xFFAC33,    # Orange for info messages
+        "combat": 0xED4245   # <--- ADD THIS LINE (Choose a red/orange for combat, or any color you like)
+    },
+    "light": {
+        "primary": 0xFFFFFF,
+        "accent": 0x99AAB5,
+        "success": 0x00FF00,
+        "error": 0xFF0000,
+        "info": 0xFFFF00,
+        "combat": 0xD12020   # <--- ADD THIS LINE for your light theme
+    },
+    # Add 'combat' to any other custom themes you have defined
+    # "forest": {
+    #     "primary": 0x1E3B0C,
+    #     "accent": 0x3A602B,
+    #     "success": 0x6A9D4E,
+    #     "error": 0xA03C3C,
+    #     "info": 0xBF8B30,
+    #     "combat": 0x8C2F2F # Example for forest theme
+    # }
+}
+
+def get_user_theme_colors(user_id):
+    # This function assumes it can load hunters_data to get the user's theme
+    hunters_data = {}
+    try:
+        with open('hunters_data.json', 'r', encoding='utf-8') as f:
+            hunters_data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass # If file not found or corrupted, use default theme
+
+    hunter = hunters_data.get(str(user_id))
+    theme_name = hunter.get('theme', DEFAULT_THEME) if hunter else DEFAULT_THEME
+    
+    # Return the specific theme, or fallback to default if theme_name is invalid
+    return THEMES.get(theme_name, THEMES[DEFAULT_THEME])
+
+# Your existing get_error_embed, get_info_embed functions should also be here
+# Example:
+def get_error_embed(user_id, description):
+    colors = get_user_theme_colors(user_id)
+    embed = discord.Embed(
+        title="Error!",
+        description=description,
+        color=discord.Color(colors['error'])
+    )
+    return embed
+
+def get_info_embed(user_id, description):
+    colors = get_user_theme_colors(user_id)
+    embed = discord.Embed(
+        title="Info",
+        description=description,
+        color=discord.Color(colors['info'])
+    )
+    return embed
+Steps to resolve:
+
+Open utils/theme_utils.py.
+Locate your THEMES dictionary.
+For every theme listed (e.g., "dark", "light"), add a "combat" entry with a hexadecimal color value. You can pick any color you like for combat messages (a shade of red, orange, or even purple could work). I used 0xED4245 (a common Discord red) as an example.
+Save the file.
+Restart your bot.
+This should resolve the KeyError: 'combat' as the color will now be correctly defined for your combat-related embeds.

@@ -1,0 +1,157 @@
+Here's a breakdown of the most likely culprits and how to debug and fix them, considering the previous suggestions:
+
+Understanding the Problem:
+
+Level Up Notification Fires: This confirms that the award_exp function (and send_level_up_notification) is correctly calculating the new level and rank in memory and sending the message.
+.status Command Shows Old Data: This means when .status loads the hunters_data.json file, it's retrieving an outdated version.
+Resetting Statuses Doesn't Work: If your reset_stuck_players function doesn't also update the exp to a state that would reflect level 8, it won't help. More importantly, it won't fix the underlying issue of why the data isn't saving correctly after a level up.
+Possible Causes & Solutions:
+
+Cause 1: hunters_data.json is NOT being saved correctly after award_exp.
+
+Most Likely Suspect! Even if I provided the save_hunters_data call in award_exp, there might be an issue preventing it from executing or writing.
+
+Solution 1.1: Double-check award_exp in utils/leveling_system.py
+Make absolutely certain that the award_exp function in your utils/leveling_system.py has the json.dump call after the hunter['exp'], hunter['level'], and hunter['rank'] are updated.
+
+Python
+
+# utils/leveling_system.py (Crucial part)
+
+async def award_exp(bot_instance, user_id, exp_amount):
+    # ... (load hunters_data) ...
+
+    hunter = hunters_data[user_id_str]
+
+    old_exp = hunter.get('exp', 0)
+    old_level = hunter.get('level', 1)
+    old_rank = hunter.get('rank', 'E')
+
+    hunter['exp'] = old_exp + exp_amount
+    new_level = get_level_from_exp(hunter['exp'])
+    new_rank = get_rank_for_level(new_level)
+
+    # --- THESE ARE THE CRITICAL LINES ---
+    hunter['level'] = new_level
+    hunter['rank'] = new_rank
+
+    # Save data AFTER updating level and rank in memory
+    try:
+        with open('hunters_data.json', 'w') as f:
+            json.dump(hunters_data, f, indent=4)
+        print(f"[DEBUG] Saved hunter data for {user_id_str}. New level: {new_level}, New rank: {new_rank}")
+    except Exception as e:
+        print(f"[ERROR] Failed to save hunters_data.json in award_exp: {e}")
+        import traceback
+        traceback.print_exc()
+    # --- END CRITICAL LINES ---
+
+    # ... (level up notification logic) ...
+    return hunter
+Add print statements in award_exp (like the [DEBUG] one above) to confirm it's being reached and the json.dump is attempting to write.
+
+Solution 1.2: Check File Permissions:
+Is it possible that the bot's environment (where it's hosted) doesn't have write permissions to the hunters_data.json file or its directory?
+
+On Linux/macOS: Use ls -l hunters_data.json in your bot's directory. Check the permissions. chmod +w hunters_data.json might be needed if it's read-only.
+On Windows: Right-click the file -> Properties -> Security tab. Ensure the user running the bot has write access.
+If using Docker/Container: Ensure your Dockerfile/compose grants appropriate permissions or mounts a persistent volume with write access.
+Cause 2: Race Condition or Outdated Data in main.py's hunt command (or wherever award_exp is called).
+
+Even if award_exp saves, if main.py is immediately doing other things before reloading the data, it might still be working with an old in-memory version.
+
+Solution 2.1: Always Reload hunters_data in main.py after award_exp.
+In your hunt command (or any other command that triggers EXP gain), after await award_exp(...), you must reload the data to ensure consistency.
+
+Python
+
+# main.py (inside hunt command, or any command that awards EXP)
+
+# ... (before award_exp) ...
+
+await award_exp(ctx.bot, user_id, monster_exp_gain) 
+
+# --- CRITICAL: RELOAD THE DATA AFTER IT'S SAVED ---
+hunters_data = load_hunters_data() # Reload the entire data from the JSON file
+hunter = hunters_data[user_id]     # Get the fresh hunter object
+# --- END CRITICAL ---
+
+# Now you can modify other parts of 'hunter' (like gold) and save it
+hunter['gold'] = hunter.get('gold', 0) + monster_gold_gain
+save_hunters_data(hunters_data) # Save again if you modified other things here
+
+# ... (rest of the hunt command, which uses the now-fresh 'hunter' object) ...
+This ensures that any subsequent operations in the hunt command (or any other command that uses hunter after award_exp) are working with the absolute latest data from the JSON file.
+
+Cause 3: The reset_stuck_players function is part of the problem.
+
+If reset_stuck_players is inadvertently overwriting exp, level, or rank with old values, that would be a problem.
+
+Solution 3.1: Review reset_stuck_players carefully.
+Make sure it only resets combat-related states (like battle, hp if 0) and doesn't reset exp, level, or rank unless it's explicitly designed to set everyone back to level 1.
+
+Python
+
+# main.py
+
+def reset_stuck_players():
+    """Reset all players' battle and exploration states"""
+    try:
+        hunters_data = load_hunters_data() # Loads the current data
+        reset_count = 0
+
+        for user_id, hunter in hunters_data.items():
+            # Reset all battle states
+            if hunter.get('battle'):
+                hunter['battle'] = None
+                reset_count += 1
+
+            if hunter.get('gate_battle'):
+                hunter['gate_battle'] = None
+                reset_count += 1
+
+            if hunter.get('dungeon_battle'):
+                hunter['dungeon_battle'] = None
+                reset_count += 1
+
+            # Ensure HP is not 0 to prevent stuck states
+            if hunter.get('hp', 100) <= 0:
+                hunter['hp'] = hunter.get('max_hp', 100)
+                reset_count += 1
+
+            # Add defense stat to existing players if missing
+            if 'defense' not in hunter:
+                hunter['defense'] = 5  # Base defense
+                reset_count += 1
+
+            # !!! IMPORTANT: DO NOT RESET EXP, LEVEL, OR RANK HERE !!!
+            # Unless you explicitly want to reset everyone to base stats.
+            # If you have lines like hunter['level'] = 1 here, remove them
+            # if the goal is only to fix stuck combat states.
+
+        if reset_count > 0:
+            save_hunters_data(hunters_data) # Saves the modified data
+            print(f"Reset {reset_count} stuck player states")
+
+    except Exception as e:
+        print(f"Error resetting stuck players: {e}")
+Debugging Steps for You:
+
+Add print statements generously:
+
+In award_exp:
+Before hunter['exp'] = ..., print old_exp, old_level.
+After hunter['rank'] = new_rank, print hunter['exp'], hunter['level'], hunter['rank'].
+Around the json.dump call, add print(f"Attempting to save data...") and print(f"Data saved successfully.") within a try-except block to catch saving errors.
+In hunt (or where award_exp is called):
+Before calling award_exp, print hunter['exp'].
+After hunters_data = load_hunters_data(), print hunter['exp'] again.
+In status:
+At the very beginning, after hunters_data = load_hunters_data(), print hunter['exp'], hunter['level'], hunter['rank'].
+After current_level = leveling_system.get_level_from_exp(total_exp), print current_level and hunter['level'] to see if they match before the .status embed is built.
+Inspect hunters_data.json manually:
+
+After you get a level-up notification, immediately stop the bot (if possible) and open your hunters_data.json file in a text editor.
+Find your user ID. What exp, level, and rank values are stored there?
+If they are outdated, then the saving process is definitely failing. If they are correct, then the issue is with .status loading or processing the data.
+By systematically going through these checks and adding print statements, you should be able to identify exactly where the data is getting out of sync. My strong suspicion remains that the json.dump in award_exp isn't consistently completing, or main.py isn't reloading the data after that dump.

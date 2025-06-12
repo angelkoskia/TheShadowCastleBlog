@@ -1,0 +1,101 @@
+{
+  "beginner_gate_d": {
+    "id": "beginner_gate_d",
+    "name": "D-Rank Slime Gate",
+    "description": "A low-level gate infested with weak slimes. Perfect for new hunters.",
+    "difficulty": "D",
+    "required_level": 1,
+    "monster_pool": ["Slime", "Goblin"],
+    "boss_id": "Giant Slime",
+    "rewards": {
+      "exp": 50,
+      "gold": 25,
+      "items": [
+        {"name": "Health Potion", "chance": 0.7},
+        {"name": "Rusty Dagger", "chance": 0.2}
+      ]
+    },
+    "floors": 1,
+    "image_url": "https://i.imgur.com/slime_gate.png"
+  },
+  "forest_gate_c": {
+    "id": "forest_gate_c",
+    "name": "C-Rank Forest Gate",
+    "description": "A dense forest gate with goblins and orcs. Beware of ambushes.",
+    "difficulty": "C",
+    "required_level": 5,
+    "monster_pool": ["Goblin", "Orc", "Forest Spider"],
+    "boss_id": "Orc Chieftain",
+    "rewards": {
+      "exp": 150,
+      "gold": 75,
+      "items": [
+        {"name": "Leather Vest", "chance": 0.6},
+        {"name": "Iron Sword", "chance": 0.3},
+        {"name": "Greater Health Potion", "chance": 0.5}
+      ]
+    },
+    "floors": 1,
+    "image_url": "https://i.imgur.com/forest_gate.png"
+  },
+  "ice_cavern_b": {
+    "id": "ice_cavern_b",
+    "name": "B-Rank Ice Cavern",
+    "description": "A frozen cavern filled with ice elementals and frost wolves.",
+    "difficulty": "B",
+    "required_level": 10,
+    "monster_pool": ["Ice Elemental", "Frost Wolf", "Ice Golem"],
+    "boss_id": "Frost King",
+    "rewards": {
+      "exp": 400,
+      "gold": 200,
+      "items": [
+        {"name": "Chain Mail", "chance": 0.5},
+        {"name": "Steel Blade", "chance": 0.3},
+        {"name": "Ice Crystal", "chance": 0.8}
+      ]
+    },
+    "floors": 1,
+    "image_url": "https://i.imgur.com/ice_cavern.png"
+  },
+  "shadow_realm_a": {
+    "id": "shadow_realm_a",
+    "name": "A-Rank Shadow Realm",
+    "description": "A dark dimension where shadows come alive. Only experienced hunters survive.",
+    "difficulty": "A",
+    "required_level": 20,
+    "monster_pool": ["Shadow Beast", "Dark Wraith", "Void Walker"],
+    "boss_id": "Shadow Lord",
+    "rewards": {
+      "exp": 800,
+      "gold": 500,
+      "items": [
+        {"name": "Shadow Cloak", "chance": 0.4},
+        {"name": "Demon Slayer", "chance": 0.2},
+        {"name": "Shadow Essence", "chance": 0.9}
+      ]
+    },
+    "floors": 1,
+    "image_url": "https://i.imgur.com/shadow_realm.png"
+  },
+  "dragon_lair_s": {
+    "id": "dragon_lair_s",
+    "name": "S-Rank Dragon Lair",
+    "description": "The legendary lair of an ancient dragon. Death awaits the unprepared.",
+    "difficulty": "S",
+    "required_level": 40,
+    "monster_pool": ["Wyvern", "Dragon Knight", "Fire Drake"],
+    "boss_id": "Ancient Dragon",
+    "rewards": {
+      "exp": 2000,
+      "gold": 1500,
+      "items": [
+        {"name": "Dragon Scale Mail", "chance": 0.3},
+        {"name": "Dragon Fang", "chance": 0.2},
+        {"name": "Dragon Heart", "chance": 0.1}
+      ]
+    },
+    "floors": 1,
+    "image_url": "https://i.imgur.com/dragon_lair.png"
+  }
+}

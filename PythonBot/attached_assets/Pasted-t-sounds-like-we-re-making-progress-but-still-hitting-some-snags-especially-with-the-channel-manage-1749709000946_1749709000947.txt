@@ -1,0 +1,31 @@
+t sounds like we're making progress but still hitting some snags, especially with the channel management. The message "Your previous private adventure channel was moved. Creating a new one." tells us a lot:
+
+The bot is correctly storing and retrieving the private_adventure_channel_id from your hunters_data. This means the JSONDecodeError might be resolved or happening elsewhere, but the channel ID itself is persisted.
+The bot is finding an existing channel with that ID.
+The problem lies in the category check: if adventure_channel.category_id != COMBAT_CATEGORY_ID: is evaluating to True, causing the bot to believe the channel is in the wrong place and create a new one.
+Let's address the potential root causes:
+
+1. Verify COMBAT_CATEGORY_ID is Absolutely Correct
+This is the most common reason for the "channel moved" message.
+
+Double-Check the ID in Discord: Go to your Discord server, right-click on the category where you want these private adventure channels to be created (the one you've always intended), and click "Copy ID".
+Compare with your code: Ensure the copied ID exactly matches the COMBAT_CATEGORY_ID defined in your bot's code (1382476125724213288). Even a single digit off will cause this issue.
+If the IDs don't match, update COMBAT_CATEGORY_ID in your bot's code to the correct one from Discord.
+
+2. Ensure Channels are Not Being Manually Moved
+If the COMBAT_CATEGORY_ID in your code is indeed correct, then someone (or something) is genuinely moving the private adventure channels out of that specific category after they are created.
+
+Check Audit Log: In your Discord server settings, go to "Audit Log" and filter by "Channel Update." See if there are entries indicating when channels were moved and by whom.
+Educate Users: If users are moving channels, inform them not to, as the bot expects them to remain in the designated category.
+3. Re-emphasize JSON Serialization Fix
+While the channel ID seems to be persisting, the Object of type Colour is not JSON serializable indicates that other data might still be causing corruption when saving hunters_data.
+
+Confirm CustomEncoder Usage: Ensure you have implemented the CustomEncoder exactly as provided in the previous response and that json.dump in save_hunters_data is explicitly using it (json.dump(data, f, indent=4, cls=CustomEncoder)).
+Delete/Rename Corrupted hunters_data.json: If you haven't already, delete or rename your hunters_data.json file (e.g., to hunters_data_backup.json) once after implementing the CustomEncoder change and before restarting the bot. This will force the bot to create a new, uncorrupted data file. If the file is already corrupted, the JSONDecodeError will prevent it from loading correctly.
+4. Victory Screen
+The victory screen relies on the channel management and data saving working correctly. Once the bot consistently uses the correct private channel and data can be saved without error, the victory screen logic (as provided in the previous turn) should then function. Ensure that:
+
+The victory logic is correctly placed where monster['hp'] <= 0 is checked after a combat turn.
+All messages (await adventure_channel.send(embed=...)) within both the victory and defeat blocks are directed to the adventure_channel.
+You have confirmed that channel.delete() calls are removed from your dungeon_cog.complete_raid function if you want channels to be truly permanent.
+Please go through these checks thoroughly. The "channel moved" message is a strong indicator that the COMBAT_CATEGORY_ID either doesn't match the actual category ID, or the channel is genuinely being moved.
