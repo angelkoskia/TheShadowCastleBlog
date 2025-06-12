@@ -1,0 +1,72 @@
+{
+  "boss_priority": {
+    "tier_0_divine": [
+      "absolute_being"
+    ],
+    "tier_1_legendary": [
+      "antares",
+      "shadow_monarch",
+      "kamish",
+      "legia"
+    ],
+    "tier_2_major": [
+      "architect",
+      "ice_monarch",
+      "iron_body_monarch",
+      "beast_monarch",
+      "metus",
+      "vulcan"
+    ],
+    "tier_3_notable": [
+      "statue_of_god",
+      "demon_king_baran",
+      "shadow_dragon",
+      "go_gun_hee_spirit",
+      "ironvale_clockwork_colossus",
+      "gorrak_brine_tide_leviathan"
+    ],
+    "tier_4_standard": [
+      "igris",
+      "beru",
+      "tusk",
+      "iron_tank",
+      "frost_monarch",
+      "yogumunt",
+      "vespera_night_weaver_queen"
+    ],
+    "tier_5_common": [
+      "greed",
+      "beast_king",
+      "thalia_mirror_wraith"
+    ]
+  },
+  "spawn_weights": {
+    "tier_0_divine": 1,
+    "tier_1_legendary": 5,
+    "tier_2_major": 15,
+    "tier_3_notable": 25,
+    "tier_4_standard": 35,
+    "tier_5_common": 19
+  },
+  "auto_spawn_settings": {
+    "enabled": true,
+    "min_interval_hours": 2,
+    "max_interval_hours": 6,
+    "require_minimum_players": 3,
+    "level_scaling": true,
+    "announcement_channel_id": 1381439963656355849
+  },
+  "special_events": {
+    "monarch_invasion": {
+      "bosses": ["antares", "shadow_monarch", "ice_monarch", "iron_body_monarch", "beast_monarch"],
+      "trigger_chance": 0.05,
+      "spawn_multiple": true,
+      "max_simultaneous": 3
+    },
+    "legendary_awakening": {
+      "bosses": ["kamish", "architect", "statue_of_god"],
+      "trigger_chance": 0.02,
+      "bonus_rewards": 2.0
+    }
+  }
+}

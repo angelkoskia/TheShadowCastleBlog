@@ -1,0 +1,96 @@
+already has one and isn't currently hunting. You want to reuse the existing channel if it exists and the user is not in combat, rather than creating a new one each time.
+
+How to fix:
+Key idea:
+Before creating a new channel, check if a private hunt channel for that user already exists.
+
+If yes, reuse that channel.
+
+If no, create it.
+
+Also track whether the user is currently in combat or idle to prevent overlapping hunts.
+
+Example fix for .hunt:
+python
+Copy
+Edit
+import discord
+from discord.ext import commands
+import asyncio
+
+active_hunts = set()  # user IDs currently hunting
+user_channels = {}    # user ID -> channel object
+
+async def get_or_create_hunt_channel(ctx):
+    guild = ctx.guild
+    channel_name = f"{ctx.author.name.lower()}-hunt"
+
+    # Check if user already has a hunt channel in the guild
+    existing_channel = discord.utils.get(guild.text_channels, name=channel_name)
+
+    if existing_channel:
+        return existing_channel
+
+    # Create new private hunt channel
+    overwrites = {
+        guild.default_role: discord.PermissionOverwrite(read_messages=False),
+        ctx.author: discord.PermissionOverwrite(read_messages=True)
+    }
+    new_channel = await guild.create_text_channel(channel_name, overwrites=overwrites)
+    return new_channel
+
+async def run_hunt(ctx):
+    if ctx.author.id in active_hunts:
+        await ctx.send("⚠️ You are already on a hunt!")
+        return
+
+    # Mark user as active hunting
+    active_hunts.add(ctx.author.id)
+
+    try:
+        # Get existing or new channel
+        channel = await get_or_create_hunt_channel(ctx)
+
+        await channel.send(f"{ctx.author.mention}, your hunt has started!")
+        await asyncio.sleep(2)
+
+        # Simulate combat or hunting process here...
+        await channel.send("Fighting monsters...")
+
+        # Simulate outcome
+        import random
+        if random.choice([True, False]):
+            gold = random.randint(100, 300)
+            xp = random.randint(50, 150)
+            await channel.send(f"🎉 You won! Gained {gold} Gold and {xp} XP.")
+        else:
+            await channel.send("💀 You lost the hunt.")
+
+    finally:
+        # Mark hunt as done
+        active_hunts.remove(ctx.author.id)
+
+
+bot = commands.Bot(command_prefix=".")
+
+@bot.command()
+async def hunt(ctx):
+    await run_hunt(ctx)
+Explanation:
+get_or_create_hunt_channel() checks for a channel named after the user.
+
+If found, it returns that channel instead of creating a new one.
+
+We use a global active_hunts set to track if the user is in combat to prevent multiple simultaneous hunts.
+
+The private channel remains persistent until you decide to delete it manually.
+
+Optional:
+If you want to delete the private channel after the hunt, add:
+
+python
+Copy
+Edit
+await asyncio.sleep(10)  # wait before deletion so user can read results
+await channel.delete()
+But deleting and recreating channels each time usually causes issues. Keeping one channel per user is cleaner.

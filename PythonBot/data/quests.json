@@ -1,105 +1,201 @@
 {
-    "daily": [
-        {
-            "type": "hunt",
-            "description": "Hunt monsters in gates",
-            "min_target": 5,
-            "max_target": 10,
-            "base_gold": 100,
-            "base_exp": 50
-        },
-        {
-            "type": "pvp",
-            "description": "Participate in PvP duels",
-            "min_target": 2,
-            "max_target": 5,
-            "base_gold": 150,
-            "base_exp": 75
-        },
-        {
-            "type": "gate",
-            "description": "Enter dimensional gates",
-            "min_target": 3,
-            "max_target": 6,
-            "base_gold": 200,
-            "base_exp": 100
-        },
-        {
-            "type": "dungeon",
-            "description": "Complete dungeon floors",
-            "min_target": 2,
-            "max_target": 4,
-            "base_gold": 250,
-            "base_exp": 125
-        },
-        {
-            "type": "party",
-            "description": "Complete party battles",
-            "min_target": 3,
-            "max_target": 5,
-            "base_gold": 175,
-            "base_exp": 85
-        },
-        {
-            "type": "boss",
-            "description": "Defeat dungeon bosses",
-            "min_target": 1,
-            "max_target": 3,
-            "base_gold": 300,
-            "base_exp": 150
-        }
-    ],
-    "weekly": [
-        {
-            "type": "redgate",
-            "description": "Clear red gates",
-            "min_target": 1,
-            "max_target": 3,
-            "base_gold": 500,
-            "base_exp": 250
-        },
-        {
-            "type": "guildraid",
-            "description": "Participate in guild raids",
-            "min_target": 2,
-            "max_target": 4,
-            "base_gold": 400,
-            "base_exp": 200
-        },
-        {
-            "type": "pvp_wins",
-            "description": "Win PvP duels",
-            "min_target": 5,
-            "max_target": 10,
-            "base_gold": 450,
-            "base_exp": 225
-        }
-    ],
-    "achievement": [
-        {
-            "type": "rank_up",
-            "description": "Reach next hunter rank",
-            "rewards": {
-                "gold": 1000,
-                "exp": 500
-            }
-        },
-        {
-            "type": "shadow_extract",
-            "description": "Extract your first shadow",
-            "rewards": {
-                "gold": 2000,
-                "exp": 1000
-            }
-        },
-        {
-            "type": "guild_leader",
-            "description": "Become a guild leader",
-            "rewards": {
-                "gold": 1500,
-                "exp": 750
-            }
-        }
-    ]
-}
+  "daily_templates": [
+    {
+      "id": "monster_hunt",
+      "name": "Monster Hunter",
+      "description": "Defeat {target} monsters",
+      "type": "kill_monsters",
+      "target_range": [10, 20],
+      "reward_gold_range": [200, 400],
+      "reward_exp_range": [100, 200]
+    },
+    {
+      "id": "gate_clear",
+      "name": "Gate Clearer",
+      "description": "Clear {target} gates",
+      "type": "clear_gates",
+      "target_range": [1, 3],
+      "reward_gold_range": [300, 600],
+      "reward_exp_range": [150, 300]
+    },
+    {
+      "id": "shadow_training",
+      "name": "Shadow Master",
+      "description": "Train your shadows {target} times",
+      "type": "train_shadows",
+      "target_range": [3, 8],
+      "reward_gold_range": [150, 300],
+      "reward_exp_range": [75, 150]
+    },
+    {
+      "id": "dungeon_explorer",
+      "name": "Dungeon Explorer",
+      "description": "Complete {target} dungeon floors",
+      "type": "complete_floors",
+      "target_range": [2, 4],
+      "reward_gold_range": [400, 800],
+      "reward_exp_range": [200, 400]
+    },
+    {
+      "id": "equipment_master",
+      "name": "Equipment Master",
+      "description": "Equip {target} different items",
+      "type": "equip_items",
+      "target_range": [2, 5],
+      "reward_gold_range": [100, 200],
+      "reward_exp_range": [50, 100]
+    },
+    {
+      "id": "gold_collector",
+      "name": "Gold Collector",
+      "description": "Earn {target} gold",
+      "type": "earn_gold",
+      "target_range": [500, 1500],
+      "reward_gold_range": [250, 500],
+      "reward_exp_range": [125, 250]
+    },
 
+    {
+      "id": "shop_customer",
+      "name": "Shop Customer",
+      "description": "Purchase {target} items from shop",
+      "type": "buy_items",
+      "target_range": [2, 5],
+      "reward_gold_range": [150, 300],
+      "reward_exp_range": [75, 150]
+    }
+  ],
+  "weekly_templates": [
+    {
+      "id": "weekly_slayer",
+      "name": "Weekly Monster Slayer",
+      "description": "Defeat {target} monsters this week",
+      "type": "kill_monsters",
+      "target_range": [50, 100],
+      "reward_gold_range": [2000, 4000],
+      "reward_exp_range": [1000, 2000],
+      "special_reward": "Enhancement Stone"
+    },
+    {
+      "id": "weekly_explorer",
+      "name": "Weekly Gate Explorer",
+      "description": "Clear {target} gates this week",
+      "type": "clear_gates",
+      "target_range": [8, 15],
+      "reward_gold_range": [3000, 5000],
+      "reward_exp_range": [1500, 2500],
+      "special_reward": "Epic Equipment Box"
+    },
+    {
+      "id": "weekly_dungeon_master",
+      "name": "Weekly Dungeon Master",
+      "description": "Complete {target} dungeon floors this week",
+      "type": "complete_floors",
+      "target_range": [25, 50],
+      "reward_gold_range": [4000, 7000],
+      "reward_exp_range": [2000, 3500],
+      "special_reward": "Master's Tome"
+    },
+    {
+      "id": "weekly_merchant",
+      "name": "Weekly Merchant",
+      "description": "Purchase {target} items this week",
+      "type": "buy_items",
+      "target_range": [15, 25],
+      "reward_gold_range": [1500, 3000],
+      "reward_exp_range": [800, 1500],
+      "special_reward": "Merchant's Token"
+    }
+  ],
+  "special_event_templates": [
+    {
+      "id": "red_gate_explorer",
+      "name": "Red Gate Explorer",
+      "description": "Successfully clear {target} red gates",
+      "type": "clear_red_gates",
+      "target_range": [1, 2],
+      "reward_gold_range": [5000, 10000],
+      "reward_exp_range": [2500, 5000],
+      "special_rewards": ["Monarch Fragment", "Legendary Item"]
+    },
+    {
+      "id": "monarch_challenger",
+      "name": "Monarch Challenger",
+      "description": "Challenge {target} National Level hunters",
+      "type": "challenge_monarchs",
+      "target_range": [1, 3],
+      "reward_gold_range": [10000, 20000],
+      "reward_exp_range": [5000, 10000],
+      "special_rewards": ["Monarch Title", "Shadow King Fragment"]
+    },
+    {
+      "id": "army_commander",
+      "name": "Army Commander",
+      "description": "Command an army of {target} shadows",
+      "type": "command_shadows",
+      "target_range": [20, 40],
+      "reward_gold_range": [3000, 6000],
+      "reward_exp_range": [1500, 3000],
+      "special_rewards": ["Elite Shadow", "General Shadow"]
+    }
+  ],
+  "quest_difficulty_scaling": {
+    "E_Rank": {
+      "multiplier": 1.0,
+      "max_daily": 3,
+      "max_weekly": 1
+    },
+    "D_Rank": {
+      "multiplier": 1.2,
+      "max_daily": 4,
+      "max_weekly": 2
+    },
+    "C_Rank": {
+      "multiplier": 1.5,
+      "max_daily": 5,
+      "max_weekly": 2
+    },
+    "B_Rank": {
+      "multiplier": 2.0,
+      "max_daily": 6,
+      "max_weekly": 3
+    },
+    "A_Rank": {
+      "multiplier": 2.5,
+      "max_daily": 7,
+      "max_weekly": 3
+    },
+    "S_Rank": {
+      "multiplier": 3.0,
+      "max_daily": 8,
+      "max_weekly": 4
+    },
+    "National_Level": {
+      "multiplier": 4.0,
+      "max_daily": 10,
+      "max_weekly": 5
+    }
+  },
+  "reset_times": {
+    "daily_reset_hour": 0,
+    "weekly_reset_day": 1,
+    "weekly_reset_hour": 0
+  },
+  "bonus_events": {
+    "double_exp_weekend": {
+      "description": "Double EXP rewards on weekends",
+      "days": [5, 6],
+      "multiplier": 2.0
+    },
+    "shadow_surge": {
+      "description": "Increased shadow extraction rates",
+      "duration_hours": 24,
+      "extraction_bonus": 0.5
+    },
+    "merchant_festival": {
+      "description": "Discounted shop prices",
+      "duration_hours": 12,
+      "discount": 0.3
+    }
+  }
+}

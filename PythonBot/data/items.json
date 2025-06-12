@@ -1,81 +1,1139 @@
 {
-    "consumables": {
-        "health_potion": {
-            "id": "health_potion",
-            "name": "Health Potion",
-            "type": "consumable",
-            "description": "Restores 50 HP",
-            "effects": {
-                "heal": 50
-            },
-            "use_message": "You restored 50 HP!",
-            "price": 100
-        },
-        "mana_potion": {
-            "id": "mana_potion",
-            "name": "Mana Potion",
-            "type": "consumable",
-            "description": "Restores 30 MP",
-            "effects": {
-                "mana": 30
-            },
-            "use_message": "You restored 30 MP!",
-            "price": 80
-        }
+  "weapons": {
+    "Rusty Dagger": {
+      "type": "weapon",
+      "strength": 3,
+      "value": 50,
+      "rarity": "Common",
+      "description": "A worn dagger that has seen better days"
     },
-    "weapons": {
-        "iron_sword": {
-            "id": "iron_sword",
-            "name": "Iron Sword",
-            "type": "weapon",
-            "description": "A basic iron sword",
-            "attack_bonus": 10,
-            "price": 200
-        },
-        "steel_sword": {
-            "id": "steel_sword",
-            "name": "Steel Sword",
-            "type": "weapon",
-            "description": "A sturdy steel sword",
-            "attack_bonus": 20,
-            "price": 500
-        }
+    "Training Sword": {
+      "type": "weapon",
+      "strength": 4,
+      "value": 75,
+      "rarity": "Common",
+      "description": "A blunted sword used for practice"
     },
-    "armor": {
-        "leather_armor": {
-            "id": "leather_armor",
-            "name": "Leather Armor",
-            "type": "armor",
-            "description": "Basic leather protection",
-            "defense_bonus": 5,
-            "price": 150
-        },
-        "iron_armor": {
-            "id": "iron_armor",
-            "name": "Iron Armor",
-            "type": "armor",
-            "description": "Sturdy iron protection",
-            "defense_bonus": 15,
-            "price": 400
-        }
+    "Iron Sword": {
+      "type": "weapon",
+      "strength": 5,
+      "value": 100,
+      "rarity": "Common",
+      "description": "A basic iron sword, reliable and sturdy"
     },
-    "accessories": {
-        "strength_ring": {
-            "id": "strength_ring",
-            "name": "Ring of Strength",
-            "type": "accessory",
-            "description": "Increases strength by 5",
-            "strength_bonus": 5,
-            "price": 300
-        },
-        "agility_ring": {
-            "id": "agility_ring",
-            "name": "Ring of Agility",
-            "type": "accessory",
-            "description": "Increases agility by 5",
-            "agility_bonus": 5,
-            "price": 300
-        }
+    "Hunter's Bow": {
+      "type": "weapon",
+      "strength": 6,
+      "agility": 2,
+      "value": 120,
+      "rarity": "Common",
+      "description": "A simple bow for hunting monsters"
+    },
+    "Battle Axe": {
+      "type": "weapon",
+      "strength": 8,
+      "value": 150,
+      "rarity": "Common",
+      "description": "A heavy axe that deals devastating blows"
+    },
+    "Steel Blade": {
+      "type": "weapon",
+      "strength": 12,
+      "value": 300,
+      "rarity": "Uncommon",
+      "description": "A well-crafted steel blade with a sharp edge"
+    },
+    "Enchanted Staff": {
+      "type": "weapon",
+      "strength": 8,
+      "intelligence": 10,
+      "value": 350,
+      "rarity": "Uncommon",
+      "description": "A magical staff that amplifies spellcasting"
+    },
+    "Silver Rapier": {
+      "type": "weapon",
+      "strength": 10,
+      "agility": 8,
+      "value": 400,
+      "rarity": "Uncommon",
+      "description": "A quick and precise thrusting sword"
+    },
+    "War Hammer": {
+      "type": "weapon",
+      "strength": 15,
+      "value": 450,
+      "rarity": "Uncommon",
+      "description": "A massive hammer that crushes enemies"
+    },
+    "Demon Slayer": {
+      "type": "weapon",
+      "strength": 25,
+      "value": 800,
+      "rarity": "Rare",
+      "description": "A blessed sword designed to hunt demons"
+    },
+    "Crystal Bow": {
+      "type": "weapon",
+      "strength": 20,
+      "agility": 15,
+      "value": 900,
+      "rarity": "Rare",
+      "description": "A bow crafted from magical crystals"
+    },
+    "Flame Sword": {
+      "type": "weapon",
+      "strength": 22,
+      "intelligence": 8,
+      "value": 950,
+      "rarity": "Rare",
+      "description": "A sword that burns with eternal flames"
+    },
+    "Ice Spear": {
+      "type": "weapon",
+      "strength": 18,
+      "agility": 12,
+      "value": 850,
+      "rarity": "Rare",
+      "description": "A spear that freezes enemies on contact"
+    },
+    "Dragon Fang": {
+      "type": "weapon",
+      "strength": 40,
+      "value": 2000,
+      "rarity": "Epic",
+      "description": "A sword forged from an ancient dragon's fang"
+    },
+    "Lightning Blade": {
+      "type": "weapon",
+      "strength": 35,
+      "agility": 20,
+      "value": 2200,
+      "rarity": "Epic",
+      "description": "A blade that crackles with electric energy"
+    },
+    "Soul Reaver": {
+      "type": "weapon",
+      "strength": 38,
+      "intelligence": 15,
+      "value": 2500,
+      "rarity": "Epic",
+      "description": "A cursed weapon that devours souls"
+    },
+    "Shadow Reaper": {
+      "type": "weapon",
+      "strength": 60,
+      "value": 5000,
+      "rarity": "Legendary",
+      "description": "A legendary blade that cuts through shadows and souls"
+    },
+    "Void Crusher": {
+      "type": "weapon",
+      "strength": 55,
+      "intelligence": 25,
+      "value": 4800,
+      "rarity": "Legendary",
+      "description": "A weapon that manipulates the void itself"
+    },
+    "Divine Excalibur": {
+      "type": "weapon",
+      "strength": 65,
+      "agility": 20,
+      "value": 5500,
+      "rarity": "Legendary",
+      "description": "The legendary sword of kings"
+    },
+    "Monarch's Edge": {
+      "type": "weapon",
+      "strength": 100,
+      "value": 15000,
+      "rarity": "Mythic",
+      "description": "The ultimate weapon wielded by the Shadow Monarch"
     }
-}
+  },
+  "armor": {
+    "Cloth Robe": {
+      "type": "armor",
+      "defense": 2,
+      "value": 40,
+      "rarity": "Common",
+      "description": "Simple cloth robes that provide minimal protection"
+    },
+    "Padded Vest": {
+      "type": "armor",
+      "defense": 3,
+      "value": 60,
+      "rarity": "Common",
+      "description": "Basic padded armor for new hunters"
+    },
+    "Leather Vest": {
+      "type": "armor",
+      "defense": 5,
+      "value": 80,
+      "rarity": "Common",
+      "description": "A basic leather vest for light protection"
+    },
+    "Hunter's Coat": {
+      "type": "armor",
+      "defense": 6,
+      "agility": 3,
+      "value": 120,
+      "rarity": "Common",
+      "description": "A flexible coat designed for mobility"
+    },
+    "Iron Breastplate": {
+      "type": "armor",
+      "defense": 8,
+      "value": 150,
+      "rarity": "Common",
+      "description": "Solid iron protection for the chest"
+    },
+    "Chain Mail": {
+      "type": "armor",
+      "defense": 10,
+      "value": 250,
+      "rarity": "Uncommon",
+      "description": "Interlocked metal rings that provide good defense"
+    },
+    "Mage Robes": {
+      "type": "armor",
+      "defense": 8,
+      "intelligence": 8,
+      "value": 300,
+      "rarity": "Uncommon",
+      "description": "Enchanted robes that enhance magical abilities"
+    },
+    "Scout's Armor": {
+      "type": "armor",
+      "defense": 12,
+      "agility": 6,
+      "value": 350,
+      "rarity": "Uncommon",
+      "description": "Lightweight armor for agile fighters"
+    },
+    "Steel Plate": {
+      "type": "armor",
+      "defense": 15,
+      "value": 400,
+      "rarity": "Uncommon",
+      "description": "Well-crafted steel armor"
+    },
+    "Knight's Plate": {
+      "type": "armor",
+      "defense": 20,
+      "value": 600,
+      "rarity": "Rare",
+      "description": "Heavy plate armor worn by knights"
+    },
+    "Mystic Vestments": {
+      "type": "armor",
+      "defense": 18,
+      "intelligence": 12,
+      "value": 750,
+      "rarity": "Rare",
+      "description": "Magical robes with protective enchantments"
+    },
+    "Assassin's Garb": {
+      "type": "armor",
+      "defense": 16,
+      "agility": 15,
+      "value": 700,
+      "rarity": "Rare",
+      "description": "Dark armor that enhances stealth and speed"
+    },
+    "Demon Hunter Armor": {
+      "type": "armor",
+      "defense": 22,
+      "strength": 8,
+      "value": 850,
+      "rarity": "Rare",
+      "description": "Specialized armor for hunting demons"
+    },
+    "Shadow Cloak": {
+      "type": "armor",
+      "defense": 35,
+      "value": 1500,
+      "rarity": "Epic",
+      "description": "A mystical cloak woven from shadows"
+    },
+    "Crystal Armor": {
+      "type": "armor",
+      "defense": 30,
+      "intelligence": 20,
+      "value": 1800,
+      "rarity": "Epic",
+      "description": "Armor forged from magical crystals"
+    },
+    "Berserker's Mail": {
+      "type": "armor",
+      "defense": 28,
+      "strength": 18,
+      "value": 1600,
+      "rarity": "Epic",
+      "description": "Heavy armor that amplifies physical power"
+    },
+    "Void Armor": {
+      "type": "armor",
+      "defense": 40,
+      "agility": 15,
+      "value": 2200,
+      "rarity": "Epic",
+      "description": "Armor that bends light and shadow"
+    },
+    "Dragon Scale Mail": {
+      "type": "armor",
+      "defense": 55,
+      "value": 4000,
+      "rarity": "Legendary",
+      "description": "Armor crafted from ancient dragon scales"
+    },
+    "Phoenix Feather Robe": {
+      "type": "armor",
+      "defense": 50,
+      "intelligence": 30,
+      "value": 4500,
+      "rarity": "Legendary",
+      "description": "Robes that grant fire immunity and magical power"
+    },
+    "Titan's Plate": {
+      "type": "armor",
+      "defense": 60,
+      "strength": 25,
+      "value": 5000,
+      "rarity": "Legendary",
+      "description": "Massive armor worn by ancient titans"
+    },
+    "Monarch's Regalia": {
+      "type": "armor",
+      "defense": 80,
+      "value": 12000,
+      "rarity": "Mythic",
+      "description": "The royal armor of the Shadow Monarch"
+    }
+  },
+  "accessories": {
+    "Hunter's Ring": {
+      "type": "accessory",
+      "agility": 5,
+      "value": 150,
+      "rarity": "Common",
+      "description": "A simple ring that enhances agility"
+    },
+    "Iron Band": {
+      "type": "accessory",
+      "strength": 4,
+      "value": 120,
+      "rarity": "Common",
+      "description": "A sturdy iron bracelet"
+    },
+    "Scholar's Pendant": {
+      "type": "accessory",
+      "intelligence": 6,
+      "value": 180,
+      "rarity": "Common",
+      "description": "A pendant that sharpens the mind"
+    },
+    "Swift Boots": {
+      "type": "accessory",
+      "agility": 8,
+      "value": 200,
+      "rarity": "Common",
+      "description": "Lightweight boots for quick movement"
+    },
+    "Mage's Amulet": {
+      "type": "accessory",
+      "intelligence": 10,
+      "value": 400,
+      "rarity": "Uncommon",
+      "description": "An amulet that boosts magical abilities"
+    },
+    "Warrior's Gauntlets": {
+      "type": "accessory",
+      "strength": 8,
+      "agility": 4,
+      "value": 350,
+      "rarity": "Uncommon",
+      "description": "Reinforced gloves for combat"
+    },
+    "Thief's Cloak Pin": {
+      "type": "accessory",
+      "agility": 12,
+      "intelligence": 3,
+      "value": 450,
+      "rarity": "Uncommon",
+      "description": "A pin that enhances stealth abilities"
+    },
+    "Mystic Orb": {
+      "type": "accessory",
+      "intelligence": 15,
+      "value": 500,
+      "rarity": "Uncommon",
+      "description": "A glowing orb filled with magical energy"
+    },
+    "Berserker's Band": {
+      "type": "accessory",
+      "strength": 15,
+      "value": 700,
+      "rarity": "Rare",
+      "description": "A band that increases physical power"
+    },
+    "Eagle Eye Circlet": {
+      "type": "accessory",
+      "agility": 18,
+      "intelligence": 8,
+      "value": 800,
+      "rarity": "Rare",
+      "description": "A headband that enhances perception"
+    },
+    "Demon Horn Necklace": {
+      "type": "accessory",
+      "strength": 12,
+      "intelligence": 12,
+      "value": 750,
+      "rarity": "Rare",
+      "description": "A necklace crafted from demon horns"
+    },
+    "Crystal Heart": {
+      "type": "accessory",
+      "intelligence": 20,
+      "agility": 5,
+      "value": 900,
+      "rarity": "Rare",
+      "description": "A crystallized heart that pulses with magic"
+    },
+    "Shadow Lord's Sigil": {
+      "type": "accessory",
+      "strength": 20,
+      "agility": 15,
+      "intelligence": 10,
+      "value": 2500,
+      "rarity": "Epic",
+      "description": "A powerful sigil that enhances all abilities"
+    },
+    "Phoenix Feather": {
+      "type": "accessory",
+      "intelligence": 25,
+      "agility": 12,
+      "value": 2200,
+      "rarity": "Epic",
+      "description": "A feather that grants fire resistance"
+    },
+    "Void Stone": {
+      "type": "accessory",
+      "strength": 18,
+      "intelligence": 18,
+      "value": 2800,
+      "rarity": "Epic",
+      "description": "A stone that manipulates space and time"
+    },
+    "Dragon's Eye": {
+      "type": "accessory",
+      "strength": 22,
+      "agility": 18,
+      "value": 3000,
+      "rarity": "Epic",
+      "description": "The crystallized eye of an ancient dragon"
+    },
+    "Crown of Kings": {
+      "type": "accessory",
+      "strength": 30,
+      "agility": 25,
+      "intelligence": 20,
+      "value": 8000,
+      "rarity": "Legendary",
+      "description": "A crown worn by legendary rulers"
+    },
+    "Soul Gem": {
+      "type": "accessory",
+      "strength": 25,
+      "intelligence": 30,
+      "value": 7500,
+      "rarity": "Legendary",
+      "description": "A gem that contains the essence of souls"
+    },
+    "Time Keeper's Watch": {
+      "type": "accessory",
+      "agility": 35,
+      "intelligence": 25,
+      "value": 8500,
+      "rarity": "Legendary",
+      "description": "A watch that grants control over time flow"
+    },
+    "Monarch's Seal": {
+      "type": "accessory",
+      "strength": 40,
+      "agility": 30,
+      "intelligence": 35,
+      "value": 15000,
+      "rarity": "Mythic",
+      "description": "The ultimate seal of the Shadow Monarch's power"
+    },
+    "Titan's Gauntlet": {
+      "type": "accessory",
+      "strength": 25,
+      "defense": 15,
+      "value": 3500,
+      "rarity": "Epic",
+      "description": "Gauntlets worn by ancient titans, granting immense strength"
+    },
+    "Lightning Rod": {
+      "type": "weapon",
+      "strength": 35,
+      "intelligence": 20,
+      "value": 3000,
+      "rarity": "Epic",
+      "description": "A staff that channels the power of lightning"
+    },
+    "Wyvern Scale": {
+      "type": "armor",
+      "defense": 30,
+      "agility": 10,
+      "value": 2800,
+      "rarity": "Epic",
+      "description": "Armor crafted from frost wyvern scales"
+    },
+    "Behemoth Horn": {
+      "type": "weapon",
+      "strength": 40,
+      "value": 3500,
+      "rarity": "Epic",
+      "description": "A massive horn carved into a devastating weapon"
+    },
+    "Phoenix Feather": {
+      "type": "accessory",
+      "intelligence": 25,
+      "agility": 12,
+      "value": 4000,
+      "rarity": "Epic",
+      "description": "A feather that grants fire resistance and magical power"
+    }
+  },
+  "shields": {
+    "Basic Shield": {
+      "type": "shield",
+      "defense": 5,
+      "value": 75,
+      "rarity": "Common",
+      "description": "A simple wooden shield for basic protection"
+    },
+    "Iron Shield": {
+      "type": "shield",
+      "defense": 8,
+      "value": 150,
+      "rarity": "Common",
+      "description": "A sturdy iron shield that deflects most attacks"
+    },
+    "Guardian Shield": {
+      "type": "shield",
+      "defense": 15,
+      "value": 400,
+      "rarity": "Rare",
+      "description": "A protective shield that enhances defensive capabilities"
+    },
+    "Knight's Shield": {
+      "type": "shield",
+      "defense": 20,
+      "value": 600,
+      "rarity": "Rare",
+      "description": "A heavy shield used by elite knights"
+    },
+    "Mystic Ward": {
+      "type": "shield",
+      "defense": 18,
+      "intelligence": 8,
+      "value": 750,
+      "rarity": "Rare",
+      "description": "A magical shield that provides both physical and magical protection"
+    },
+    "Dragon Scale Shield": {
+      "type": "shield",
+      "defense": 30,
+      "value": 1500,
+      "rarity": "Epic",
+      "description": "A shield crafted from ancient dragon scales"
+    },
+    "Void Barrier": {
+      "type": "shield",
+      "defense": 35,
+      "agility": 10,
+      "value": 2000,
+      "rarity": "Epic",
+      "description": "A shield that bends reality to deflect attacks"
+    },
+    "Aegis of the Ancients": {
+      "type": "shield",
+      "defense": 50,
+      "strength": 15,
+      "value": 5000,
+      "rarity": "Legendary",
+      "description": "A legendary shield that grants unparalleled protection"
+    }
+  },
+  "consumables": {
+    "Health Potion": {
+      "type": "consumable",
+      "effect": "heal",
+      "heal_amount": 50,
+      "value": 50,
+      "rarity": "Common",
+      "description": "Restores 50 HP when consumed"
+    },
+    "Mana Potion": {
+      "type": "consumable",
+      "effect": "mana",
+      "mana_amount": 30,
+      "value": 30,
+      "rarity": "Common",
+      "description": "Restores 30 MP when consumed"
+    },
+    "Stamina Drink": {
+      "type": "consumable",
+      "effect": "heal",
+      "heal_amount": 25,
+      "value": 25,
+      "rarity": "Common",
+      "description": "A light refreshment that restores energy"
+    },
+    "Revive Potion": {
+      "type": "consumable",
+      "effect": "revive",
+      "value": 500,
+      "rarity": "Rare",
+      "description": "Instantly removes death penalty timer and restores you to life"
+    },
+    "Hunter's Ration": {
+      "type": "consumable",
+      "effect": "heal",
+      "heal_amount": 75,
+      "value": 60,
+      "rarity": "Common",
+      "description": "Nutritious food that sustains hunters"
+    },
+    "Greater Health Potion": {
+      "type": "consumable",
+      "effect": "heal",
+      "heal_amount": 150,
+      "value": 200,
+      "rarity": "Uncommon",
+      "description": "Restores 150 HP when consumed"
+    },
+    "Greater Mana Potion": {
+      "type": "consumable",
+      "effect": "mana",
+      "mana_amount": 100,
+      "value": 150,
+      "rarity": "Uncommon",
+      "description": "Restores 100 MP when consumed"
+    },
+    "Energy Elixir": {
+      "type": "consumable",
+      "effect": "heal",
+      "heal_amount": 100,
+      "mana_amount": 50,
+      "value": 180,
+      "rarity": "Uncommon",
+      "description": "Restores both health and mana"
+    },
+    "Lucky Charm": {
+      "type": "consumable",
+      "effect": "luck_boost",
+      "luck_amount": 20,
+      "duration": 1800,
+      "value": 250,
+      "rarity": "Uncommon",
+      "description": "Increases luck for finding rare items (30 min)"
+    },
+    "Experience Boost": {
+      "type": "consumable",
+      "effect": "exp_boost",
+      "exp_amount": 200,
+      "value": 300,
+      "rarity": "Rare",
+      "description": "Grants 200 bonus experience points"
+    },
+    "Superior Health Potion": {
+      "type": "consumable",
+      "effect": "heal",
+      "heal_amount": 300,
+      "value": 400,
+      "rarity": "Rare",
+      "description": "Restores 300 HP when consumed"
+    },
+    "Superior Mana Potion": {
+      "type": "consumable",
+      "effect": "mana",
+      "mana_amount": 200,
+      "value": 350,
+      "rarity": "Rare",
+      "description": "Restores 200 MP when consumed"
+    },
+    "Battle Stim": {
+      "type": "consumable",
+      "effect": "combat_boost",
+      "damage_boost": 25,
+      "duration": 900,
+      "value": 450,
+      "rarity": "Rare",
+      "description": "Increases damage dealt by 25% for 15 minutes"
+    },
 
+    "Elixir of Power": {
+      "type": "consumable",
+      "effect": "stat_boost",
+      "boost_type": "strength",
+      "boost_amount": 10,
+      "duration": 3600,
+      "value": 500,
+      "rarity": "Epic",
+      "description": "Temporarily increases strength by 10 for 1 hour"
+    },
+    "Elixir of Swiftness": {
+      "type": "consumable",
+      "effect": "stat_boost",
+      "boost_type": "agility",
+      "boost_amount": 10,
+      "duration": 3600,
+      "value": 500,
+      "rarity": "Epic",
+      "description": "Temporarily increases agility by 10 for 1 hour"
+    },
+    "Elixir of Wisdom": {
+      "type": "consumable",
+      "effect": "stat_boost",
+      "boost_type": "intelligence",
+      "boost_amount": 10,
+      "duration": 3600,
+      "value": 500,
+      "rarity": "Epic",
+      "description": "Temporarily increases intelligence by 10 for 1 hour"
+    },
+    "Phoenix Tear": {
+      "type": "consumable",
+      "effect": "full_heal",
+      "heal_amount": 999,
+      "value": 800,
+      "rarity": "Epic",
+      "description": "Fully restores health and cures all ailments"
+    },
+    "Dragon's Breath": {
+      "type": "consumable",
+      "effect": "mega_boost",
+      "strength_boost": 15,
+      "agility_boost": 15,
+      "intelligence_boost": 15,
+      "duration": 1800,
+      "value": 1200,
+      "rarity": "Epic",
+      "description": "Temporarily increases all stats by 15 for 30 minutes"
+    },
+    "Legendary Elixir": {
+      "type": "consumable",
+      "effect": "ultimate_boost",
+      "exp_amount": 1000,
+      "gold_amount": 500,
+      "value": 2000,
+      "rarity": "Legendary",
+      "description": "Grants massive experience and gold bonus"
+    },
+    "Immortal's Nectar": {
+      "type": "consumable",
+      "effect": "immortal_boost",
+      "heal_amount": 999,
+      "mana_amount": 999,
+      "all_stats_boost": 25,
+      "duration": 3600,
+      "value": 5000,
+      "rarity": "Legendary",
+      "description": "The ultimate consumable - full restoration and massive stat boost for 1 hour"
+    },
+    "Monarch's Blessing": {
+      "type": "consumable",
+      "effect": "monarch_power",
+      "level_boost": 1,
+      "permanent_stats": 5,
+      "value": 10000,
+      "rarity": "Mythic",
+      "description": "Permanently increases level and all stats - can only be used once"
+    }
+  },
+  "crafting_materials": {
+    "Iron Ore": {
+      "type": "material",
+      "value": 20,
+      "rarity": "Common",
+      "description": "Raw iron ore used for crafting basic weapons"
+    },
+    "Copper Wire": {
+      "type": "material",
+      "value": 15,
+      "rarity": "Common",
+      "description": "Basic wire for simple crafting projects"
+    },
+    "Wood Planks": {
+      "type": "material",
+      "value": 10,
+      "rarity": "Common",
+      "description": "Sturdy wood for crafting weapon handles"
+    },
+    "Leather Strips": {
+      "type": "material",
+      "value": 25,
+      "rarity": "Common",
+      "description": "Flexible leather for armor padding"
+    },
+    "Monster Bones": {
+      "type": "material",
+      "value": 30,
+      "rarity": "Common",
+      "description": "Bones from defeated monsters, useful for crafting"
+    },
+    "Steel Ingot": {
+      "type": "material",
+      "value": 80,
+      "rarity": "Uncommon",
+      "description": "Refined steel used for better equipment"
+    },
+    "Silver Thread": {
+      "type": "material",
+      "value": 60,
+      "rarity": "Uncommon",
+      "description": "Magical thread for enchanted items"
+    },
+    "Crystal Shard": {
+      "type": "material",
+      "value": 100,
+      "rarity": "Uncommon",
+      "description": "Magical crystal fragments with stored energy"
+    },
+    "Goblin Teeth": {
+      "type": "material",
+      "value": 45,
+      "rarity": "Uncommon",
+      "description": "Sharp teeth used for crafting daggers"
+    },
+    "Magic Dust": {
+      "type": "material",
+      "value": 90,
+      "rarity": "Uncommon",
+      "description": "Sparkling dust that enhances magical properties"
+    },
+    "Demon Horn": {
+      "type": "material",
+      "value": 300,
+      "rarity": "Rare",
+      "description": "A horn from a defeated demon, useful for magical items"
+    },
+    "Phoenix Feather": {
+      "type": "material",
+      "value": 250,
+      "rarity": "Rare",
+      "description": "A feather that radiates warmth and magical energy"
+    },
+    "Void Crystal": {
+      "type": "material",
+      "value": 400,
+      "rarity": "Rare",
+      "description": "A crystal that absorbs light and magical energy"
+    },
+    "Elemental Core": {
+      "type": "material",
+      "value": 350,
+      "rarity": "Rare",
+      "description": "The core of an elemental creature"
+    },
+    "Ancient Rune": {
+      "type": "material",
+      "value": 500,
+      "rarity": "Rare",
+      "description": "A carved stone with ancient magical inscriptions"
+    },
+    "Dragon Scale": {
+      "type": "material",
+      "value": 1000,
+      "rarity": "Epic",
+      "description": "A scale from an ancient dragon, extremely valuable"
+    },
+    "Titan's Blood": {
+      "type": "material",
+      "value": 1200,
+      "rarity": "Epic",
+      "description": "Crystallized blood from a defeated titan"
+    },
+    "Soul Stone": {
+      "type": "material",
+      "value": 1500,
+      "rarity": "Epic",
+      "description": "A stone that contains trapped souls"
+    },
+    "Time Crystal": {
+      "type": "material",
+      "value": 1800,
+      "rarity": "Epic",
+      "description": "A crystal that distorts time around it"
+    },
+    "Shadow Essence": {
+      "type": "material",
+      "value": 2000,
+      "rarity": "Legendary",
+      "description": "Pure shadow energy, the rarest crafting material"
+    },
+    "Divine Metal": {
+      "type": "material",
+      "value": 2500,
+      "rarity": "Legendary",
+      "description": "Metal blessed by the gods themselves"
+    },
+    "World Tree Bark": {
+      "type": "material",
+      "value": 2200,
+      "rarity": "Legendary",
+      "description": "Bark from the legendary World Tree"
+    },
+    "Chaos Orb": {
+      "type": "material",
+      "value": 3000,
+      "rarity": "Legendary",
+      "description": "An orb that contains pure chaotic energy"
+    },
+    "Monarch Fragment": {
+      "type": "material",
+      "value": 5000,
+      "rarity": "Mythic",
+      "description": "A fragment of power from a fallen Monarch"
+    },
+    "Shadow Crown": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "The crown of the Shadow Monarch, radiating dark power",
+      "stats": {
+        "intelligence": 50,
+        "strength": 30,
+        "agility": 30
+      }
+    },
+    "Monarch's Blade": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "The legendary blade wielded by the Shadow Monarch",
+      "stats": {
+        "strength": 80,
+        "agility": 40
+      }
+    },
+    "Demon King's Crown": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "The crown of the Demon King, pulsing with hellfire",
+      "stats": {
+        "strength": 60,
+        "intelligence": 40,
+        "endurance": 30
+      }
+    },
+    "Hellfire Sword": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "A sword forged in the flames of hell itself",
+      "stats": {
+        "strength": 90,
+        "intelligence": 30
+      }
+    },
+    "Demon Core": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "The core essence of a demon king's power",
+      "stats": {
+        "intelligence": 70,
+        "strength": 20,
+        "agility": 20
+      }
+    },
+    "Ice Crown": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "The frozen crown of the Ice Monarch",
+      "stats": {
+        "intelligence": 55,
+        "agility": 45,
+        "endurance": 25
+      }
+    },
+    "Frozen Heart": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "A heart frozen in eternal ice, still beating with power",
+      "stats": {
+        "endurance": 60,
+        "intelligence": 40
+      }
+    },
+    "Winter's Edge": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "A blade that brings eternal winter to its enemies",
+      "stats": {
+        "agility": 70,
+        "strength": 50
+      }
+    },
+    "Dragon Crown": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "The majestic crown of the Dragon Emperor",
+      "stats": {
+        "strength": 70,
+        "intelligence": 50,
+        "endurance": 40
+      }
+    },
+    "Emperor's Scale": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "A divine scale from the Dragon Emperor's hide",
+      "stats": {
+        "endurance": 80,
+        "strength": 40
+      }
+    },
+    "Dragon Heart": {
+      "type": "artifact",
+      "value": 0,
+      "rarity": "Mythic",
+      "description": "The beating heart of the Dragon Emperor",
+      "stats": {
+        "strength": 60,
+        "intelligence": 60,
+        "agility": 30,
+        "endurance": 50
+      }
+    }
+  },
+  "special_items": {
+    "Red Gate Key": {
+      "type": "red_key",
+      "value": 0,
+      "rarity": "Rare",
+      "description": "A crimson key that grants access to dangerous red gates",
+      "usable": true
+    },
+    "Dungeon Key (Red)": {
+      "type": "special_key",
+      "value": 0,
+      "rarity": "Rare",
+      "description": "A crimson key that unlocks special red dungeons",
+      "usable": true
+    },
+    "Dungeon Key (Blue)": {
+      "type": "special_key",
+      "value": 0,
+      "rarity": "Epic",
+      "description": "An azure key that unlocks special blue dungeons",
+      "usable": true
+    },
+    "Dungeon Key (Gold)": {
+      "type": "special_key",
+      "value": 0,
+      "rarity": "Legendary",
+      "description": "A golden key that unlocks legendary dungeons",
+      "usable": true
+    },
+    "Hunter License": {
+      "type": "permit",
+      "value": 10000,
+      "rarity": "Epic",
+      "description": "Official license allowing access to high-rank content"
+    },
+    "Guild Badge": {
+      "type": "permit",
+      "value": 5000,
+      "rarity": "Rare",
+      "description": "A badge showing membership in the Hunter's Guild"
+    },
+    "Dimensional Anchor": {
+      "type": "tool",
+      "value": 1500,
+      "rarity": "Epic",
+      "description": "A device that stabilizes dimensional rifts"
+    },
+    "Monster Scanner": {
+      "type": "tool",
+      "value": 800,
+      "rarity": "Uncommon",
+      "description": "A device that reveals monster weaknesses"
+    },
+    "Treasure Map": {
+      "type": "consumable",
+      "effect": "treasure_hunt",
+      "value": 600,
+      "rarity": "Rare",
+      "description": "A map leading to hidden treasure caches"
+    },
+    "Revival Stone": {
+      "type": "consumable",
+      "effect": "revive",
+      "value": 2000,
+      "rarity": "Epic",
+      "description": "A stone that prevents death once when used"
+    },
+    "EXP Multiplier": {
+      "type": "consumable",
+      "effect": "exp_multiplier",
+      "multiplier": 2,
+      "duration": 7200,
+      "value": 1500,
+      "rarity": "Epic",
+      "description": "Doubles experience gain for 2 hours"
+    },
+    "Rare Drop Enhancer": {
+      "type": "consumable",
+      "effect": "drop_boost",
+      "boost_amount": 50,
+      "duration": 3600,
+      "value": 1000,
+      "rarity": "Rare",
+      "description": "Increases rare item drop rate by 50% for 1 hour"
+    },
+    "Shadow Clone Scroll": {
+      "type": "consumable",
+      "effect": "shadow_clone",
+      "duration": 1800,
+      "value": 2500,
+      "rarity": "Epic",
+      "description": "Creates a shadow clone that fights alongside you for 30 minutes"
+    },
+    "Teleport Crystal": {
+      "type": "consumable",
+      "effect": "teleport",
+      "value": 300,
+      "rarity": "Uncommon",
+      "description": "Instantly teleports you to safety when in danger"
+    },
+    "Skill Reset Tome": {
+      "type": "consumable",
+      "effect": "skill_reset",
+      "value": 5000,
+      "rarity": "Legendary",
+      "description": "Allows you to reallocate all skill points"
+    },
+    "Monarch's Crown": {
+      "type": "artifact",
+      "strength": 50,
+      "agility": 40,
+      "intelligence": 45,
+      "value": 25000,
+      "rarity": "Mythic",
+      "description": "The crown of absolute power - grants authority over shadows"
+    }
+  }
+}

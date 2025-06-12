@@ -1,0 +1,119 @@
+Coding partner
+
+Show thinking
+You've hit a common Python asyncio error! The message [ERROR] Interactive combat error: 'coroutine' object is not subscriptable combined with the RuntimeWarning: coroutine 'award_exp' was never awaited directly tells us the problem.
+
+Understanding the Error:
+
+'coroutine' object is not subscriptable: This means you're trying to use square brackets [] on something that is an asynchronous function (a coroutine) before it has finished executing. Asynchronous functions, when called, return a coroutine object. To get the result of that function, you need to await it.
+RuntimeWarning: coroutine 'award_exp' was never awaited: This warning is the smoking gun! It tells us exactly which function is causing the problem. Your award_exp function (likely imported from utils.leveling_system) is an async function, but somewhere in your code, you're calling it without await.
+The Solution:
+
+The fix is straightforward: you need to await the award_exp function call.
+
+Let's find the problematic line and correct it.
+
+Located the Issue:
+
+Based on the RuntimeWarning at /home/runner/workspace/main.py:1323, the problem is likely within your combat handling logic where experience is awarded.
+
+Here's the relevant section of your code from main.py (around line 1323 for the RuntimeWarning, and line 1101 for the interactive_battles error, likely in the handle_combat_turn function):
+
+Python
+
+# ... (inside handle_combat_turn or similar combat loop function) ...
+
+        if view.player_action == "attack":
+            # Player attacks monster
+            # ... (attack calculation logic) ...
+            turn_info += f"💥 You attacked the {monster['name']} for {player_damage} damage!\n"
+            monster['current_hp'] -= player_damage
+
+            if monster['current_hp'] <= 0:
+                turn_info += f"🏆 You defeated the {monster['name']}!"
+                hunter['monsters_defeated'] = hunter.get('monsters_defeated', 0) + 1
+                
+                # Check for daily kill progress
+                if 'daily_kills' not in hunter:
+                    hunter['daily_kills'] = 0
+                hunter['daily_kills'] += 1
+
+                # Award EXP and Gold
+                exp_gained = monster['exp_reward']
+                gold_gained = monster['gold_reward']
+                
+                # --- THIS IS LIKELY THE PROBLEM AREA ---
+                # The line that needs `await` before award_exp
+                level_up_message = award_exp(self.bot, ctx, user_id, exp_gained) # <--- THIS LINE (or similar)
+                
+                # The error "'coroutine' object is not subscriptable" suggests interactive_battles is affected here too.
+                # This could be because award_exp returns a coroutine object instead of modifying the hunter in place
+                # or because subsequent code tries to access interactive_battles without it being fully updated.
+                
+                hunter['gold'] = hunter.get('gold', 0) + gold_gained
+                
+                turn_info += f"\nYou gained {exp_gained} EXP and {gold_gained} Gold."
+                if level_up_message:
+                    turn_info += f"\n{level_up_message}"
+
+                # ... (rest of the combat end logic) ...
+                
+            else:
+                # Monster attacks back if not defeated
+                # ... (monster attack logic) ...
+                turn_info += f"👹 {monster['name']} attacked you for {monster_damage} damage!\n"
+                hunter['hp'] -= monster_damage
+                
+        # ... (rest of the combat turn handling) ...
+
+Here's the corrected code snippet:
+
+Python
+
+# ... (inside handle_combat_turn or similar combat loop function) ...
+
+        if view.player_action == "attack":
+            # Player attacks monster
+            # ... (attack calculation logic) ...
+            turn_info += f"💥 You attacked the {monster['name']} for {player_damage} damage!\n"
+            monster['current_hp'] -= player_damage
+
+            if monster['current_hp'] <= 0:
+                turn_info += f"🏆 You defeated the {monster['name']}!"
+                hunter['monsters_defeated'] = hunter.get('monsters_defeated', 0) + 1
+                
+                # Check for daily kill progress
+                if 'daily_kills' not in hunter:
+                    hunter['daily_kills'] = 0
+                hunter['daily_kills'] += 1
+
+                # Award EXP and Gold
+                exp_gained = monster['exp_reward']
+                gold_gained = monster['gold_reward']
+                
+                # --- CORRECTED LINE ---
+                # Await the coroutine to get its result
+                level_up_message = await award_exp(self.bot, ctx, user_id, exp_gained) 
+                
+                hunter['gold'] = hunter.get('gold', 0) + gold_gained
+                
+                turn_info += f"\nYou gained {exp_gained} EXP and {gold_gained} Gold."
+                if level_up_message:
+                    turn_info += f"\n{level_up_message}"
+
+                # ... (rest of the combat end logic) ...
+                
+            else:
+                # Monster attacks back if not defeated
+                # ... (monster attack logic) ...
+                turn_info += f"👹 {monster['name']} attacked you for {monster_damage} damage!\n"
+                hunter['hp'] -= monster_damage
+                
+        # ... (rest of the combat turn handling) ...
+Reasoning for the fix:
+
+The award_exp function is defined as an async function (a coroutine) in your leveling_system.py. When you call an async function, it doesn't execute immediately; instead, it returns a coroutine object. To actually run the code inside the async function and get its return value, you must use the await keyword. Without await, you were trying to assign a coroutine object to level_up_message, which then caused issues if any subsequent code tried to treat it like a string or access it with [] (making it "not subscriptable").
+
+By adding await before award_exp(...), you ensure that the experience awarding logic completes and the level_up_message receives the actual string result (or None, if award_exp can return that).
+
+Make sure to apply this change to any other instances where award_exp is called without await in your combat or other relevant functions.
