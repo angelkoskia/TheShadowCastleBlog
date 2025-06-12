@@ -36,7 +36,7 @@
         "daily_kills": 0,
         "last_kill_reset": "2025-01-12",
         "base_defense": 165,
-        "private_adventure_channel_id": 1382605576978042952
+        "private_adventure_channel_id": 1382868958612553818
     },
     "958126753392500738": {
         "level": 1,
@@ -83,5 +83,53 @@
         "base_intelligence": 10,
         "base_defense": 5,
         "private_adventure_channel_id": 1382734046555017286
+    },
+    "353473195824775169": {
+        "level": 1,
+        "exp": 30,
+        "rank": "E Rank",
+        "hp": 100,
+        "max_hp": 100,
+        "mp": 50,
+        "max_mp": 50,
+        "mana": 100,
+        "max_mana": 100,
+        "strength": 10,
+        "agility": 10,
+        "intelligence": 10,
+        "defense": 5,
+        "inventory": [],
+        "shadows": [],
+        "equipment": {
+            "weapon": null,
+            "armor": null,
+            "accessory": null
+        },
+        "abilities": [
+            "power_strike",
+            "heal"
+        ],
+        "active_cooldowns": {},
+        "temp_buffs": {},
+        "gold": 120,
+        "quests": {
+            "daily": {},
+            "last_daily_reset": ""
+        },
+        "battle": null,
+        "last_defeated_monster": null,
+        "pvp_stats": {
+            "wins": 0,
+            "losses": 0,
+            "rank": "Unranked"
+        },
+        "private_adventure_channel_id": 1382857820592017439,
+        "daily_kills": {
+            "2025-06-13": 1
+        },
+        "base_strength": 10,
+        "base_agility": 10,
+        "base_intelligence": 10,
+        "base_defense": 5
     }
 }

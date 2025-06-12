@@ -30,9 +30,9 @@ intents.members = True
 intents.reactions = True  # Enable reaction intent for events
 
 # System message configuration
-SYSTEM_CHANNEL_ID = 1381439963656355849  # announcements channel for system messages
-COMBAT_CATEGORY_ID = 1382589016393650248  # Category for temporary combat channels
-PRIVATE_EVENT_CATEGORY_ID = 1382529024022155274  # New category for private event channels
+# SYSTEM_CHANNEL_ID = 1381439963656355849  # announcements channel for system messages
+COMBAT_CATEGORY_ID = 1382846867418775552  # Category for temporary combat channels
+# PRIVATE_EVENT_CATEGORY_ID = 1382846867418775552  # New category for private event channels
 
 # Global variables
 active_battles = {}
@@ -338,7 +338,7 @@ async def create_private_combat_channel(ctx):
     try:
         user = ctx.author
         guild = ctx.guild
-        COMBAT_CATEGORY_ID = 1382589016393650248
+        COMBAT_CATEGORY_ID = 1382846867418775552
         
         # Try to get category with fallback
         category = discord.utils.get(guild.categories, id=COMBAT_CATEGORY_ID)
@@ -433,7 +433,7 @@ async def create_combat_channel(user):
     user_key = str(user.id)
     
     # Define the combat category ID
-    COMBAT_CATEGORY_ID = 1382589016393650248
+    COMBAT_CATEGORY_ID = 1382846867418775552
     
     # Prevent race conditions with async lock
     if user_key in channel_creation_locks:
@@ -1609,7 +1609,6 @@ async def hunt(ctx):
             # Send welcome message in combat channel
             from utils.theme_utils import get_info_embed
             welcome_embed = get_info_embed(
-                ctx.author.id,
                 "🏟️ Welcome to Your Private Combat Arena!",
                 f"{ctx.author.mention} You venture into the dangerous territories in search of monsters to hunt..."
             )
@@ -1624,7 +1623,6 @@ async def hunt(ctx):
         # Using existing channel - send hunt start message
         from utils.theme_utils import get_info_embed
         hunt_embed = get_info_embed(
-            ctx.author.id,
             "🎯 New Hunt Started!",
             f"{ctx.author.mention} You venture deeper into the dangerous territories in search of new monsters to hunt..."
         )
@@ -2284,7 +2282,6 @@ async def my_adventure(ctx):
         if adventure_channel:
             from utils.theme_utils import get_info_embed
             embed = get_info_embed(
-                ctx.author.id,
                 "🌀 Your Personal Adventure",
                 f"Your adventure space: {adventure_channel.mention}\n\n"
                 f"All your battles and adventures take place in this private channel. "
@@ -2308,7 +2305,6 @@ async def my_adventure(ctx):
         if adventure_channel:
             from utils.theme_utils import get_info_embed
             embed = get_info_embed(
-                ctx.author.id,
                 "🌀 Personal Adventure Created!",
                 f"Your adventure space: {adventure_channel.mention}\n\n"
                 f"This private channel is your dimensional space where you can:\n\n"

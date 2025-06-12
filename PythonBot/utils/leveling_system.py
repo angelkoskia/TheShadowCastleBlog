@@ -1,3 +1,5 @@
+"""Leveling system and rank utilities for the Solo Leveling RPG bot."""
+
 import json
 import discord
 from typing import Dict, Tuple, Optional
@@ -15,14 +17,15 @@ RANK_ROLES = {
     range(101, 1000): "Monarch"
 }
 
-def get_rank_role_name(level):
-    """Get rank role name based on player level"""
+def get_rank_role_name(level: int) -> str:
+    """Return the rank role name based on player level."""
     for rank_range, role_name in RANK_ROLES.items():
         if level in rank_range:
             return role_name
     return "Monarch"  # Default for very high levels
 
 class LevelingSystem:
+    """Handles experience, leveling, and rank logic for players."""
     def __init__(self):
         # EXP requirements for each level range
         self.level_ranges = {
@@ -420,3 +423,4 @@ def create_progress_bar(current: int, maximum: int, length: int = 10) -> str:
     filled = int((current / maximum) * length)
     bar = "█" * filled + "░" * (length - filled)
     return f"[{bar}]"
+

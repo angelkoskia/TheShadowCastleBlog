@@ -602,6 +602,9 @@ class CombatView(discord.ui.View):
     """Interactive combat view with action buttons"""
     
     def __init__(self, bot, ctx, user_id, monster_data, combat_type="hunt"):
+        import logging
+        logging.basicConfig(level=logging.DEBUG)
+        logging.debug(f"[CombatView.__init__] Called with user_id={user_id}, monster_data={monster_data}, combat_type={combat_type}")
         super().__init__(timeout=120)  # 2-minute timeout for inactivity
         self.bot = bot
         self.ctx = ctx
@@ -669,32 +672,37 @@ class CombatView(discord.ui.View):
         self.stop()
 
     async def item_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.defer()
-        
-        # Load hunter data to check inventory
+        # Do not defer; respond immediately for error/info cases
         hunters_data = load_hunters_data_ui()
         hunter = hunters_data.get(self.user_id)
-        
         if not hunter or not hunter.get('inventory'):
-            await interaction.followup.send("You have no items to use!", ephemeral=True)
+            await interaction.response.send_message("You have no items currently", ephemeral=False)
             return
-            
-        # For now, auto-use the first health potion found
         inventory = hunter.get('inventory', [])
+        if not inventory:
+            await interaction.response.send_message("You have no items currently", ephemeral=False)
+            return
         health_items = [item for item in inventory if 'potion' in item.lower() and 'health' in item.lower()]
-        
         if health_items:
+            await interaction.response.defer()
             self.player_action = "use_item"
             self.item_used = health_items[0]
             self.player_turn_active = False
             self.stop()
         else:
-            await interaction.followup.send("You have no usable combat items!", ephemeral=True)
+            await interaction.response.send_message("You have no usable combat items!", ephemeral=False)
 
     def create_combat_embed(self, hunter, monster, turn_info=""):
-        """Create combat status embed"""
+        import logging
+        logging.debug(f"[CombatView.create_combat_embed] Called with hunter={hunter}, monster={monster}, turn_info={turn_info}")
         colors = get_user_theme_colors(self.user_id)
-        
+        logging.debug(f"[CombatView.create_combat_embed] colors={colors}")
+        if 'combat' not in colors:
+            logging.error(f"[CombatView.create_combat_embed] KeyError: 'combat' not in colors. colors={colors}")
+            combat_color = 0xFF0000
+        else:
+            combat_color = colors['combat']
+
         # Create health bars
         hunter_hp_bar = create_progress_bar(hunter['hp'], hunter.get('max_hp', 100))
         hunter_mp_bar = create_progress_bar(hunter['mp'], hunter.get('max_mp', 50))
@@ -707,12 +715,19 @@ class CombatView(discord.ui.View):
                        f"**Your Status**\n"
                        f"❤️ HP: {hunter_hp_bar} {hunter['hp']}/{hunter.get('max_hp', 100)}\n"
                        f"💠 MP: {hunter_mp_bar} {hunter['mp']}/{hunter.get('max_mp', 50)}",
-            color=discord.Color(colors['combat'])
+            color=discord.Color(combat_color)
         )
-        
+
+        # Show inventory status
+        inventory = hunter.get('inventory', {})
+        if not inventory:
+            embed.add_field(name="Inventory", value="*You have no items!*", inline=False)
+        else:
+            items_list = '\n'.join(f"• {item}" for item in inventory)
+            embed.add_field(name="Inventory", value=items_list, inline=False)
+
         if turn_info:
             embed.add_field(name="Combat Log", value=turn_info, inline=False)
-            
         embed.set_footer(text="Choose your action!")
         return embed
 
