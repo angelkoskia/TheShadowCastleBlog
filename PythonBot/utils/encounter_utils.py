@@ -69,7 +69,7 @@ def update_monster_kill_count(hunter: Dict[str, Any], monster_id: str) -> int:
 def apply_encounter_reward(hunter: Dict[str, Any], reward_data: Dict[str, Any]) -> str:
     """Apply encounter reward to hunter and return success message"""
     messages = []
-    
+
     # Gold reward
     if 'gold' in reward_data:
         gold_change = reward_data['gold']
@@ -83,7 +83,7 @@ def apply_encounter_reward(hunter: Dict[str, Any], reward_data: Dict[str, Any]) 
                 messages.append(f"Spent {abs(gold_change)} gold.")
             else:
                 return "You don't have enough gold for this!"
-    
+
     # EXP reward
     if 'exp' in reward_data:
         exp_gain = reward_data['exp']
