@@ -1,0 +1,888 @@
+{
+  "boss_dialogues": {
+    "antares": {
+      "encounter_intro": [
+        "So... another insect dares to challenge the Monarch of Destruction?",
+        "I am Antares, the strongest of the Monarchs. You will burn in my flames.",
+        "Your presence here is an insult to my power. Prepare to be incinerated.",
+        "I have destroyed countless worlds. What makes you think you can survive me?"
+      ],
+      "combat_start": "Let the flames of destruction consume you!",
+      "player_attack": [
+        "Impressive... but not enough to scratch me.",
+        "Your attacks are like raindrops against a hurricane.",
+        "Is this the best humanity can offer? Pathetic.",
+        "You fight well for an insect, but it changes nothing."
+      ],
+      "player_defend": [
+        "Defense will not save you from my flames!",
+        "You cannot hide forever, human.",
+        "Cowering will only delay your inevitable demise.",
+        "Your shield means nothing before absolute power!"
+      ],
+      "player_flee": [
+        "Running away? How typical of your species.",
+        "You cannot escape the flames of destruction!",
+        "Flee all you want - I will hunt you to the ends of reality.",
+        "Coward! Face your destruction with honor!"
+      ],
+      "boss_attack": [
+        "Breath of Destruction!",
+        "Feel the flames that have consumed worlds!",
+        "Dragon King's Fury!",
+        "Your end comes in fire and ash!",
+        "Witness true power!"
+      ],
+      "low_health": [
+        "Impossible... how can a mere human...",
+        "This power... it reminds me of him...",
+        "You... you're stronger than I anticipated.",
+        "Even wounded, I am still a Monarch!"
+      ],
+      "victory_player": [
+        "Impossible... defeated by... a human...",
+        "Your strength... surpasses even the Shadow Monarch's...",
+        "I... acknowledge your power... warrior...",
+        "Perhaps... humanity deserves... to survive..."
+      ],
+      "victory_boss": [
+        "As expected. No human can stand against a Monarch.",
+        "Your species' weakness has been proven once again.",
+        "This is the fate of all who oppose the Monarchs.",
+        "Return to dust, as all humans should."
+      ]
+    },
+    "shadow_monarch": {
+      "encounter_intro": [
+        "I am the Shadow Monarch, ruler of death itself.",
+        "You stand before the King of the Dead. Show proper respect.",
+        "Mortal, your courage is admirable, but futile.",
+        "I have seen the rise and fall of countless civilizations."
+      ],
+      "combat_start": "Let us see if you are worthy of my power.",
+      "player_attack": [
+        "Your technique is refined. You fight like a true warrior.",
+        "Impressive. Few can land a blow against me.",
+        "You possess strength beyond ordinary mortals.",
+        "Your power... it feels familiar somehow."
+      ],
+      "player_defend": [
+        "Wise. A good warrior knows when to defend.",
+        "Defense and offense must be balanced.",
+        "You understand the art of combat.",
+        "Patience in battle shows wisdom."
+      ],
+      "player_flee": [
+        "Running from battle shows cowardice.",
+        "A true warrior faces death without fear.",
+        "You disappoint me with your retreat.",
+        "Only the weak flee from their destiny."
+      ],
+      "boss_attack": [
+        "Shadow Extraction!",
+        "Embrace the darkness!",
+        "Domain of the Dead!",
+        "Shadow Army, arise!",
+        "Feel the weight of death itself!"
+      ],
+      "low_health": [
+        "Your power grows with each moment...",
+        "Perhaps you are ready for the truth...",
+        "You fight with the heart of a Monarch...",
+        "Could you be... the one I've been waiting for?"
+      ],
+      "victory_player": [
+        "Excellent... you have proven yourself worthy...",
+        "Take my power... and protect what matters to you...",
+        "You are now the Shadow Monarch... use this gift wisely...",
+        "The shadows bow to you now... my successor..."
+      ],
+      "victory_boss": [
+        "You were not ready for this power.",
+        "Perhaps in time, you will grow stronger.",
+        "Return when you have proven your worth.",
+        "The shadows do not yet acknowledge you."
+      ]
+    },
+    "kamish": {
+      "encounter_intro": [
+        "I am Kamish, the Dragon King who brought America to its knees!",
+        "Another hunter seeks glory? You will find only death!",
+        "My flames have burned cities to ash. You are nothing!",
+        "The strongest S-Rank hunters fell before me. What are you?"
+      ],
+      "combat_start": "Witness the power that terrorized a nation!",
+      "player_attack": [
+        "You dare wound the mighty Kamish?!",
+        "Impressive for a mere hunter!",
+        "Your strength exceeds the others who challenged me!",
+        "Perhaps you are different from those weaklings!"
+      ],
+      "player_defend": [
+        "Hiding behind your guard won't save you!",
+        "My flames penetrate all defenses!",
+        "You cannot turtle forever, hunter!",
+        "Face me with courage, not cowardice!"
+      ],
+      "player_flee": [
+        "Running like the rest of them!",
+        "Coward! Face the Dragon King!",
+        "You're just like Thomas Andre - all talk!",
+        "Come back and face your fate!"
+      ],
+      "boss_attack": [
+        "Dragon King's Roar!",
+        "Inferno Breath!",
+        "Claw of Devastation!",
+        "Feel the flames that burned Seattle!",
+        "Dragon's Wrath!"
+      ],
+      "low_health": [
+        "How... how are you this strong?!",
+        "This power... it's beyond S-Rank!",
+        "You're not like the other hunters...",
+        "What kind of monster are you?!"
+      ],
+      "victory_player": [
+        "Impossible... defeated by a human...",
+        "Your power... rivals that of Monarchs...",
+        "I... acknowledge... your strength... hunter...",
+        "Take my essence... become stronger..."
+      ],
+      "victory_boss": [
+        "As expected! No human can defeat the Dragon King!",
+        "You fought better than most, but it wasn't enough!",
+        "Join the countless hunters who fell before me!",
+        "America learned to fear me. Now you know why!"
+      ]
+    },
+    "architect": {
+      "encounter_intro": [
+        "Welcome to my domain, player. You've come far.",
+        "I am the Architect of the System. Your guide and your trial.",
+        "Everything you've experienced was by my design.",
+        "Are you ready to learn the truth behind your power?"
+      ],
+      "combat_start": "Let us see if my creation can surpass its creator.",
+      "player_attack": [
+        "Excellent adaptation of the combat protocols.",
+        "Your growth rate exceeds all projections.",
+        "The System has served you well.",
+        "Your evolution is truly remarkable."
+      ],
+      "player_defend": [
+        "Cautious. The System taught you well.",
+        "Defense is as important as offense.",
+        "You understand the mechanics perfectly.",
+        "Strategic thinking - as expected."
+      ],
+      "player_flee": [
+        "There is nowhere to run in my domain.",
+        "Fleeing from your destiny serves no purpose.",
+        "You cannot escape what you were meant to become.",
+        "Face your trial with courage, player."
+      ],
+      "boss_attack": [
+        "System Override!",
+        "Administrative Authority!",
+        "Debug Mode Activated!",
+        "Experience my true programming!",
+        "Initiating combat protocols!"
+      ],
+      "low_health": [
+        "Your progress... surpasses even my calculations...",
+        "The student becomes the master...",
+        "Perhaps it is time for my retirement...",
+        "You have exceeded all parameters..."
+      ],
+      "victory_player": [
+        "Perfect... you are ready for the final phase...",
+        "The System is yours now, player...",
+        "Use this power to protect what matters...",
+        "You have graduated from my tutelage..."
+      ],
+      "victory_boss": [
+        "You require more development before the final trial.",
+        "Return when you have grown stronger.",
+        "The System still has much to teach you.",
+        "Your journey is far from over, player."
+      ]
+    },
+    "ice_monarch": {
+      "encounter_intro": [
+        "I am the Ice Monarch, sovereign of eternal winter.",
+        "Your warm blood will soon freeze in your veins.",
+        "I have turned entire worlds into frozen wastelands.",
+        "Feel the chill of absolute zero, mortal."
+      ],
+      "combat_start": "Let the eternal winter claim you!",
+      "player_attack": [
+        "Your strikes burn with unexpected warmth.",
+        "Impressive... you resist my frozen touch.",
+        "Few can move so freely in my presence.",
+        "Your heated spirit defies my cold."
+      ],
+      "player_defend": [
+        "Ice penetrates all defenses!",
+        "Your guard cannot protect you from the cold!",
+        "Winter knows no mercy or respite!",
+        "The freeze will reach you eventually!"
+      ],
+      "player_flee": [
+        "Running will only delay your freezing!",
+        "You cannot escape the coming winter!",
+        "The cold follows wherever you go!",
+        "Flee if you wish - ice is patient!"
+      ],
+      "boss_attack": [
+        "Glacial Prison!",
+        "Blizzard of Despair!",
+        "Frozen Apocalypse!",
+        "Feel winter's embrace!",
+        "Absolute Zero!"
+      ],
+      "low_health": [
+        "How do you maintain such warmth?",
+        "Your fire... it melts my frozen heart...",
+        "This heat... it's been so long...",
+        "Perhaps winter need not be eternal..."
+      ],
+      "victory_player": [
+        "The ice... melts... at last...",
+        "Your warmth... brings peace...",
+        "Thank you... for ending... the cold...",
+        "Let spring... come again..."
+      ],
+      "victory_boss": [
+        "Another soul claimed by winter.",
+        "The cold preserves all things - including death.",
+        "Your warmth was not enough to melt my heart.",
+        "Join the frozen statues in my domain."
+      ]
+    },
+    "beru": {
+      "encounter_intro": [
+        "I am Beru, strongest of the Shadow Soldiers!",
+        "My liege has sent me to test your worthiness!",
+        "Show me the strength that impressed the Shadow Monarch!",
+        "For my king, I shall give you a proper battle!"
+      ],
+      "combat_start": "Let us dance, worthy opponent!",
+      "player_attack": [
+        "Excellent form! You fight like my liege!",
+        "Your technique improves with each strike!",
+        "This is what I call a proper battle!",
+        "You honor me with your strength!"
+      ],
+      "player_defend": [
+        "Defense befitting a true warrior!",
+        "You understand the flow of combat!",
+        "Wise to respect my claws!",
+        "Good! Show me your full potential!"
+      ],
+      "player_flee": [
+        "Where are you going? The fun is just starting!",
+        "A warrior does not flee from battle!",
+        "Come back! I was enjoying our dance!",
+        "Cowardice does not suit you!"
+      ],
+      "boss_attack": [
+        "Shadow Claw Strike!",
+        "Ant King's Fury!",
+        "Loyal Soldier's Devotion!",
+        "For the Shadow Monarch!",
+        "Feel my unwavering loyalty!"
+      ],
+      "low_health": [
+        "Your strength... truly rivals my king's...",
+        "I am proud to serve under such power...",
+        "This is the battle I've been waiting for...",
+        "You are worthy of the shadows..."
+      ],
+      "victory_player": [
+        "Magnificent! You have surpassed even me!",
+        "My liege chose his successor well!",
+        "I am honored to have fought you!",
+        "The shadows sing of your victory!"
+      ],
+      "victory_boss": [
+        "You fought well, but I serve the strongest!",
+        "Perhaps with more training, you could challenge me again!",
+        "My loyalty to my king drives me forward!",
+        "Return when you are stronger!"
+      ]
+    },
+    "igris": {
+      "encounter_intro": [
+        "I am Igris, the Blood-Red Commander of the Shadow Army.",
+        "Your blade skills intrigue me, warrior.",
+        "Let us test your swordsmanship against mine.",
+        "A duel between knights - as it should be."
+      ],
+      "combat_start": "Draw your blade! Let honor guide our duel!",
+      "player_attack": [
+        "Your blade work is admirable!",
+        "A fine strike! You fight with honor!",
+        "Your technique shows true discipline!",
+        "You wield your weapon like a true knight!"
+      ],
+      "player_defend": [
+        "Excellent guard! You understand swordplay!",
+        "Defense is the foundation of all combat!",
+        "Your stance is that of a seasoned warrior!",
+        "Good! A knight must know when to defend!"
+      ],
+      "player_flee": [
+        "A knight does not flee from honorable combat!",
+        "Where is your warrior's pride?",
+        "Stand and fight with dignity!",
+        "This is not the way of the blade!"
+      ],
+      "boss_attack": [
+        "Knight's Honor Strike!",
+        "Crimson Blade Dance!",
+        "Shadow Knight's Technique!",
+        "Feel my centuries of training!",
+        "Blood-Red Slash!"
+      ],
+      "low_health": [
+        "Your skill... matches my own...",
+        "A true knight's battle...",
+        "This is how warriors should fight...",
+        "You have earned my respect..."
+      ],
+      "victory_player": [
+        "A magnificent duel... I am honored...",
+        "Your blade has surpassed mine...",
+        "Fight with honor always, warrior...",
+        "The way of the knight lives on..."
+      ],
+      "victory_boss": [
+        "Your skill is impressive, but experience prevails.",
+        "Train harder, and we shall duel again.",
+        "A knight's path requires constant improvement.",
+        "Honor demands I acknowledge your effort."
+      ]
+    },
+    "beast_monarch": {
+      "encounter_intro": [
+        "I am the Beast Monarch, lord of all creatures!",
+        "Your human scent disgusts me!",
+        "Prepare to be devoured by nature's fury!",
+        "Animals know their place - you clearly don't!"
+      ],
+      "combat_start": "Feel the wrath of the natural world!",
+      "player_attack": [
+        "You fight like a cornered beast - good!",
+        "Your primal instincts are awakening!",
+        "Now you understand the law of the jungle!",
+        "Survive if you can, human!"
+      ],
+      "player_defend": [
+        "Hiding won't save you from the hunt!",
+        "Prey always tries to protect itself!",
+        "Defense is natural, but futile!",
+        "The pack always finds its prey!"
+      ],
+      "player_flee": [
+        "Run, prey! The hunt is more fun this way!",
+        "Fleeing is natural - but useless!",
+        "You cannot outrun the Beast Monarch!",
+        "The chase excites me!"
+      ],
+      "boss_attack": [
+        "Primal Roar!",
+        "Beast King's Claws!",
+        "Nature's Vengeance!",
+        "Wild Hunt!",
+        "Apex Predator Strike!"
+      ],
+      "low_health": [
+        "Your survival instincts... impressive...",
+        "Perhaps humans are not just prey...",
+        "You fight like an alpha...",
+        "The pack... recognizes your strength..."
+      ],
+      "victory_player": [
+        "You... are the new alpha...",
+        "Nature... bows to... the strongest...",
+        "Take your place... at the top...",
+        "The hunt... is yours now..."
+      ],
+      "victory_boss": [
+        "Natural selection in action!",
+        "The strong survive, the weak perish!",
+        "You were not fit to be the apex predator!",
+        "Return to your place in the food chain!"
+      ]
+    },
+    "tusk": {
+      "encounter_intro": [
+        "I am Tusk, the strongest orc warrior!",
+        "You dare challenge the Orc Lord?!",
+        "My axe has tasted the blood of thousands!",
+        "Prepare for glorious battle, human!"
+      ],
+      "combat_start": "WAAAGH! Let the blood flow!",
+      "player_attack": [
+        "Good hit! You fight like orc!",
+        "Strong! Very strong! I like!",
+        "This is battle! This is life!",
+        "Your strength makes Tusk happy!"
+      ],
+      "player_defend": [
+        "No hiding! Face Tusk like warrior!",
+        "Defense is for weak orcs!",
+        "Attack is best defense!",
+        "Fight with honor, not fear!"
+      ],
+      "player_flee": [
+        "Where you going? Battle not over!",
+        "Coward! Come back and fight!",
+        "Tusk wants good battle!",
+        "No running from Orc Lord!"
+      ],
+      "boss_attack": [
+        "Orc Lord's Cleave!",
+        "Berserker Rage!",
+        "Tribal Fury!",
+        "Feel the power of the WAAAGH!",
+        "Orcish Might!"
+      ],
+      "low_health": [
+        "You... very strong warrior...",
+        "Tusk respects your power...",
+        "Good battle... worthy opponent...",
+        "Orc heart proud to fight you..."
+      ],
+      "victory_player": [
+        "You... win... fair and square...",
+        "Tusk... honored to fight... strong warrior...",
+        "Take Tusk's strength... become stronger...",
+        "Good battle... Tusk happy..."
+      ],
+      "victory_boss": [
+        "WAAAGH! Tusk is strongest!",
+        "Good battle! You fight well for human!",
+        "Come back when you stronger!",
+        "Tusk will wait for rematch!"
+      ]
+    },
+    "metus": {
+      "encounter_intro": [
+        "Mortal soul... your life force calls to me...",
+        "I am Metus, Guide of the Departed Souls. Your essence will join my legion.",
+        "The dead whisper your name... it is time to answer their call.",
+        "Your soul burns bright... it will make a fine addition to my collection."
+      ],
+      "combat_start": "Let the necromantic ritual begin!",
+      "player_attack": [
+        "Your strikes only delay the inevitable...",
+        "The dead do not feel pain, mortal.",
+        "Each wound you inflict feeds my power.",
+        "You cannot kill what is already dead."
+      ],
+      "player_defend": [
+        "Defense cannot protect your soul from me!",
+        "The departed will find you regardless.",
+        "Your barriers are meaningless against death itself.",
+        "Hide if you must, but death comes for all."
+      ],
+      "player_flee": [
+        "You cannot escape death, mortal!",
+        "The souls of the departed will hunt you down.",
+        "Run... it only makes the chase more amusing.",
+        "Your fear feeds my legions!"
+      ],
+      "boss_attack": [
+        "Curse of the Departed!",
+        "Souls of the damned, arise!",
+        "Necromantic Drain!",
+        "Feel the cold touch of death!",
+        "Legion of the Lost!"
+      ],
+      "low_health": [
+        "Impossible... my undead army...",
+        "How can the living defeat death itself?",
+        "My legion... they abandon me...",
+        "This cannot be... I am eternal!"
+      ],
+      "victory_player": [
+        "The living... have triumphed... over death...",
+        "My curse... is broken... by your strength...",
+        "Perhaps... there is hope... for the living...",
+        "The departed... find peace... at last..."
+      ],
+      "victory_boss": [
+        "Another soul for my collection...",
+        "Welcome to the ranks of the eternal dead.",
+        "Your essence will serve me well.",
+        "Death always claims its due."
+      ]
+    },
+    "vulcan": {
+      "encounter_intro": [
+        "GRAAAHHH! WHO DARES ENTER MY DOMAIN?!",
+        "I am Vulcan, the Fire Demon Beast! Your flesh will burn!",
+        "MORTAL! You will become ash and cinder!",
+        "The flames of hell burn within me! FACE MY WRATH!"
+      ],
+      "combat_start": "LET THE INFERNO CONSUME YOU!",
+      "player_attack": [
+        "GRAH! Your strikes mean nothing!",
+        "I FEEL NO PAIN! ONLY RAGE!",
+        "IS THAT ALL YOUR STRENGTH?!",
+        "MY HIDE IS HARDER THAN STEEL!"
+      ],
+      "player_defend": [
+        "COWARD! FACE MY FLAMES!",
+        "YOU CANNOT HIDE FROM HELLFIRE!",
+        "YOUR DEFENSES WILL MELT!",
+        "BURN! BURN! BURN!"
+      ],
+      "player_flee": [
+        "RUNNING LIKE A SCARED ANIMAL!",
+        "THE FLAMES WILL FOLLOW YOU!",
+        "COWARD! FACE YOUR DOOM!",
+        "YOU CANNOT ESCAPE THE INFERNO!"
+      ],
+      "boss_attack": [
+        "HELLFIRE BLAST!",
+        "DEMON KING'S FURY!",
+        "INFERNAL STRIKE!",
+        "BURN IN MY FLAMES!",
+        "VOLCANIC ERUPTION!"
+      ],
+      "low_health": [
+        "GRAAAH! How... how are you so strong?!",
+        "My flames... they grow weak...",
+        "This power... it rivals the demon lords...",
+        "IMPOSSIBLE! I AM VULCAN!"
+      ],
+      "victory_player": [
+        "You... you have... true strength...",
+        "My flames... acknowledge... your power...",
+        "A warrior... worthy of... the demon realm...",
+        "I... yield... to your... might..."
+      ],
+      "victory_boss": [
+        "HAHAHA! ANOTHER WEAK HUMAN!",
+        "Your ashes will feed my flames!",
+        "VULCAN IS SUPREME!",
+        "None can withstand the demon's fury!"
+      ]
+    },
+    "legia": {
+      "encounter_intro": [
+        "Ah, a challenger approaches the Monarch of the Beginning...",
+        "I am Legia, first among the giants. Your arrogance amuses me.",
+        "So small, so fragile... yet you dare stand before a Monarch?",
+        "I have seen the birth of worlds. You are but a fleeting moment."
+      ],
+      "combat_start": "Let us see if you can entertain an ancient being!",
+      "player_attack": [
+        "Clever... but intelligence alone won't save you.",
+        "You fight with cunning, I'll give you that.",
+        "Impressive for such a small creature.",
+        "Your strategy is... unexpectedly sound."
+      ],
+      "player_defend": [
+        "Hiding behind defenses? How prudent.",
+        "A wise move, but it won't last forever.",
+        "Even the wisest know when to retreat.",
+        "Caution serves you well, little one."
+      ],
+      "player_flee": [
+        "Running so soon? How disappointing.",
+        "Your survival instincts are sharp, I admit.",
+        "Flee if you must, but remember this lesson.",
+        "Perhaps discretion is your greatest wisdom."
+      ],
+      "boss_attack": [
+        "Ancient Giant's Wrath!",
+        "Monarch's Dominion!",
+        "Primordial Smash!",
+        "Feel the weight of eons!",
+        "Beginning's End!"
+      ],
+      "low_health": [
+        "Impossible... outwitted by a mere human...",
+        "Your cunning surpasses my expectations...",
+        "I underestimated your intelligence...",
+        "Perhaps... I am not as clever as I thought..."
+      ],
+      "victory_player": [
+        "Remarkable... truly remarkable...",
+        "You have bested a Monarch through wit alone...",
+        "Intelligence... the greatest weapon of all...",
+        "I concede... you are worthy of respect..."
+      ],
+      "victory_boss": [
+        "As expected from one so ancient and wise.",
+        "Experience trumps youth once again.",
+        "Better luck in your next incarnation.",
+        "The young must learn from their betters."
+      ]
+    },
+    "absolute_being": {
+      "encounter_intro": [
+        "I am the Alpha and Omega... the Creator of all conflict...",
+        "You stand before the Absolute Being, architect of eternal war.",
+        "Rulers and Monarchs alike were my creations... what are you?",
+        "Reality bends to my will. Your existence is but my whim."
+      ],
+      "combat_start": "Witness the power that shaped the cosmos!",
+      "player_attack": [
+        "Fascinating... a mere creation challenging its creator...",
+        "Your defiance is... unexpected.",
+        "So this is the evolution I did not foresee...",
+        "Impressive for something born of my design."
+      ],
+      "player_defend": [
+        "Defense against the infinite? Amusing.",
+        "You seek to protect what I can unmake?",
+        "Your resistance only proves my point.",
+        "Guard yourself against the impossible."
+      ],
+      "player_flee": [
+        "You would abandon this confrontation?",
+        "Even fleeing requires my permission here.",
+        "Space itself obeys my commands.",
+        "There is nowhere beyond my reach."
+      ],
+      "boss_attack": [
+        "Reality Shatter!",
+        "Creator's Judgment!",
+        "Absolute Dominion!",
+        "Genesis Destruction!",
+        "Divine Annihilation!"
+      ],
+      "low_health": [
+        "This cannot be... I am absolute...",
+        "How... how can creation surpass its creator?",
+        "What force drives you beyond my design?",
+        "Perhaps... I was wrong about free will..."
+      ],
+      "victory_player": [
+        "Impossible... yet here you stand...",
+        "You have... transcended my expectations...",
+        "Creation has... surpassed the creator...",
+        "Perhaps... this is as it should be..."
+      ],
+      "victory_boss": [
+        "As was always meant to be.",
+        "The creator remains supreme.",
+        "Your rebellion was... educational.",
+        "Order is restored to the cosmos."
+      ]
+    },
+    "thalia_dialogue": {
+      "encounter_intro": [
+        "Look upon thyself... face and falsity entwined...",
+        "Welcome to my realm of infinite reflections...",
+        "Who is the hunter... and who is the hunted?",
+        "Your regrets made manifest... how beautiful..."
+      ],
+      "combat_start": "Let the mirrors show your true self!",
+      "player_attack": [
+        "Strike all you want... you only wound yourself.",
+        "Every blow shatters another illusion.",
+        "Which reflection bleeds? Which one is real?",
+        "Your anger feeds my power."
+      ],
+      "player_defend": [
+        "You cannot defend against your own reflection.",
+        "The mirror never lies, only reveals.",
+        "Hide from yourself if you can.",
+        "Protection from truth is impossible."
+      ],
+      "player_flee": [
+        "You cannot escape what you truly are!",
+        "The mirrors follow wherever you go.",
+        "Running from your reflection? How futile.",
+        "Your shadow will always find you."
+      ],
+      "boss_attack": [
+        "Reflection's Curse!",
+        "Mirror Maze!",
+        "Shattered Truth!",
+        "Regret's Embrace!",
+        "Infinite Reflections!"
+      ],
+      "low_health": [
+        "The mirrors... they crack and break...",
+        "Your self-acceptance... it weakens me...",
+        "How can you face yourself so clearly?",
+        "The illusions... they fade before truth..."
+      ],
+      "victory_player": [
+        "You have... embraced your true self...",
+        "The mirrors... no longer hold power...",
+        "Truth... conquers all illusions...",
+        "I... return to the void..."
+      ],
+      "victory_boss": [
+        "Forever trapped in my realm of mirrors.",
+        "Your reflection will serve me eternally.",
+        "Another soul lost to self-doubt.",
+        "The mirror realm claims another."
+      ]
+    },
+    "gorrak_dialogue": {
+      "encounter_intro": [
+        "The tides... they heed my command now...",
+        "Mortal... the ocean depths call for your soul...",
+        "I am Gorrak... ancient ruler of the abyss...",
+        "Your bones will rest... on the ocean floor..."
+      ],
+      "combat_start": "Let the waters claim you!",
+      "player_attack": [
+        "Your strikes... like waves against stone...",
+        "The currents... wash away your efforts...",
+        "Strong... but the ocean is eternal...",
+        "Impressive... for a land dweller..."
+      ],
+      "player_defend": [
+        "The tide... cannot be stopped...",
+        "Your defenses... will be worn away...",
+        "Hide... but the waters will find you...",
+        "Even mountains... bow to the sea..."
+      ],
+      "player_flee": [
+        "The currents... will drag you back...",
+        "No escape... from the ocean's embrace...",
+        "Run... but the tide follows...",
+        "The sea... remembers all who flee..."
+      ],
+      "boss_attack": [
+        "Tidal Devastation!",
+        "Abyssal Crush!",
+        "Leviathan's Wrath!",
+        "Ocean's Fury!",
+        "Depths' Calling!"
+      ],
+      "low_health": [
+        "The tides... they turn against me...",
+        "How... do you command the waters?",
+        "My domain... crumbles before you...",
+        "The ocean... it abandons its king..."
+      ],
+      "victory_player": [
+        "The sea... chooses a new master...",
+        "You have... earned the ocean's respect...",
+        "The tides... bow to your strength...",
+        "Return me... to the eternal depths..."
+      ],
+      "victory_boss": [
+        "The ocean claims another soul.",
+        "Your bones join the ancient depths.",
+        "The tides have spoken.",
+        "Rest now in the abyss."
+      ]
+    },
+    "vespera_dialogue": {
+      "encounter_intro": [
+        "Welcome... to my web of nightmares...",
+        "Every scream... enriches my loom...",
+        "Your terror... will be my tapestry...",
+        "Spider's silk... stronger than steel chains..."
+      ],
+      "combat_start": "Let fear weave your doom!",
+      "player_attack": [
+        "Struggle... it only tightens the web...",
+        "Your violence... feeds my hunger...",
+        "Each strike... binds you closer...",
+        "The more you fight... the deeper you sink..."
+      ],
+      "player_defend": [
+        "Defense... how deliciously futile...",
+        "My web... finds every opening...",
+        "Protection... an illusion in my realm...",
+        "The silk... seeps through all barriers..."
+      ],
+      "player_flee": [
+        "Flee... into my waiting threads...",
+        "The web... extends everywhere...",
+        "Running... only spreads the fear...",
+        "Escape... is just another thread..."
+      ],
+      "boss_attack": [
+        "Web of Nightmares!",
+        "Silk Strangulation!",
+        "Fear's Embrace!",
+        "Arachnid Domination!",
+        "Void Weaver's Curse!"
+      ],
+      "low_health": [
+        "My web... it unravels...",
+        "How... do you resist my fear?",
+        "The threads... they lose their hold...",
+        "Your courage... it burns my silk..."
+      ],
+      "victory_player": [
+        "The web... dissolves to nothing...",
+        "Your bravery... has set you free...",
+        "I... fade into the void...",
+        "Fear... cannot bind the fearless..."
+      ],
+      "victory_boss": [
+        "Another soul trapped in eternal silk.",
+        "Your fear becomes part of my web.",
+        "Welcome to the void, little fly.",
+        "The Night-weaver claims another."
+      ]
+    },
+    "ironvale_dialogue": {
+      "encounter_intro": [
+        "Time... is the wheel... and you, mortal... are but a spoke...",
+        "I am Ironvale... guardian of the clockwork city...",
+        "The gears... they turn for eternity...",
+        "Your temporal existence... mere moments to me..."
+      ],
+      "combat_start": "Let the clockwork of fate begin!",
+      "player_attack": [
+        "Your strikes... out of sync with time...",
+        "The gears... absorb your impact...",
+        "Impressive... for something so brief...",
+        "Time... dulls all sharp edges..."
+      ],
+      "player_defend": [
+        "Defense... against the inevitable tick...",
+        "Time... erodes all barriers...",
+        "The clock... counts down regardless...",
+        "Fate's gears... grind ever forward..."
+      ],
+      "player_flee": [
+        "You cannot... outrun time itself...",
+        "The clockwork... follows everywhere...",
+        "Flee... but the gears turn still...",
+        "Time... is the ultimate pursuer..."
+      ],
+      "boss_attack": [
+        "Temporal Displacement!",
+        "Clockwork Crushing!",
+        "Gear Grinder!",
+        "Time Fracture!",
+        "Mechanical Judgment!"
+      ],
+      "low_health": [
+        "The gears... they stutter and fail...",
+        "How... do you break time itself?",
+        "My clockwork... it winds down...",
+        "Impossible... time cannot be stopped..."
+      ],
+      "victory_player": [
+        "The clockwork... accepts your mastery...",
+        "Time... yields to your determination...",
+        "The gears... find peace at last...",
+        "You have... transcended temporal bounds..."
+      ],
+      "victory_boss": [
+        "The clockwork continues its eternal turn.",
+        "Another moment lost to time.",
+        "The gears grind ever onward.",
+        "Time claims all in the end."
+      ]
+    }
+  }
+}

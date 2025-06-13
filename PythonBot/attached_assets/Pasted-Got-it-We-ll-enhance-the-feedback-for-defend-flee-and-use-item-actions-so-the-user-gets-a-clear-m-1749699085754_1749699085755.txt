@@ -1,0 +1,381 @@
+Got it! We'll enhance the feedback for defend, flee, and use_item actions so the user gets a clear message about what happened during their turn.
+
+I've incorporated these messages directly into the turn_info string that's used to update the main combat embed for the ongoing turns. This keeps the turn-by-turn combat log consistent.
+
+Here's the updated handle_combat_turn function, incorporating the new messages for each action:
+
+Python
+
+import discord
+from discord.ext import commands
+import json
+import os
+from dotenv import load_dotenv
+import asyncio
+import time
+import random # Added for flee logic
+from datetime import datetime, timedelta
+from utils.leveling_system import award_exp, send_level_up_notification, leveling_system
+from utils.theme_utils import get_user_theme_colors, get_error_embed, get_info_embed
+from ui_elements import HelpView, StatusView, CombatView # Ensure CombatView is imported
+
+# ... (rest of your imports, global variables, load/save functions, and helper functions like get_monster_data, calculate_player_damage, calculate_monster_damage) ...
+
+# Ensure create_defeat_summary_embed is available (either defined above or imported)
+# If create_defeat_summary_embed is in theme_utils.py, uncomment this:
+# from utils.theme_utils import create_defeat_summary_embed
+
+def create_defeat_summary_embed(bot, user_id, hunter, monster_name, exp_gained, gold_gained, level_up_message=None):
+    colors = get_user_theme_colors(str(user_id))
+    user = bot.get_user(int(user_id))
+    username = user.display_name if user else "Unknown Hunter"
+
+    embed = discord.Embed(
+        title=f"🎉 {username} Defeated the {monster_name}!",
+        description=f"**Victory!** You have successfully defeated the {monster_name}.",
+        color=discord.Color(colors['success']) # Using a success color for victory
+    )
+
+    embed.add_field(name="💰 Gold Gained", value=f"{gold_gained:,} Gold", inline=True)
+    embed.add_field(name="🌟 EXP Gained", value=f"{exp_gained:,} EXP", inline=True)
+    
+    if level_up_message:
+        embed.add_field(name="⬆️ Level Up!", value=level_up_message, inline=False)
+    
+    embed.add_field(
+        name="📊 Current Stats (Post-Combat)",
+        value=f"Level: {hunter.get('level', 1)}\nHP: {hunter.get('hp', 0)}/{hunter.get('max_hp', 100)}\nGold: {hunter.get('gold', 0):,}",
+        inline=False
+    )
+
+    embed.set_footer(text="Your adventure continues!")
+    return embed
+
+
+async def handle_combat_turn(ctx, user_id, channel_id, view: CombatView):
+    hunters_data = load_hunters_data()
+    hunter = hunters_data.get(str(user_id))
+    
+    if not hunter or not interactive_battles.get(str(user_id)):
+        if view.message:
+            try:
+                for item in view.children:
+                    item.disabled = True
+                await view.message.edit(content="Combat session concluded or invalid.", view=view)
+            except discord.HTTPException:
+                pass
+        view.stop()
+        return
+
+    current_battle = interactive_battles[str(user_id)]
+    monster = current_battle['monster']
+    hunter['hp'] = current_battle['hunter']['hp']
+    hunter['mp'] = current_battle['hunter']['mp']
+
+    turn_info = "" # Initialize turn_info for this turn's log
+
+    # Player's action
+    if view.player_action == "attack":
+        player_damage = calculate_player_damage(hunter)
+        turn_info += f"💥 You attacked the {monster['name']} for {player_damage} damage!\n"
+        monster['current_hp'] -= player_damage
+
+        if monster['current_hp'] <= 0:
+            # Monster defeated!
+            hunter['monsters_defeated'] = hunter.get('monsters_defeated', 0) + 1
+            
+            if 'daily_kills' not in hunter:
+                hunter['daily_kills'] = 0
+            hunter['daily_kills'] += 1
+
+            exp_gained = monster['exp_reward']
+            gold_gained = monster['gold_reward']
+            
+            level_up_message = await award_exp(bot, ctx, user_id, exp_gained) 
+            
+            hunter['gold'] = hunter.get('gold', 0) + gold_gained
+            
+            current_battle['hunter'] = hunter
+            current_battle['monster'] = monster
+            save_hunters_data(hunters_data)
+
+            view.combat_ended = True
+            view.disable_all_buttons()
+            try:
+                await view.message.edit(content="Combat Concluded!", view=view)
+            except discord.HTTPException:
+                pass
+
+            defeat_embed = create_defeat_summary_embed(
+                bot, user_id, hunter, monster['name'], exp_gained, gold_gained, level_up_message
+            )
+            await ctx.send(embed=defeat_embed)
+
+            if str(user_id) in active_battles:
+                del active_battles[str(user_id)]
+            if str(user_id) in interactive_battles:
+                del interactive_battles[str(user_id)]
+
+            view.stop()
+            return
+
+        else:
+            # Monster attacks back if not defeated
+            monster_damage = calculate_monster_damage(monster, hunter)
+            turn_info += f"👹 {monster['name']} attacked you for {monster_damage} damage!\n"
+            hunter['hp'] -= monster_damage
+            
+            if hunter['hp'] <= 0:
+                turn_info += f"💀 You were defeated by the {monster['name']}!\n"
+                hunter['battles_lost'] = hunter.get('battles_lost', 0) + 1
+                hunter['hp'] = hunter.get('max_hp', hunter.get('max_hp', 100))
+
+                current_battle['hunter'] = hunter
+                current_battle['monster'] = monster
+                save_hunters_data(hunters_data)
+                
+                view.combat_ended = True
+                view.disable_all_buttons()
+                
+                defeat_embed = discord.Embed(
+                    title=f"☠️ {hunter.get('name', 'Hunter')} was Defeated!",
+                    description=f"You were knocked out by the {monster['name']}!",
+                    color=discord.Color(get_user_theme_colors(user_id)['error'])
+                )
+                defeat_embed.add_field(name="Consequences", value="You respawned at full HP.", inline=False)
+                defeat_embed.set_footer(text="Better luck next time!")
+                
+                try:
+                     await view.message.edit(content="Combat Concluded!", view=view)
+                except discord.HTTPException:
+                    pass
+
+                await ctx.send(embed=defeat_embed)
+
+                if str(user_id) in active_battles:
+                    del active_battles[str(user_id)]
+                if str(user_id) in interactive_battles:
+                    del interactive_battles[str(user_id)]
+
+                view.stop()
+                return
+
+    elif view.player_action == "defend":
+        turn_info += "🛡️ You raised your shield to defend!\n" # More descriptive message
+        # Implement defense logic (e.g., reduce incoming monster damage for this turn)
+        monster_damage = calculate_monster_damage(monster, hunter)
+        
+        # Assume a defense multiplier
+        defense_multiplier = 0.5 # 50% damage reduction
+        final_monster_damage = int(monster_damage * defense_multiplier)
+
+        turn_info += f"👹 The {monster['name']} attacked you for {final_monster_damage} damage (reduced by defense)!\n"
+        hunter['hp'] -= final_monster_damage
+
+        if hunter['hp'] <= 0:
+            turn_info += f"💀 You were defeated by the {monster['name']} while defending!\n"
+            hunter['battles_lost'] = hunter.get('battles_lost', 0) + 1
+            hunter['hp'] = hunter.get('max_hp', hunter.get('max_hp', 100))
+            save_hunters_data(hunters_data)
+
+            view.combat_ended = True
+            view.disable_all_buttons()
+            
+            defeat_embed = discord.Embed(
+                title=f"☠️ {hunter.get('name', 'Hunter')} was Defeated!",
+                description=f"You were knocked out by the {monster['name']}!",
+                color=discord.Color(get_user_theme_colors(user_id)['error'])
+            )
+            defeat_embed.add_field(name="Consequences", value="You respawned at full HP.", inline=False)
+            defeat_embed.set_footer(text="Better luck next time!")
+            
+            try:
+                await view.message.edit(content="Combat Concluded!", view=view)
+            except discord.HTTPException:
+                pass
+            await ctx.send(embed=defeat_embed)
+
+            if str(user_id) in active_battles:
+                del active_battles[str(user_id)]
+            if str(user_id) in interactive_battles:
+                del interactive_battles[str(user_id)]
+
+            view.stop()
+            return
+
+    elif view.player_action == "flee":
+        # Ensure 'random' is imported at the top of your main.py
+        if random.random() < 0.6: # Increased flee chance slightly for example
+            turn_info += "🏃 You successfully fled the battle and escaped to safety!\n" # More descriptive
+            
+            view.combat_ended = True
+            view.disable_all_buttons()
+            
+            if str(user_id) in active_battles:
+                del active_battles[str(user_id)]
+            if str(user_id) in interactive_battles:
+                del interactive_battles[str(user_id)]
+            save_hunters_data(hunters_data)
+
+            flee_embed = discord.Embed(
+                title="💨 Fled from Battle!",
+                description=f"You successfully escaped the {monster['name']}.",
+                color=discord.Color(get_user_theme_colors(user_id)['info'])
+            )
+            flee_embed.set_footer(text="Sometimes discretion is the better part of valor.")
+            
+            try:
+                await view.message.edit(content="Combat Concluded!", view=view)
+            except discord.HTTPException:
+                pass
+            await ctx.send(embed=flee_embed)
+            
+            view.stop()
+            return
+
+        else:
+            turn_info += "❌ You attempted to flee, but the monster blocked your path!\n" # More descriptive
+            monster_damage = calculate_monster_damage(monster, hunter)
+            turn_info += f"👹 The {monster['name']} attacked you for {monster_damage} damage!\n"
+            hunter['hp'] -= monster_damage
+            
+            if hunter['hp'] <= 0:
+                turn_info += f"💀 You were defeated by the {monster['name']}!\n"
+                hunter['battles_lost'] = hunter.get('battles_lost', 0) + 1
+                hunter['hp'] = hunter.get('max_hp', hunter.get('max_hp', 100))
+                save_hunters_data(hunters_data)
+
+                view.combat_ended = True
+                view.disable_all_buttons()
+                
+                defeat_embed = discord.Embed(
+                    title=f"☠️ {hunter.get('name', 'Hunter')} was Defeated!",
+                    description=f"You were knocked out by the {monster['name']}!",
+                    color=discord.Color(get_user_theme_colors(user_id)['error'])
+                )
+                defeat_embed.add_field(name="Consequences", value="You respawned at full HP.", inline=False)
+                defeat_embed.set_footer(text="Better luck next time!")
+                
+                try:
+                    await view.message.edit(content="Combat Concluded!", view=view)
+                except discord.HTTPException:
+                    pass
+                await ctx.send(embed=defeat_embed)
+
+                if str(user_id) in active_battles:
+                    del active_battles[str(user_id)]
+                if str(user_id) in interactive_battles:
+                    del interactive_battles[str(user_id)]
+                
+                view.stop()
+                return
+
+    elif view.player_action == "use_item":
+        item_name = view.item_used
+        # You'll need an actual item database to get item properties
+        item_properties = {
+            "health potion": {"type": "healing", "amount": 50},
+            "mana potion": {"type": "mana_restoration", "amount": 30}, # Example mana potion
+            # Add more items here with their effects
+        }
+        item_data = item_properties.get(item_name.lower())
+
+        if item_name and item_name.lower() in [item.lower() for item in hunter.get('inventory', [])] and item_data:
+            # Check if item is actually in inventory (case-insensitive check)
+            
+            if item_data["type"] == "healing":
+                heal_amount = item_data["amount"]
+                hunter['hp'] = min(hunter.get('max_hp', hunter.get('max_hp', 100)), hunter['hp'] + heal_amount)
+                
+                # Remove one instance of the item (case-insensitive removal if needed)
+                # For simplicity, if you store exact names, ensure exact match here.
+                # If inventory can have multiple same items, implement a count-based removal.
+                # For now, assuming direct list removal.
+                try:
+                    hunter['inventory'].remove(item_name) 
+                except ValueError: # Item not found, though checked before, good for robustness
+                    pass
+                
+                turn_info += f"✨ You used a **{item_name}** and recovered {heal_amount} HP!\n"
+            elif item_data["type"] == "mana_restoration":
+                mana_amount = item_data["amount"]
+                hunter['mp'] = min(hunter.get('max_mp', hunter.get('max_mp', 50)), hunter['mp'] + mana_amount)
+                
+                try:
+                    hunter['inventory'].remove(item_name)
+                except ValueError:
+                    pass
+
+                turn_info += f"💧 You used a **{item_name}** and recovered {mana_amount} MP!\n"
+
+            else:
+                turn_info += f"❓ You used **{item_name}**, but it had no immediate combat effect.\n"
+        else:
+            turn_info += "🚫 You don't have that item in your inventory, or it's not usable right now.\n" # More descriptive
+
+        # Monster still attacks after item use
+        monster_damage = calculate_monster_damage(monster, hunter)
+        turn_info += f"👹 The {monster['name']} attacked you for {monster_damage} damage!\n"
+        hunter['hp'] -= monster_damage
+
+        if hunter['hp'] <= 0:
+            turn_info += f"💀 You were defeated by the {monster['name']} after using an item!\n"
+            hunter['battles_lost'] = hunter.get('battles_lost', 0) + 1
+            hunter['hp'] = hunter.get('max_hp', hunter.get('max_hp', 100))
+            save_hunters_data(hunters_data)
+
+            view.combat_ended = True
+            view.disable_all_buttons()
+            
+            defeat_embed = discord.Embed(
+                title=f"☠️ {hunter.get('name', 'Hunter')} was Defeated!",
+                description=f"You were knocked out by the {monster['name']}!",
+                color=discord.Color(get_user_theme_colors(user_id)['error'])
+            )
+            defeat_embed.add_field(name="Consequences", value="You respawned at full HP.", inline=False)
+            defeat_embed.set_footer(text="Better luck next time!")
+            
+            try:
+                await view.message.edit(content="Combat Concluded!", view=view)
+            except discord.HTTPException:
+                pass
+            await ctx.send(embed=defeat_embed)
+
+            if str(user_id) in active_battles:
+                del active_battles[str(user_id)]
+            if str(user_id) in interactive_battles:
+                del interactive_battles[str(user_id)]
+
+            view.stop()
+            return
+    
+    # --- IMPORTANT: Update the interactive_battles dictionary for the next turn ---
+    interactive_battles[str(user_id)]['hunter']['hp'] = hunter['hp']
+    interactive_battles[str(user_id)]['hunter']['mp'] = hunter['mp'] # Ensure MP is updated
+    interactive_battles[str(user_id)]['monster']['current_hp'] = monster['current_hp']
+
+    save_hunters_data(hunters_data)
+
+    if not view.combat_ended:
+        updated_embed = view.create_combat_embed(hunter, monster, turn_info)
+        await view.message.edit(embed=updated_embed, view=view)
+        view.player_turn_active = True
+        await view.wait()
+
+Key Improvements for Each Action:
+
+defend:
+turn_info += "🛡️ You raised your shield to defend!\n": A clearer message indicating the player's action.
+turn_info += f"👹 The {monster['name']} attacked you for {int(final_monster_damage)} damage (reduced by defense)!\n": Explicitly states that damage was reduced due to defending.
+flee:
+turn_info += "🏃 You successfully fled the battle and escaped to safety!\n": More positive and descriptive for a successful flee.
+turn_info += "❌ You attempted to flee, but the monster blocked your path!\n": More descriptive for a failed flee.
+use_item:
+turn_info += f"✨ You used a **{item_name}** and recovered {heal_amount} HP!\n": Clear feedback on HP recovery.
+Added Mana Potion Example: Included a basic example for a "mana potion" to demonstrate how you'd extend this for other item types.
+turn_info += f"💧 You used a **{item_name}** and recovered {mana_amount} MP!\n": Message for mana recovery.
+turn_info += f"❓ You used **{item_name}**, but it had no immediate combat effect.\n": For items that don't have a combat effect.
+turn_info += "🚫 You don't have that item in your inventory, or it's not usable right now.\n": Improved message if the item isn't available or valid.
+Remember to ensure import random is at the very top of your main.py file if it's not already there, as it's used in the flee logic.
+
+These changes will provide more detailed and immediate feedback to the user on every action they take during combat, making the experience more engaging!

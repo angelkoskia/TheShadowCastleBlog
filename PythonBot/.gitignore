@@ -56,4 +56,6 @@ Thumbs.db
 !.yarn/versions
 .pnp.*
 
-./cogs/__pycache__
+__pycache__/
+*.py[cod]
+*$py.class

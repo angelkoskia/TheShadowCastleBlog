@@ -1,99 +1,101 @@
 {
-    "normal_gates": {
-        "E": {
-            "level_range": [1, 10],
-            "monsters": ["goblin", "wolf"],
-            "boss_chance": 0.05,
-            "rewards": {
-                "exp_multiplier": 1.0,
-                "gold_multiplier": 1.0
-            }
-        },
-        "D": {
-            "level_range": [10, 20],
-            "monsters": ["goblin", "wolf", "orc"],
-            "boss_chance": 0.1,
-            "rewards": {
-                "exp_multiplier": 1.2,
-                "gold_multiplier": 1.2
-            }
-        },
-        "C": {
-            "level_range": [20, 40],
-            "monsters": ["orc", "skeleton", "troll"],
-            "boss_chance": 0.15,
-            "rewards": {
-                "exp_multiplier": 1.5,
-                "gold_multiplier": 1.5
-            }
-        },
-        "B": {
-            "level_range": [40, 60],
-            "monsters": ["troll", "ogre", "demon"],
-            "boss_chance": 0.2,
-            "rewards": {
-                "exp_multiplier": 2.0,
-                "gold_multiplier": 2.0
-            }
-        },
-        "A": {
-            "level_range": [60, 80],
-            "monsters": ["demon", "dragon", "giant"],
-            "boss_chance": 0.25,
-            "rewards": {
-                "exp_multiplier": 2.5,
-                "gold_multiplier": 2.5
-            }
-        },
-        "S": {
-            "level_range": [80, 100],
-            "monsters": ["dragon", "giant", "demon_lord"],
-            "boss_chance": 0.3,
-            "rewards": {
-                "exp_multiplier": 3.0,
-                "gold_multiplier": 3.0
-            }
-        }
+  "beginner_gate_d": {
+    "id": "beginner_gate_d",
+    "name": "D-Rank Slime Gate",
+    "description": "A low-level gate infested with weak slimes. Perfect for new hunters.",
+    "difficulty": "D",
+    "required_level": 1,
+    "monster_pool": ["Slime", "Goblin"],
+    "boss_id": "Giant Slime",
+    "rewards": {
+      "exp": 50,
+      "gold": 25,
+      "items": [
+        {"name": "Health Potion", "chance": 0.7},
+        {"name": "Rusty Dagger", "chance": 0.2}
+      ]
     },
-    "red_gates": {
-        "A": {
-            "level_range": [70, 90],
-            "monsters": ["demon_lord", "chaos_dragon"],
-            "boss_required": true,
-            "rewards": {
-                "exp_multiplier": 4.0,
-                "gold_multiplier": 4.0,
-                "shadow_chance": 0.3
-            }
-        },
-        "S": {
-            "level_range": [90, 100],
-            "monsters": ["chaos_dragon", "ancient_demon"],
-            "boss_required": true,
-            "rewards": {
-                "exp_multiplier": 5.0,
-                "gold_multiplier": 5.0,
-                "shadow_chance": 0.5
-            }
-        }
+    "floors": 1,
+    "image_url": "https://i.imgur.com/slime_gate.png"
+  },
+  "forest_gate_c": {
+    "id": "forest_gate_c",
+    "name": "C-Rank Forest Gate",
+    "description": "A dense forest gate with goblins and orcs. Beware of ambushes.",
+    "difficulty": "C",
+    "required_level": 5,
+    "monster_pool": ["Goblin", "Orc", "Forest Spider"],
+    "boss_id": "Orc Chieftain",
+    "rewards": {
+      "exp": 150,
+      "gold": 75,
+      "items": [
+        {"name": "Leather Vest", "chance": 0.6},
+        {"name": "Iron Sword", "chance": 0.3},
+        {"name": "Greater Health Potion", "chance": 0.5}
+      ]
     },
-    "status_effects": {
-        "Stable": {
-            "monster_level_modifier": 0,
-            "reward_modifier": 1.0
-        },
-        "Unstable": {
-            "monster_level_modifier": 2,
-            "reward_modifier": 1.2
-        },
-        "Volatile": {
-            "monster_level_modifier": 5,
-            "reward_modifier": 1.5
-        },
-        "Critical": {
-            "monster_level_modifier": 10,
-            "reward_modifier": 2.0
-        }
-    }
+    "floors": 1,
+    "image_url": "https://i.imgur.com/forest_gate.png"
+  },
+  "ice_cavern_b": {
+    "id": "ice_cavern_b",
+    "name": "B-Rank Ice Cavern",
+    "description": "A frozen cavern filled with ice elementals and frost wolves.",
+    "difficulty": "B",
+    "required_level": 10,
+    "monster_pool": ["Ice Elemental", "Frost Wolf", "Ice Golem"],
+    "boss_id": "Frost King",
+    "rewards": {
+      "exp": 400,
+      "gold": 200,
+      "items": [
+        {"name": "Chain Mail", "chance": 0.5},
+        {"name": "Steel Blade", "chance": 0.3},
+        {"name": "Ice Crystal", "chance": 0.8}
+      ]
+    },
+    "floors": 1,
+    "image_url": "https://i.imgur.com/ice_cavern.png"
+  },
+  "shadow_realm_a": {
+    "id": "shadow_realm_a",
+    "name": "A-Rank Shadow Realm",
+    "description": "A dark dimension where shadows come alive. Only experienced hunters survive.",
+    "difficulty": "A",
+    "required_level": 20,
+    "monster_pool": ["Shadow Beast", "Dark Wraith", "Void Walker"],
+    "boss_id": "Shadow Lord",
+    "rewards": {
+      "exp": 800,
+      "gold": 500,
+      "items": [
+        {"name": "Shadow Cloak", "chance": 0.4},
+        {"name": "Demon Slayer", "chance": 0.2},
+        {"name": "Shadow Essence", "chance": 0.9}
+      ]
+    },
+    "floors": 1,
+    "image_url": "https://i.imgur.com/shadow_realm.png"
+  },
+  "dragon_lair_s": {
+    "id": "dragon_lair_s",
+    "name": "S-Rank Dragon Lair",
+    "description": "The legendary lair of an ancient dragon. Death awaits the unprepared.",
+    "difficulty": "S",
+    "required_level": 40,
+    "monster_pool": ["Wyvern", "Dragon Knight", "Fire Drake"],
+    "boss_id": "Ancient Dragon",
+    "rewards": {
+      "exp": 2000,
+      "gold": 1500,
+      "items": [
+        {"name": "Dragon Scale Mail", "chance": 0.3},
+        {"name": "Dragon Fang", "chance": 0.2},
+        {"name": "Dragon Heart", "chance": 0.1}
+      ]
+    },
+    "floors": 1,
+    "image_url": "https://i.imgur.com/dragon_lair.png"
+  }
 }
-

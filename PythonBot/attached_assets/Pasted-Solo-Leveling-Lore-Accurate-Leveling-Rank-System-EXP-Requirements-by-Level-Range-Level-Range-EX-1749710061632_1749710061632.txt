@@ -1,0 +1,65 @@
+Solo Leveling Lore-Accurate Leveling & Rank System
+🎯 EXP Requirements by Level Range
+Level Range	EXP Required Per Level (approximate)
+1 - 10	100 - 300 EXP
+11 - 20	500 - 1,000 EXP
+21 - 30	1,500 - 2,500 EXP
+31 - 40	3,000 - 4,500 EXP
+41 - 50	5,000 - 7,000 EXP
+51 - 60	8,000 - 10,000 EXP
+61 - 70	12,000 - 15,000 EXP
+71 - 80	18,000 - 25,000 EXP
+81 - 90	30,000 - 40,000 EXP
+91 - 100	50,000 - 100,000 EXP
+
+EXP requirements progressively increase, simulating realistic growth and challenge.
+
+🏆 Rank Progression
+Rank	Level Range	Lore Notes
+E Rank	1 - 10	Beginner hunters
+D Rank	11 - 20	Low-level hunters
+C Rank	21 - 30	Mid-tier hunters
+B Rank	31 - 40	Skilled hunters
+A Rank	41 - 50	High-level hunters
+S Rank	51 - 60	Top-tier hunters
+National Level Hunter	61 - 100	Elite hunters with exceptional power
+Monarch	100+	Legendary hunters (like Sung Jin-Woo)
+
+Ranks S+, SS, and SSS are not part of Solo Leveling canon and are therefore removed.
+
+⭐ EXP Sources & Scaling
+Source	Base EXP	Lore Explanation
+Hunting Monsters	25 EXP	Base reward for killing monsters
+Gate Clear	100 EXP	Completing a gate successfully
+Dungeon Clear	150 EXP	Completing a dungeon
+Boss Kill	200 EXP	Defeating a boss-level monster
+Quest Complete	50 EXP	Completing normal quests
+Daily Quest	30 EXP	Daily mission rewards
+Weekly Quest	100 EXP	Weekly mission rewards
+Special Quest	300 EXP	Special high-difficulty quests
+
+Scaling:
+All EXP gains scale based on enemy rank, dungeon difficulty, and quest complexity, following Solo Leveling lore where higher ranks yield exponentially more rewards.
+
+💪 Level-Up Bonuses
++3 Stat Points per level (player can distribute among Strength, Agility, Intelligence)
+
++20 Max HP per level
+
++10 Max MP per level
+
+Full HP and MP restore on level-up
+
+Automatic rank promotion when level thresholds are reached
+
+Private level-up notification with detailed stats and rewards
+
+New abilities and skill unlocks at milestone levels (optional, lore-consistent)
+
+📊 Additional Notes
+Use .status to view current level, EXP progress, stats, and rank.
+
+EXP gained from monsters and quests should dynamically factor in the hunter’s rank and relative level difference.
+
+Monarch status is reserved for level 100+ hunters and reflects the peak of hunter power.
+

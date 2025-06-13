@@ -1,0 +1,399 @@
+Okay, I understand. If updating the existing message for the final defeat state isn't working reliably, sending a new, conclusive message is a robust way to ensure the user gets the final combat results. This approach clearly separates the ongoing combat log from the final outcome.
+
+We'll modify the handle_combat_turn function in main.py to do the following when a monster is defeated:
+
+Finalize all hunter data (XP, Gold, etc.).
+Disable the buttons on the original combat message (the one with the CombatView).
+Send a new, dedicated embed that summarizes the combat outcome (monster defeated, XP gained, gold gained, level-up message if any).
+Clear the battle state.
+Here's the updated handle_combat_turn function with the new approach. I'll also add a helper function create_defeat_summary_embed for clarity.
+
+First, let's add this new helper function, perhaps near your create_combat_embed or within main.py itself, or consider adding it to utils/theme_utils.py if you want it more centralized:
+
+Python
+
+# Add this function somewhere in your main.py, or in theme_utils.py
+# If in theme_utils.py, remember to import it: from utils.theme_utils import ..., create_defeat_summary_embed
+
+def create_defeat_summary_embed(bot, user_id, hunter, monster_name, exp_gained, gold_gained, level_up_message=None):
+    colors = get_user_theme_colors(str(user_id))
+    user = bot.get_user(int(user_id))
+    username = user.display_name if user else "Unknown Hunter"
+
+    embed = discord.Embed(
+        title=f"🎉 {username} Defeated the {monster_name}!",
+        description=f"**Victory!** You have successfully defeated the {monster_name}.",
+        color=discord.Color(colors['success']) # Using a success color for victory
+    )
+
+    embed.add_field(name="💰 Gold Gained", value=f"{gold_gained:,} Gold", inline=True)
+    embed.add_field(name="🌟 EXP Gained", value=f"{exp_gained:,} EXP", inline=True)
+    
+    if level_up_message:
+        embed.add_field(name="⬆️ Level Up!", value=level_up_message, inline=False)
+    
+    embed.add_field(
+        name="📊 Current Stats (Post-Combat)",
+        value=f"Level: {hunter.get('level', 1)}\nHP: {hunter.get('hp', 0)}/{hunter.get('max_hp', 100)}\nGold: {hunter.get('gold', 0):,}",
+        inline=False
+    )
+
+    embed.set_footer(text="Your adventure continues!")
+    return embed
+
+Now, here's the modified handle_combat_turn function in your main.py:
+
+Python
+
+import discord
+from discord.ext import commands
+import json
+import os
+from dotenv import load_dotenv
+import asyncio
+import time
+from datetime import datetime, timedelta
+from utils.leveling_system import award_exp, send_level_up_notification, leveling_system
+from utils.theme_utils import get_user_theme_colors, get_error_embed, get_info_embed
+from ui_elements import HelpView, StatusView, CombatView # Ensure CombatView is imported
+
+# ... (rest of your imports, global variables, load/save functions, and helper functions like get_monster_data, calculate_player_damage, calculate_monster_damage) ...
+
+# Ensure create_defeat_summary_embed is available (either defined above or imported)
+# from utils.theme_utils import create_defeat_summary_embed # if you put it there
+
+async def handle_combat_turn(ctx, user_id, channel_id, view: CombatView):
+    hunters_data = load_hunters_data()
+    hunter = hunters_data.get(str(user_id))
+    
+    if not hunter or not interactive_battles.get(str(user_id)):
+        # This condition might mean the battle was already concluded or somehow invalid.
+        # Log this if it happens unexpectedly often.
+        if view.message:
+            try:
+                # Optionally, disable buttons on the old message if it's still active
+                for item in view.children:
+                    item.disabled = True
+                await view.message.edit(content="Combat session concluded or invalid.", view=view)
+            except discord.HTTPException:
+                pass # Message might have been deleted or inaccessible
+        view.stop() # Ensure the view stops listening
+        return
+
+    current_battle = interactive_battles[str(user_id)]
+    monster = current_battle['monster']
+    hunter['hp'] = current_battle['hunter']['hp']
+    hunter['mp'] = current_battle['hunter']['mp']
+
+    turn_info = "" # Initialize turn_info for this turn's log
+
+    # Player's action
+    if view.player_action == "attack":
+        player_damage = calculate_player_damage(hunter)
+        turn_info += f"💥 You attacked the {monster['name']} for {player_damage} damage!\n"
+        monster['current_hp'] -= player_damage
+
+        if monster['current_hp'] <= 0:
+            # Monster defeated!
+            hunter['monsters_defeated'] = hunter.get('monsters_defeated', 0) + 1
+            
+            if 'daily_kills' not in hunter:
+                hunter['daily_kills'] = 0
+            hunter['daily_kills'] += 1
+
+            exp_gained = monster['exp_reward']
+            gold_gained = monster['gold_reward']
+            
+            # Award EXP (this also updates hunter's level and exp in the data)
+            # level_up_message will contain a string if the user leveled up, else None
+            level_up_message = await award_exp(bot, ctx, user_id, exp_gained) 
+            
+            # Award Gold
+            hunter['gold'] = hunter.get('gold', 0) + gold_gained
+            
+            # --- NEW APPROACH FOR DEFEAT MESSAGE ---
+            # 1. Update interactive_battles and save hunter data FIRST
+            current_battle['hunter'] = hunter # Update hunter state in current battle
+            current_battle['monster'] = monster # Update monster state in current battle
+            save_hunters_data(hunters_data) # Save the data immediately
+
+            # 2. Disable buttons on the *original* combat message
+            view.combat_ended = True # Signal the view to stop
+            view.disable_all_buttons()
+            try:
+                # Optionally update the original message to say "Combat Concluded"
+                await view.message.edit(content="Combat Concluded!", view=view)
+            except discord.HTTPException:
+                pass # Handle cases where message might be gone
+
+            # 3. Send the NEW, dedicated defeat summary embed
+            defeat_embed = create_defeat_summary_embed(
+                bot, user_id, hunter, monster['name'], exp_gained, gold_gained, level_up_message
+            )
+            await ctx.send(embed=defeat_embed) # Send it in the channel
+
+            # 4. Clear battle state
+            if str(user_id) in active_battles:
+                del active_battles[str(user_id)]
+            if str(user_id) in interactive_battles:
+                del interactive_battles[str(user_id)]
+
+            view.stop() # Stop the CombatView's listener
+            return # Exit the function, combat is over
+
+        else:
+            # Monster attacks back if not defeated
+            monster_damage = calculate_monster_damage(monster, hunter)
+            turn_info += f"👹 {monster['name']} attacked you for {monster_damage} damage!\n"
+            hunter['hp'] -= monster_damage
+            
+            # Check if hunter is defeated by monster's counter-attack
+            if hunter['hp'] <= 0:
+                # Hunter defeated scenario
+                turn_info += f"💀 You were defeated by the {monster['name']}!\n"
+                hunter['battles_lost'] = hunter.get('battles_lost', 0) + 1
+                hunter['hp'] = hunter.get('max_hp', hunter.get('max_hp', 100)) # Respawn with full health
+
+                # Update interactive_battles and remove
+                current_battle['hunter'] = hunter
+                current_battle['monster'] = monster
+                save_hunters_data(hunters_data)
+
+                view.combat_ended = True
+                view.disable_all_buttons()
+                
+                # Send a defeat specific embed (similar to victory, but for loss)
+                defeat_embed = discord.Embed(
+                    title=f"☠️ {hunter.get('name', 'Hunter')} was Defeated!",
+                    description=f"You were knocked out by the {monster['name']}!",
+                    color=discord.Color(get_user_theme_colors(user_id)['error'])
+                )
+                defeat_embed.add_field(name="Consequences", value="You respawned at full HP.", inline=False)
+                defeat_embed.set_footer(text="Better luck next time!")
+                
+                try:
+                     await view.message.edit(content="Combat Concluded!", view=view)
+                except discord.HTTPException:
+                    pass
+
+                await ctx.send(embed=defeat_embed)
+
+                if str(user_id) in active_battles:
+                    del active_battles[str(user_id)]
+                if str(user_id) in interactive_battles:
+                    del interactive_battles[str(user_id)]
+
+                view.stop()
+                return # Exit if player is defeated
+
+    elif view.player_action == "defend":
+        turn_info += "🛡️ You chose to defend!\n"
+        monster_damage = calculate_monster_damage(monster, hunter) * 0.5 # Example: halve damage
+        turn_info += f"👹 {monster['name']} attacked you for {int(monster_damage)} damage (reduced)!\n"
+        hunter['hp'] -= int(monster_damage)
+
+        if hunter['hp'] <= 0:
+            # Handle defeat after defending
+            turn_info += f"💀 You were defeated by the {monster['name']} while defending!\n"
+            hunter['battles_lost'] = hunter.get('battles_lost', 0) + 1
+            hunter['hp'] = hunter.get('max_hp', hunter.get('max_hp', 100))
+            save_hunters_data(hunters_data)
+
+            view.combat_ended = True
+            view.disable_all_buttons()
+            
+            # Send defeat embed
+            defeat_embed = discord.Embed(
+                title=f"☠️ {hunter.get('name', 'Hunter')} was Defeated!",
+                description=f"You were knocked out by the {monster['name']}!",
+                color=discord.Color(get_user_theme_colors(user_id)['error'])
+            )
+            defeat_embed.add_field(name="Consequences", value="You respawned at full HP.", inline=False)
+            defeat_embed.set_footer(text="Better luck next time!")
+            
+            try:
+                await view.message.edit(content="Combat Concluded!", view=view)
+            except discord.HTTPException:
+                pass
+            await ctx.send(embed=defeat_embed)
+
+            if str(user_id) in active_battles:
+                del active_battles[str(user_id)]
+            if str(user_id) in interactive_battles:
+                del interactive_battles[str(user_id)]
+
+            view.stop()
+            return
+
+    elif view.player_action == "flee":
+        import random # Ensure random is imported at the top of main.py
+        if random.random() < 0.5:
+            turn_info += "🏃 You successfully fled the battle!\n"
+            
+            view.combat_ended = True
+            view.disable_all_buttons()
+            
+            # Clear battle state
+            if str(user_id) in active_battles:
+                del active_battles[str(user_id)]
+            if str(user_id) in interactive_battles:
+                del interactive_battles[str(user_id)]
+            save_hunters_data(hunters_data)
+
+            flee_embed = discord.Embed(
+                title="💨 Fled from Battle!",
+                description=f"You successfully escaped the {monster['name']}.",
+                color=discord.Color(get_user_theme_colors(user_id)['info'])
+            )
+            flee_embed.set_footer(text="Sometimes discretion is the better part of valor.")
+            
+            try:
+                await view.message.edit(content="Combat Concluded!", view=view)
+            except discord.HTTPException:
+                pass
+            await ctx.send(embed=flee_embed)
+            
+            view.stop()
+            return
+
+        else:
+            turn_info += "❌ You failed to flee! The monster attacks!\n"
+            monster_damage = calculate_monster_damage(monster, hunter)
+            turn_info += f"👹 {monster['name']} attacked you for {monster_damage} damage!\n"
+            hunter['hp'] -= monster_damage
+            
+            if hunter['hp'] <= 0:
+                # Handle defeat after failed flee
+                turn_info += f"💀 You were defeated by the {monster['name']}!\n"
+                hunter['battles_lost'] = hunter.get('battles_lost', 0) + 1
+                hunter['hp'] = hunter.get('max_hp', hunter.get('max_hp', 100))
+                save_hunters_data(hunters_data)
+
+                view.combat_ended = True
+                view.disable_all_buttons()
+                
+                defeat_embed = discord.Embed(
+                    title=f"☠️ {hunter.get('name', 'Hunter')} was Defeated!",
+                    description=f"You were knocked out by the {monster['name']}!",
+                    color=discord.Color(get_user_theme_colors(user_id)['error'])
+                )
+                defeat_embed.add_field(name="Consequences", value="You respawned at full HP.", inline=False)
+                defeat_embed.set_footer(text="Better luck next time!")
+                
+                try:
+                    await view.message.edit(content="Combat Concluded!", view=view)
+                except discord.HTTPException:
+                    pass
+                await ctx.send(embed=defeat_embed)
+
+                if str(user_id) in active_battles:
+                    del active_battles[str(user_id)]
+                if str(user_id) in interactive_battles:
+                    del interactive_battles[str(user_id)]
+                
+                view.stop()
+                return
+
+    elif view.player_action == "use_item":
+        item_name = view.item_used
+        # You'll need an actual item database to get item properties
+        # For demonstration, assuming a 'Health Potion' restores 50 HP
+        item_properties = {
+            "health potion": {"type": "healing", "amount": 50},
+            # Add more items here
+        }
+        item_data = item_properties.get(item_name.lower())
+
+        if item_name and item_name in hunter.get('inventory', []) and item_data:
+            if item_data["type"] == "healing":
+                heal_amount = item_data["amount"]
+                hunter['hp'] = min(hunter.get('max_hp', hunter.get('max_hp', 100)), hunter['hp'] + heal_amount)
+                
+                hunter['inventory'].remove(item_name) # Remove the item
+                
+                turn_info += f"✨ You used a {item_name} and recovered {heal_amount} HP!\n"
+            else:
+                turn_info += f"❓ You tried to use {item_name}, but it had no effect in combat.\n"
+        else:
+            turn_info += "🚫 You tried to use an item, but it wasn't available or usable.\n"
+
+        # Monster still attacks after item use
+        monster_damage = calculate_monster_damage(monster, hunter)
+        turn_info += f"👹 {monster['name']} attacked you for {monster_damage} damage!\n"
+        hunter['hp'] -= monster_damage
+
+        if hunter['hp'] <= 0:
+            # Handle defeat after item use
+            turn_info += f"💀 You were defeated by the {monster['name']} after using an item!\n"
+            hunter['battles_lost'] = hunter.get('battles_lost', 0) + 1
+            hunter['hp'] = hunter.get('max_hp', hunter.get('max_hp', 100))
+            save_hunters_data(hunters_data)
+
+            view.combat_ended = True
+            view.disable_all_buttons()
+            
+            defeat_embed = discord.Embed(
+                title=f"☠️ {hunter.get('name', 'Hunter')} was Defeated!",
+                description=f"You were knocked out by the {monster['name']}!",
+                color=discord.Color(get_user_theme_colors(user_id)['error'])
+            )
+            defeat_embed.add_field(name="Consequences", value="You respawned at full HP.", inline=False)
+            defeat_embed.set_footer(text="Better luck next time!")
+            
+            try:
+                await view.message.edit(content="Combat Concluded!", view=view)
+            except discord.HTTPException:
+                pass
+            await ctx.send(embed=defeat_embed)
+
+            if str(user_id) in active_battles:
+                del active_battles[str(user_id)]
+            if str(user_id) in interactive_battles:
+                del interactive_battles[str(user_id)]
+
+            view.stop()
+            return
+    
+    # --- IMPORTANT: Update the interactive_battles dictionary for the next turn ---
+    # This ensures the current state (HP, MP, etc.) is consistent across turns
+    interactive_battles[str(user_id)]['hunter']['hp'] = hunter['hp']
+    interactive_battles[str(user_id)]['hunter']['mp'] = hunter['mp']
+    interactive_battles[str(user_id)]['monster']['current_hp'] = monster['current_hp']
+
+    save_hunters_data(hunters_data) # Save after each turn's calculations if combat is ongoing
+
+    # Only update the embed for the *next* turn if combat is still ongoing
+    if not view.combat_ended:
+        updated_embed = view.create_combat_embed(hunter, monster, turn_info)
+        await view.message.edit(embed=updated_embed, view=view)
+        view.player_turn_active = True # Re-enable player turn for next input
+        await view.wait() # Wait for player input for the next turn
+
+# ... (rest of your main.py, including the @bot.command(name='hunt') and bot.run() calls) ...
+
+Explanation of the New Approach:
+
+create_defeat_summary_embed Function:
+
+This is a new helper function designed specifically to generate a visually distinct embed for combat victory.
+It takes all the necessary information (bot, user_id, hunter data, monster_name, exp_gained, gold_gained, level_up_message) and formats it nicely.
+It uses a discord.Color(colors['success']) to make it visually clear that it's a positive outcome.
+Changes in handle_combat_turn (Monster Defeat Scenario):
+
+Data First: All hunter and monster data updates (exp, gold, monsters_defeated, daily_kills) and the await award_exp(...) call happen first.
+Save Data: save_hunters_data(hunters_data) is called before sending the new message. This ensures the data is persisted even if something goes wrong with the message sending.
+Disable Original View:
+view.combat_ended = True and view.disable_all_buttons() are called.
+await view.message.edit(content="Combat Concluded!", view=view) is used to update the original combat message. This changes its text to "Combat Concluded!" and grays out its buttons, signaling the end of interaction with that specific combat instance.
+Send New Summary Embed:
+defeat_embed = create_defeat_summary_embed(...) creates the new, distinct embed.
+await ctx.send(embed=defeat_embed) sends this new embed as a new message in the channel. This guarantees that the victory message appears clearly without being part of the potentially confusing turn_info update on the old message.
+Clean Up: The battle is removed from active_battles and interactive_battles.
+Stop View: view.stop() is crucial to end the CombatView's listener, releasing its resources and preventing further processing of interactions from that view.
+Return: return immediately exits the handle_combat_turn function for that combat instance, preventing it from trying to process another turn.
+Important Considerations:
+
+Import random: If you use random.random() for the flee chance, make sure import random is at the top of your main.py file.
+Theme Colors: Ensure get_user_theme_colors is correctly imported and available.
+Item System: The use_item logic has a basic placeholder. You'll want to connect item_properties to your actual item data structure.
+This approach should now reliably inform the user of the combat outcome with a clear, dedicated message.

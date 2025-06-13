@@ -1,0 +1,75 @@
+When a player uses .hunt, the bot:
+
+Creates a private temporary combat channel.
+
+Places it under a specific category.
+
+Only allows the player (and optionally mods or the bot) to view/send messages.
+
+Deletes the channel after combat ends.
+
+🔧 Setup Code Snippet
+python
+Copy
+Edit
+import discord
+from discord.ext import commands
+import asyncio
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='.', intents=intents)
+
+# Replace with your real category and system message channel ID
+COMBAT_CATEGORY_ID = 1382473442397519912
+SYSTEM_MESSAGE_CHANNEL_ID = 1382460143828205728
+
+@bot.command()
+async def hunt(ctx):
+    player = ctx.author
+    guild = ctx.guild
+    combat_category = discord.utils.get(guild.categories, id=COMBAT_CATEGORY_ID)
+
+    overwrites = {
+        guild.default_role: discord.PermissionOverwrite(view_channel=False),
+        player: discord.PermissionOverwrite(view_channel=True, send_messages=True),
+        guild.me: discord.PermissionOverwrite(view_channel=True, send_messages=True)
+    }
+
+    # Create the channel
+    combat_channel = await guild.create_text_channel(
+        name=f'combat-{player.name}-{player.id}',
+        overwrites=overwrites,
+        category=combat_category,
+        reason='Private combat channel for Solo Leveling bot'
+    )
+
+    # Redirect message
+    await ctx.send(f"⚔️ Private Combat Arena Created! Your personal combat has started in {combat_channel.mention}")
+
+    await combat_channel.send(f"{player.mention} ⚔️ Welcome to your private combat arena!")
+
+    # Simulate combat (replace with your real combat logic)
+    await asyncio.sleep(30)  # simulate a 30-second fight
+
+    await combat_channel.send("✅ Combat has ended. This channel will now be deleted.")
+    await asyncio.sleep(5)
+    await combat_channel.delete()
+
+bot.run('YOUR_BOT_TOKEN')
+🛠 Customizations You Can Add:
+Add a combat timer or rounds.
+
+Store combat logs or results.
+
+Allow the player to use buttons/select menus (use discord.ui for that).
+
+Add a flag so players can’t .hunt again until combat ends.
+
+✅ Notes:
+The category ID must be correct and bot needs permission to manage channels and roles.
+
+If you're using discord.py version 2+, this code is ready.
+
+To make this persistent, you might use a SQLite or JSON file to track active combats.

@@ -1,63 +1,57 @@
 {
-    "198108580115644418": {
-        "level": 1,
-        "exp": 100,
-        "rank": "E",
-        "hp": 100,
-        "mp": 50,
-        "strength": 10,
-        "agility": 10,
-        "intelligence": 10,
-        "inventory": [],
-        "shadows": [],
+    "299559754756521985": {
+        "level": 17,
+        "exp": 7100,
+        "rank": "D Rank",
+        "hp": 495,
+        "max_hp": 495,
+        "mp": 285,
+        "max_mp": 285,
+        "strength": 11,
+        "agility": 11,
+        "intelligence": 11,
+        "base_strength": 11,
+        "base_agility": 11,
+        "base_intelligence": 11,
+        "custom_title": "The Shadow Monarch",
+        "inventory": {
+            "Mana Potion": 1,
+            "Shadow Realm Key": 1,
+            "Ice Monarch Key": 1,
+            "Hunter License": 1,
+            "Elven Longbow": 1,
+            "Iron Dagger": 1,
+            "Healing Potion": 1
+        },
+        "gold": 3160,
+        "attack": 225,
+        "defense": 165,
         "equipment": {
-            "weapon": null,
+            "weapon": "Elven Longbow",
             "armor": null,
             "accessory": null
         },
-        "quests": {
-            "daily": {
-                "monster_hunt": {
-                    "name": "Monster Hunter",
-                    "description": "Defeat 15 monsters",
-                    "target": 15,
-                    "progress": 0,
-                    "reward_gold": 300,
-                    "reward_exp": 150,
-                    "completed": false
-                },
-                "gate_clear": {
-                    "name": "Gate Clearer",
-                    "description": "Clear 1 gates",
-                    "target": 1,
-                    "progress": 1,
-                    "reward_gold": 200,
-                    "reward_exp": 100,
-                    "completed": true
-                },
-                "shadow_training": {
-                    "name": "Shadow Master",
-                    "description": "Train your shadows 3 times",
-                    "target": 3,
-                    "progress": 0,
-                    "reward_gold": 150,
-                    "reward_exp": 75,
-                    "completed": false
-                }
-            },
-            "last_daily_reset": "2025-06-10"
-        },
-        "gold": 200
+        "in_battle": false,
+        "last_rest": "2025-01-12T12:30:00.000Z",
+        "daily_kills": 0,
+        "last_kill_reset": "2025-01-12",
+        "base_defense": 165,
+        "private_adventure_channel_id": 1382868958612553818
     },
-    "299559754756521985": {
+    "958126753392500738": {
         "level": 1,
         "exp": 0,
-        "rank": "E",
+        "rank": "E Rank",
         "hp": 100,
+        "max_hp": 100,
         "mp": 50,
+        "max_mp": 50,
+        "mana": 100,
+        "max_mana": 100,
         "strength": 10,
         "agility": 10,
         "intelligence": 10,
+        "defense": 5,
         "inventory": [],
         "shadows": [],
         "equipment": {
@@ -65,17 +59,45 @@
             "armor": null,
             "accessory": null
         },
-        "awakened": true
+        "abilities": [
+            "power_strike",
+            "heal"
+        ],
+        "active_cooldowns": {},
+        "temp_buffs": {},
+        "gold": 100,
+        "quests": {
+            "daily": {},
+            "last_daily_reset": ""
+        },
+        "battle": null,
+        "last_defeated_monster": null,
+        "pvp_stats": {
+            "wins": 0,
+            "losses": 0,
+            "rank": "Unranked"
+        },
+        "dungeon_battle": null,
+        "base_strength": 10,
+        "base_agility": 10,
+        "base_intelligence": 10,
+        "base_defense": 5,
+        "private_adventure_channel_id": 1382734046555017286
     },
-    "263758972945825795": {
+    "353473195824775169": {
         "level": 1,
-        "exp": 100,
-        "rank": "E",
+        "exp": 30,
+        "rank": "E Rank",
         "hp": 100,
+        "max_hp": 100,
         "mp": 50,
+        "max_mp": 50,
+        "mana": 100,
+        "max_mana": 100,
         "strength": 10,
         "agility": 10,
         "intelligence": 10,
+        "defense": 5,
         "inventory": [],
         "shadows": [],
         "equipment": {
@@ -83,8 +105,31 @@
             "armor": null,
             "accessory": null
         },
-        "gold": 250,
-        "last_daily_claim": "2025-06-10T22:28:38.322351",
-        "awakened": true
+        "abilities": [
+            "power_strike",
+            "heal"
+        ],
+        "active_cooldowns": {},
+        "temp_buffs": {},
+        "gold": 120,
+        "quests": {
+            "daily": {},
+            "last_daily_reset": ""
+        },
+        "battle": null,
+        "last_defeated_monster": null,
+        "pvp_stats": {
+            "wins": 0,
+            "losses": 0,
+            "rank": "Unranked"
+        },
+        "private_adventure_channel_id": 1382857820592017439,
+        "daily_kills": {
+            "2025-06-13": 1
+        },
+        "base_strength": 10,
+        "base_agility": 10,
+        "base_intelligence": 10,
+        "base_defense": 5
     }
 }

@@ -1,0 +1,88 @@
+Thanks for providing the ui_elements.py file! This gives me the context for the CombatView class and how the combat embed is created.
+
+The logic for displaying EXP and Gold rewards needs to be placed after the monster['current_hp'] <= 0 condition, right before the embed is updated and sent.
+
+Based on the ui_elements.py and what I recall from main.py (specifically the handle_combat_turn function or similar combat loop), the turn_info is built up and then passed to create_combat_embed. The key is to make sure the turn_info string actually includes the gold and XP message when the monster is defeated.
+
+Let's look at the handle_combat_turn (or equivalent) function in your main.py where the monster defeat is processed. I'll provide a general structure and point out where the additions should go.
+
+In your main.py (or wherever your combat turn handling logic is), look for a section similar to this:
+
+Python
+
+# ... (inside a function like handle_combat_turn, within the combat loop) ...
+
+        if view.player_action == "attack":
+            # ... (player attack logic) ...
+            turn_info += f"💥 You attacked the {monster['name']} for {player_damage} damage!\n"
+            monster['current_hp'] -= player_damage
+
+            if monster['current_hp'] <= 0:
+                # Monster defeated!
+                turn_info += f"🏆 You defeated the {monster['name']}!"
+                hunter['monsters_defeated'] = hunter.get('monsters_defeated', 0) + 1
+                
+                # Check for daily kill progress
+                if 'daily_kills' not in hunter:
+                    hunter['daily_kills'] = 0
+                hunter['daily_kills'] += 1
+
+                # Award EXP and Gold
+                exp_gained = monster['exp_reward']
+                gold_gained = monster['gold_reward']
+                
+                # Await the coroutine to get its result
+                level_up_message = await award_exp(self.bot, ctx, user_id, exp_gained) 
+                
+                hunter['gold'] = hunter.get('gold', 0) + gold_gained
+                
+                # --- IMPORTANT: ADD/ENSURE THESE LINES ---
+                # Add the XP and Gold gained to the turn_info
+                turn_info += f"\nYou gained {exp_gained} EXP and {gold_gained} Gold."
+                if level_up_message:
+                    turn_info += f"\n{level_up_message}" # This will include level-up messages from award_exp
+
+                # Set combat as ended and disable buttons
+                view.combat_ended = True
+                view.disable_all_buttons()
+                save_hunters_data(hunters_data) # Make sure data is saved after awarding
+
+                # Create the final embed with updated turn_info
+                final_embed = view.create_combat_embed(hunter, monster, turn_info)
+                
+                # Edit the message to show the final combat result
+                await view.message.edit(embed=final_embed, view=view)
+                view.stop() # Stop the view to end the interaction
+                return # End the function, combat is over
+
+            else:
+                # ... (monster counter-attack logic if not defeated) ...
+                turn_info += f"👹 {monster['name']} attacked you for {monster_damage} damage!\n"
+                hunter['hp'] -= monster_damage
+                save_hunters_data(hunters_data)
+
+        # ... (After the if/else for player action, update the message for the next turn) ...
+        if not view.combat_ended: # Only update if combat hasn't ended
+            updated_embed = view.create_combat_embed(hunter, monster, turn_info)
+            await view.message.edit(embed=updated_embed, view=view)
+            view.player_turn_active = True # Re-enable player turn for next input
+            await view.wait() # Wait for player input for the next turn
+
+# ... (rest of your combat handling function) ...
+Key additions and considerations:
+
+turn_info Update:
+
+turn_info += f"\nYou gained {exp_gained} EXP and {gold_gained} Gold." This is the crucial line to add the reward message to the log.
+if level_up_message: turn_info += f"\n{level_up_message}" - This ensures that if award_exp returns a message (e.g., "You leveled up!"), it's also included.
+save_hunters_data(hunters_data): Ensure this is called after hunter['gold'] is updated and after award_exp has run (which likely updates hunter['exp'] and hunter['level']). This persists the changes.
+
+Ending Combat (view.combat_ended, view.disable_all_buttons, view.stop()):
+
+When the monster is defeated, you need to explicitly tell the CombatView that the combat has ended (view.combat_ended = True).
+view.disable_all_buttons() will gray out the buttons, preventing further interaction.
+view.stop() will end the await view.wait() call in your main combat loop, allowing the program flow to continue after combat.
+return will exit the handle_combat_turn function for this specific combat, as it's concluded.
+Final message.edit: The await view.message.edit(embed=final_embed, view=view) line right after the monster is defeated is essential to update the Discord message one last time with the complete combat log, including the rewards and the disabled buttons.
+
+By ensuring these lines are present and in the correct order, your bot should now clearly display the EXP and gold gained when a monster is defeated!

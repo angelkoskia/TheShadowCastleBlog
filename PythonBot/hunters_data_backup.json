@@ -1,0 +1,158 @@
+{
+    "299559754756521985": {
+        "level": 17,
+        "exp": 6622,
+        "rank": "D Rank",
+        "hp": 495,
+        "max_hp": 495,
+        "mp": 285,
+        "max_mp": 285,
+        "strength": 29,
+        "agility": 50,
+        "intelligence": 14,
+        "base_strength": 11,
+        "base_agility": 11,
+        "base_intelligence": 11,
+        "custom_title": "The Shadow Monarch",
+        "inventory": {
+            "Mana Potion": 1,
+            "Shadow Realm Key": 1,
+            "Ice Monarch Key": 1,
+            "Hunter's Ring": 1,
+            "Silver Rapier": 1,
+            "Warrior's Gauntlets": 1,
+            "Chain Mail": 1
+        },
+        "equipment": {
+            "weapon": "Ice Spear",
+            "armor": "Assassin's Garb",
+            "accessory": "Thief's Cloak Pin",
+            "shield": "Knight's Shield"
+        },
+        "gold": 2545,
+        "quests": {
+            "daily": {
+                "monster_hunt": {
+                    "name": "Monster Hunter",
+                    "description": "Defeat 30 monsters",
+                    "type": "kill_monsters",
+                    "target": 30,
+                    "progress": 0,
+                    "completed": false,
+                    "claimed": false,
+                    "reward_gold": 1164,
+                    "reward_exp": 420
+                },
+                "gold_collector": {
+                    "name": "Gold Collector",
+                    "description": "Earn 2949 gold from battles",
+                    "type": "earn_gold",
+                    "target": 2949,
+                    "progress": 0,
+                    "completed": false,
+                    "claimed": false,
+                    "reward_gold": 1365,
+                    "reward_exp": 498
+                },
+                "shop_customer": {
+                    "name": "Shop Customer",
+                    "description": "Purchase 6 items from shop",
+                    "type": "buy_items",
+                    "target": 6,
+                    "progress": 0,
+                    "completed": false,
+                    "claimed": false,
+                    "reward_gold": 639,
+                    "reward_exp": 318
+                },
+                "equipment_master": {
+                    "name": "Equipment Master",
+                    "description": "Equip 6 different items",
+                    "type": "equip_items",
+                    "target": 6,
+                    "progress": 0,
+                    "completed": false,
+                    "claimed": false,
+                    "reward_gold": 618,
+                    "reward_exp": 258
+                }
+            },
+            "last_daily_reset": "2025-06-12",
+            "weekly": {
+                "weekly_merchant": {
+                    "name": "Weekly Merchant",
+                    "description": "Purchase 20 items this week",
+                    "type": "buy_items",
+                    "target": 20,
+                    "progress": 9,
+                    "completed": false,
+                    "claimed": false,
+                    "reward_gold": 2249,
+                    "reward_exp": 937,
+                    "special_reward": "Merchant's Token"
+                },
+                "weekly_slayer": {
+                    "name": "Weekly Monster Slayer",
+                    "description": "Defeat 69 monsters this week",
+                    "type": "kill_monsters",
+                    "target": 69,
+                    "progress": 22,
+                    "completed": false,
+                    "claimed": false,
+                    "reward_gold": 3258,
+                    "reward_exp": 1668,
+                    "special_reward": "Enhancement Stone"
+                },
+                "weekly_explorer": {
+                    "name": "Weekly Gate Explorer",
+                    "description": "Clear 10 gates this week",
+                    "type": "clear_gates",
+                    "target": 10,
+                    "progress": 6,
+                    "completed": false,
+                    "claimed": false,
+                    "reward_gold": 3570,
+                    "reward_exp": 1674,
+                    "special_reward": "Epic Equipment Box"
+                }
+            },
+            "last_weekly_reset": "2025-06-11"
+        },
+        "battle": null,
+        "last_defeated_monster": {
+            "name": "Orc Berserker",
+            "level": 12,
+            "hp": 120,
+            "attack": 25,
+            "defense": 15,
+            "exp_reward": 150,
+            "gold_reward": 100,
+            "abilities": [
+                "Rage",
+                "Brutal Swing"
+            ],
+            "rarity": "common"
+        },
+        "pvp_stats": {
+            "wins": 0,
+            "losses": 0,
+            "rank": "Unranked"
+        },
+        "theme": "purple",
+        "dungeons_cleared": 3,
+        "defense": 41,
+        "gates_cleared": 4,
+        "daily_kills": {
+            "2025-06-12": 12
+        },
+        "base_defense": 5,
+        "dungeon_battle": {
+            "boss": {
+                "name": "The Mad Scientist Xerion",
+                "description": "Dr. Xerion was humanity's greatest genius, working to cure all diseases and extend life. When the government weaponized his research and used it to create biological weapons, his sanity shattered. Now he conducts twisted experiments, believing humanity must be 'perfected' through mutation.",
+                "hp": 3800,
+                "max_hp": 3800,
+                "attack": 125,
+                "defense": 85,
+                "level_req": 16,
+                "color": 
